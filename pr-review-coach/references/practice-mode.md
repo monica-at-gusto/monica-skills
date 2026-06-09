@@ -7,6 +7,8 @@ she commits to a read BEFORE seeing the lens findings.
 
 1. **Set up the hunk.** Show one changed hunk worth scrutinizing (don't reveal what the
    lenses flagged). Ask: *"What's your read here — anything you'd comment on, and why?"*
+   Use `references/reviewer-lens.md` (bug taxonomy + Critical Questions) to pick hunks worth
+   quizzing and to frame the grading.
 2. **Wait for her swing.** Let her commit to a verdict in her own words. Do not hint.
 3. **Sharpen, point by point.** Compare her read against the merged lens findings for that
    hunk and grade each point:
@@ -21,7 +23,7 @@ she commits to a read BEFORE seeing the lens findings.
 
 - Offer to turn the confirmed findings into draft comments (same voice rules as triage), so a
   practice session can still produce a real review.
-- Pattern capture (SKILL.md Step 8) is especially valuable here: if a category keeps showing
+- Pattern capture (SKILL.md Step 9) is especially valuable here: if a category keeps showing
   up as a "miss," that's a candidate convention for `usp-conventions.md`.
 
 ## Tone

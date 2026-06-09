@@ -24,10 +24,16 @@ only injects data and opens it.
 ```json
 {
   "meta": { "target": "20151", "title": "<PR title or branch>", "mode": "remote|local|practice",
-            "counts": { "critical": 1, "important": 1, "suggestion": 1, "strength": 1 } },
+            "counts": { "critical": 1, "important": 1, "suggestion": 1, "strength": 1 },
+            "context": ["CI: failing — 2 checks", "Large PR (1,240 lines) — consider splitting",
+                        "Ticket USPDS-593: scope matches"] },
   "findings": [ /* finding objects */ ]
 }
 ```
+
+`meta.context` (optional) holds the Step 2 triage notes — CI status, size/scope, description
+gaps, ticket alignment. The template renders them as a short banner under the counts. Omit or
+leave empty when there's nothing to surface.
 
 Each finding uses the `finding-schema.md` fields plus three UI fields:
 

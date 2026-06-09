@@ -54,6 +54,8 @@ tiers), `check`→`check`, `lens: "fresh-eyes"`, `side: "RIGHT"`, `confidence: "
 1. **Dedupe:** group findings by `(file, line)` within a 3-line window. On collision keep the
    higher severity, union `incident_refs`, and note both lenses hit it.
 2. **Filter:** drop `confidence: low`. For remote posting also drop `introduced_by_pr: false`.
+   Also drop anything already raised in the PR's existing reviews/comments (fetched in Step 2) —
+   don't re-flag what a reviewer already said.
 3. **Tier:** Critical / Important / Suggestion / Strengths, by `severity`.
 4. **Cap:** at most ~5 issue findings carried into posting (strengths are exempt). If more
    survive, keep the highest-severity / highest-confidence and say how many were trimmed —
