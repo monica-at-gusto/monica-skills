@@ -3,7 +3,7 @@ name: pr-review-coach
 description: Coach me through reviewing a PR — surface what to scrutinize, draft comments in my voice, but I decide what to post. Use when reviewing a teammate's PR, self-reviewing my own branch before pushing, practicing review judgment, or invoking /pr-review-coach.
 argument-hint: "[<PR_NUMBER>|<url>|<branch>|\"my changes\"|\"staged\"] [--practice] [--post]"
 disable-model-invocation: true
-allowed-tools: [Read, Grep, Glob, Agent, AskUserQuestion, WebFetch, Skill, "Bash(gh pr view *)", "Bash(gh pr diff *)", "Bash(gh api repos/*/pulls/*/comments *)", "Bash(gh api \"repos/*/pulls/*/comments\" *)", "Bash(gh api repos/*/pulls/*/reviews *)", "Bash(gh api \"repos/*/pulls/*/reviews\" *)", "Bash(gh api graphql *)", "Bash(git diff *)", "Bash(git log *)", "Bash(git status)"]
+allowed-tools: [Read, Write, Edit, Grep, Glob, Agent, AskUserQuestion, WebFetch, Skill, "Bash(open *)", "Bash(gh pr view *)", "Bash(gh pr diff *)", "Bash(gh api repos/*/pulls/*/comments *)", "Bash(gh api \"repos/*/pulls/*/comments\" *)", "Bash(gh api repos/*/pulls/*/reviews *)", "Bash(gh api \"repos/*/pulls/*/reviews\" *)", "Bash(gh api graphql *)", "Bash(git diff *)", "Bash(git log *)", "Bash(git status)"]
 ---
 
 # PR Review Coach
@@ -55,25 +55,41 @@ Strengths.
 ## Step 5 — Conventions layer
 
 Read `references/usp-conventions.md` and apply any checks whose triggers match the changed
-files. (Stub until populated — see Step 7.)
+files. (Stub until populated — see Step 9.)
 
 ## Step 6 — Interaction
 
-- **Triage (default):** present findings grouped by tier. For each issue, ask Monica:
-  **post / skip / edit**. Draft each comment **in her voice** — plain, conversational,
-  1–3 sentences, no "consider whether", no consultant-speak; state the issue and a concrete
-  suggestion. Triage, don't address-all: one pass is enough. Collect approved comments.
-- **Practice (`--practice`):** follow `references/practice-mode.md` (ask her read first,
-  then grade right / wrong / sharpen).
+- **Triage (default):** go straight to Step 7 — Monica triages in the rendered page
+  (Post/Skip + edit per finding). She can triage in chat instead if she prefers.
+- **Practice (`--practice`):** run the swing-then-sharpen loop in chat FIRST
+  (`references/practice-mode.md`) — ask her read on each hunk before revealing findings, then
+  grade right / sharpen / missed. Record her read and verdict on each finding, then Step 7
+  renders the scorecard.
 
-## Step 7 — Output
+Draft every postable comment **in her voice** — plain, conversational, 1–3 sentences, no
+"consider whether", no consultant-speak; state the issue and a concrete suggestion. Set each
+finding's `default_action` (`post` for critical/important, `skip` for suggestion/strength).
 
-- **Remote →** assemble ONE pending GitHub review from approved comments per
-  `references/posting-recipe.md`. Default: leave it PENDING for her to submit from the UI;
-  submit only on explicit request. This also replaces her old `/review` self-review habit.
-- **Local →** print the tiered terminal report. Nothing is posted.
+## Step 7 — Render the report (both modes)
 
-## Step 8 — Pattern capture (every session)
+Follow `references/html-report.md`:
+1. Read `templates/report.html`; replace the block between the `__PRC_DATA_START__` /
+   `__PRC_DATA_END__` markers with `const PRC = <json>;`. The JSON carries `meta`
+   (`target`, `title`, `mode`, `counts`) and `findings[]` (the schema fields plus
+   `draft_body`, `default_action`, and — practice only — `your_read` + `verdict`).
+2. Write it to `/tmp/pr-review-coach-<target>.html` and `open` it.
+3. Tell Monica: triage in the page, then **Copy decisions for Claude** and paste the blob
+   back here (remote posting), or **Copy for PR** to paste markdown into the PR herself.
+
+## Step 8 — Post (remote only)
+
+When Monica pastes the decisions blob (`_type: "pr-review-coach-decisions"`), parse it and
+assemble ONE pending GitHub review from the `action: "post"` entries per
+`references/posting-recipe.md` (verify each line anchor first). Default: leave it PENDING;
+submit only on explicit request. Locally there is nothing to post — the page plus
+**Copy for PR** is the deliverable. This replaces her old `/review` self-review habit.
+
+## Step 9 — Pattern capture (every session)
 
 If a recurring move emerged — a check you kept running, a comment phrasing reused, a triage
 heuristic, a flow you and Monica fell into — name it and **ask** whether to codify it:
