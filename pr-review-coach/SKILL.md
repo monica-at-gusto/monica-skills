@@ -3,7 +3,7 @@ name: pr-review-coach
 description: Coach me through reviewing a PR — surface what to scrutinize, draft comments in my voice, but I decide what to post. Use when reviewing a teammate's PR, self-reviewing my own branch before pushing, practicing review judgment, or invoking /pr-review-coach.
 argument-hint: "[<PR_NUMBER>|<url>|<branch>|\"my changes\"|\"staged\"] [--practice] [--post]"
 disable-model-invocation: true
-allowed-tools: [Read, Write, Edit, Grep, Glob, Agent, AskUserQuestion, WebFetch, Skill, "Bash(open *)", "Bash(gh pr view *)", "Bash(gh pr diff *)", "Bash(gh api repos/*/pulls/*/comments *)", "Bash(gh api \"repos/*/pulls/*/comments\" *)", "Bash(gh api repos/*/pulls/*/reviews *)", "Bash(gh api \"repos/*/pulls/*/reviews\" *)", "Bash(gh api graphql *)", "Bash(git diff *)", "Bash(git log *)", "Bash(git status)"]
+allowed-tools: [Read, Write, Edit, Grep, Glob, Agent, AskUserQuestion, WebFetch, Skill, "Bash(open *)", "Bash(gh pr view *)", "Bash(gh pr diff *)", "Bash(gh pr checks *)", "Bash(gh api repos/*/pulls/*/comments *)", "Bash(gh api \"repos/*/pulls/*/comments\" *)", "Bash(gh api repos/*/pulls/*/reviews *)", "Bash(gh api \"repos/*/pulls/*/reviews\" *)", "Bash(gh api graphql *)", "Bash(git diff *)", "Bash(git log *)", "Bash(git status)"]
 ---
 
 # PR Review Coach
@@ -27,14 +27,25 @@ never decide for her, never review *for* her.
 - **Mode:** `--practice` or "quiz me" → practice mode; otherwise triage (default).
 - `--post` only changes the default at Step 6; it never skips approval.
 
-## Step 2 — Fetch the diff ONCE (you own all gh/git; subagents never call gh)
+## Step 2 — Fetch & triage (you own all gh/git; subagents never call gh)
 
-- Remote: `gh pr view <n> --json title,body,author,url,baseRefName,headRefName,headRefOid,comments,files`,
-  then `gh pr diff <n> --name-only` and `gh pr diff <n>`.
+Fetch once:
+- Remote: `gh pr view <n> --json title,body,author,url,baseRefName,headRefName,headRefOid,comments,reviews,files`,
+  then `gh pr diff <n> --name-only`, `gh pr diff <n>`, and `gh pr checks <n>` (CI status).
 - Local: `git diff main...HEAD --name-only` (use `git diff --cached` for "staged"), then the
   matching full diff.
 
 Keep the full diff text and the changed-file list; you pass them to every lens.
+
+Then a quick triage pass (cheap, pre-lens) — carry results as report context
+(`references/html-report.md` → `meta.context`):
+- **CI:** if `gh pr checks` shows failures, surface them at the top of the report.
+- **Prior reviews:** note existing review comments so later steps don't re-flag what reviewers
+  already raised.
+- **Size / scope:** large diff (≈400+ lines) or mixed concerns → flag "consider splitting".
+- **Description:** missing the "why" or a test plan → flag it.
+- **Ticket alignment (remote):** parse a Jira ID from the branch/title/body; if found, check the
+  PR against the ticket's acceptance criteria (Jira MCP) and note any gap.
 
 ## Step 3 — Gather lenses concurrently
 
@@ -69,6 +80,10 @@ files. (Stub until populated — see Step 9.)
 Draft every postable comment **in her voice** — plain, conversational, 1–3 sentences, no
 "consider whether", no consultant-speak; state the issue and a concrete suggestion. Set each
 finding's `default_action` (`post` for critical/important, `skip` for suggestion/strength).
+
+Comment discipline: each finding appears once; stay proportional (don't bury a critical under
+nits); acknowledge good patterns (they become Strengths). Before finalizing, optionally run the
+Critical Questions self-check in `references/reviewer-lens.md`.
 
 ## Step 7 — Render the report (both modes)
 
