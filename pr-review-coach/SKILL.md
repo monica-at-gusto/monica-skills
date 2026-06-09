@@ -46,6 +46,11 @@ Then a quick triage pass (cheap, pre-lens) — carry results as report context
 - **Description:** missing the "why" or a test plan → flag it.
 - **Ticket alignment (remote):** parse a Jira ID from the branch/title/body; if found, check the
   PR against the ticket's acceptance criteria (Jira MCP) and note any gap.
+- **Re-review reconciliation:** if you reviewed this target earlier in the session, compare the
+  current `headRefOid` against the prior pass. If it moved, re-fetch the diff (prior findings are
+  stale) and reconcile which findings the new commits resolved — surface resolved items in
+  `meta.context` ("commit <sha> resolved N prior findings: …") and carry forward only what's
+  unchanged. Don't re-flag fixed issues.
 
 ## Step 3 — Gather lenses concurrently
 
@@ -62,6 +67,10 @@ Apply the merge rules in `references/finding-schema.md`: dedupe by `(file, line)
 3-line window, drop `confidence: low`, for remote posting drop `introduced_by_pr: false`,
 cap issue findings at ~5 (strengths exempt). Tier into Critical / Important / Suggestion /
 Strengths.
+
+Then **reconcile deferrals** (`references/deferrals.md`): load this target's ledger and mark any
+matched findings `acknowledged-deferred` — pulled out of the open set/counts, rendered as a
+decided note carrying their rationale + follow-up. Don't re-surface what Monica already deferred.
 
 ## Step 5 — Conventions layer
 
@@ -85,12 +94,16 @@ Comment discipline: each finding appears once; stay proportional (don't bury a c
 nits); acknowledge good patterns (they become Strengths). Before finalizing, optionally run the
 Critical Questions self-check in `references/reviewer-lens.md`.
 
+**Capture deferrals:** when Monica defers a finding *with a rationale* (rather than a plain
+skip), persist it to the deferrals ledger (`references/deferrals.md`) so it returns as
+acknowledged & deferred on the next run instead of re-surfacing as an open ask.
+
 ## Step 7 — Render the report (both modes)
 
 Follow `references/html-report.md`:
 1. Read `templates/report.html`; replace the block between the `__PRC_DATA_START__` /
    `__PRC_DATA_END__` markers with `const PRC = <json>;`. The JSON carries `meta`
-   (`target`, `title`, `mode`, `counts`) and `findings[]` (the schema fields plus
+   (`target`, `ticket`, `title`, `mode`, `counts`, `context`) and `findings[]` (the schema fields plus
    `draft_body`, `default_action`, and — practice only — `your_read` + `verdict`).
 2. Write it to `/tmp/pr-review-coach-<target>.html` and `open` it.
 3. Tell Monica: triage in the page, then **Copy decisions for Claude** and paste the blob
