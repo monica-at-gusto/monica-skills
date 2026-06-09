@@ -32,8 +32,9 @@
   h1 { font-size: 22px; font-weight: 650; margin: 6px 0 10px; letter-spacing: -.01em; }
   .counts { display: flex; gap: 14px; flex-wrap: wrap; font-size: 13px; color: var(--muted); }
   .counts b { color: var(--ink); font-weight: 600; }
-  .context { display: flex; flex-direction: column; gap: 4px; margin-top: 12px; }
-  .context .ctx { font-size: 12.5px; color: var(--muted); padding-left: 12px; border-left: 2px solid var(--line); }
+  .context { display: flex; flex-direction: column; gap: 3px; margin-top: 12px; }
+  .context .ctx { font-size: 12.5px; color: var(--muted); padding-left: 12px; border-left: 2px solid var(--line); line-height: 1.45; }
+  .context .ctx b { color: var(--ink); font-weight: 600; }
   .rule { height: 1px; background: var(--line); margin: 22px 0; }
 
   .tier { font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin: 26px 0 10px; }
@@ -60,8 +61,12 @@
   .verdict.right   { color: #1b7a33; background: #e7f4ea; }
   .verdict.missed  { color: #b42318; background: #fbeae8; }
   .verdict.sharpen { color: #9a6700; background: #fbf1dd; }
+  .verdict.deferred { color: #6b7177; background: #efefee; }
   .yourread { margin: 8px 0 0; padding-left: 10px; border-left: 2px solid var(--line); color: var(--muted); }
   .yourread b { color: var(--ink); font-weight: 600; }
+  .card.deferred { border-left-color: var(--line); background: #fbfbfa; }
+  .deferral { margin: 8px 0 0; color: #34383d; }
+  .deferral b { color: var(--ink); font-weight: 600; }
   .loc { font: 12.5px ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--muted); }
   .detail { margin: 8px 0 0; color: #34383d; }
   .fix { margin: 8px 0 0; color: #34383d; }
@@ -143,6 +148,7 @@
   <div class="bar-inner">
     <button class="copybtn" id="copy">Copy decisions for Claude</button>
     <button class="copybtn secondary" id="copyPr">Copy for PR</button>
+    <button class="copybtn secondary" id="copyNotes">Copy for notes</button>
     <span class="status" id="status"></span>
   </div>
 </div>
@@ -174,6 +180,8 @@ function el(tag, cls, txt) {
 }
 
 function render() {
+  const tag = PRC.meta.ticket || PRC.meta.target;
+  document.title = "PR Review Coach" + (tag ? ": " + tag : "");
   document.getElementById("title").textContent = PRC.meta.title || PRC.meta.target;
   const c = PRC.meta.counts || {};
   document.getElementById("counts").innerHTML =
@@ -184,20 +192,43 @@ function render() {
 
   const ctx = PRC.meta.context || [];
   if (ctx.length) {
-    document.getElementById("context").innerHTML =
-      ctx.map(s => `<span class="ctx">${escapeHtml(s)}</span>`).join("");
+    document.getElementById("context").innerHTML = ctx.map(s => {
+      const i = s.indexOf(": ");
+      return (i > 0 && i <= 18)
+        ? `<span class="ctx"><b>${escapeHtml(s.slice(0, i))}</b> ${escapeHtml(s.slice(i + 2))}</span>`
+        : `<span class="ctx">${escapeHtml(s)}</span>`;
+    }).join("");
   }
 
   const root = document.getElementById("findings");
   for (const [key, label] of TIERS) {
-    const items = PRC.findings.filter(f => f.severity === key);
+    const items = PRC.findings.filter(f => f.severity === key && f.status !== "acknowledged-deferred");
     if (!items.length) continue;
     root.appendChild(el("div", "tier", label));
     for (const f of items) root.appendChild(card(f, key));
   }
+  const deferred = PRC.findings.filter(f => f.status === "acknowledged-deferred");
+  if (deferred.length) {
+    root.appendChild(el("div", "tier", "Acknowledged & deferred"));
+    for (const f of deferred) root.appendChild(deferredCard(f));
+  }
 }
 
 const VERDICTS = { right: "RIGHT", missed: "MISSED", sharpen: "SHARPEN" };
+
+function deferredCard(f) {
+  const card = el("div", "card deferred");
+  const head = el("div", "card-head");
+  head.appendChild(el("h3", null, f.title));
+  head.appendChild(el("span", "verdict deferred", "DEFERRED"));
+  card.appendChild(head);
+  if (f.file) card.appendChild(el("div", "loc", f.file + (f.line ? ":" + f.line : "")));
+  const d = f.deferral || {};
+  if (d.rationale) { const p = el("p", "deferral"); p.innerHTML = `<b>Why deferred</b> — ` + escapeHtml(d.rationale); card.appendChild(p); }
+  if (d.follow_up) { const p = el("p", "deferral"); p.innerHTML = `<b>Follow-up</b> — ` + escapeHtml(d.follow_up); card.appendChild(p); }
+  if (d.decided_at) card.appendChild(el("div", "loc", "deferred " + d.decided_at));
+  return card;
+}
 
 function card(f, key) {
   const card = el("div", "card " + key);
@@ -299,6 +330,55 @@ function buildPrMarkdown() {
     strengths.forEach(f => lines.push(`- ${(decisions[f.id].body || f.title).trim()}`));
     lines.push("");
   }
+  const deferred = PRC.findings.filter(f => f.status === "acknowledged-deferred");
+  if (deferred.length) {
+    lines.push("**Deferred (acknowledged)**");
+    deferred.forEach(f => {
+      const loc = f.file ? "`" + f.file + (f.line ? ":" + f.line : "") + "` — " : "";
+      const d = f.deferral || {};
+      let l = `- ${loc}${f.title}: ${(d.rationale || "").trim()}`;
+      if (d.follow_up) l += ` Follow-up: ${d.follow_up.trim()}`;
+      lines.push(l);
+    });
+    lines.push("");
+  }
+  return lines.join("\n").trim() + "\n";
+}
+
+function buildNotesMarkdown() {
+  const m = PRC.meta;
+  const heading = (m.ticket ? m.ticket + " — " : "") + (m.title || m.target || "");
+  const lines = ["# PR Review — " + heading, ""];
+  (m.context || []).forEach(s => lines.push("- " + s));
+  if ((m.context || []).length) lines.push("");
+  const labels = { critical: "Critical", important: "Important", suggestion: "Suggestion", strength: "Strengths" };
+  for (const key of ["critical", "important", "suggestion", "strength"]) {
+    const items = PRC.findings.filter(f => f.severity === key && f.status !== "acknowledged-deferred");
+    if (!items.length) continue;
+    lines.push("## " + labels[key]);
+    items.forEach(f => {
+      const loc = f.file ? "`" + f.file + (f.line ? ":" + f.line : "") + "` — " : "";
+      lines.push(`- ${loc}${f.title}`);
+      if (f.detail) lines.push(`  ${f.detail}`);
+      if (f.suggested_action) lines.push(`  fix → ${f.suggested_action}`);
+      const tags = [f.lens, f.check, f.confidence && f.confidence + " confidence"].filter(Boolean)
+        .concat((f.incident_refs || []).map(r => "incident " + r));
+      const dec = decisions[f.id] ? ` [${decisions[f.id].action}]` : "";
+      if (tags.length || dec) lines.push(`  (${tags.join(" · ")})${dec}`);
+    });
+    lines.push("");
+  }
+  const deferred = PRC.findings.filter(f => f.status === "acknowledged-deferred");
+  if (deferred.length) {
+    lines.push("## Deferred (acknowledged)");
+    deferred.forEach(f => {
+      const loc = f.file ? "`" + f.file + (f.line ? ":" + f.line : "") + "` — " : "";
+      const d = f.deferral || {};
+      lines.push(`- ${loc}${f.title}: ${(d.rationale || "").trim()}`);
+      if (d.follow_up) lines.push(`  Follow-up: ${d.follow_up.trim()}`);
+    });
+    lines.push("");
+  }
   return lines.join("\n").trim() + "\n";
 }
 
@@ -321,6 +401,11 @@ document.getElementById("copy").addEventListener("click", () => {
 document.getElementById("copyPr").addEventListener("click", () => {
   copyOut(buildPrMarkdown(), "Copied PR markdown — paste it into the PR.",
           "Select the box below and copy the PR markdown.");
+});
+
+document.getElementById("copyNotes").addEventListener("click", () => {
+  copyOut(buildNotesMarkdown(), "Copied notes record — paste into your ticket chat or notes.",
+          "Select the box below and copy the notes record.");
 });
 
 render();

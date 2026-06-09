@@ -20,7 +20,9 @@ deterministically.
   "suggested_action": "concrete fix, or null",
   "confidence": "high | medium | low",
   "incident_refs": ["#4466"],
-  "introduced_by_pr": true
+  "introduced_by_pr": true,
+  "status": "open | acknowledged-deferred",
+  "deferral": { "rationale": "...", "follow_up": "...", "decided_at": "YYYY-MM-DD" }
 }
 ```
 
@@ -29,6 +31,13 @@ deterministically.
 - `incident_refs` is populated by the risk lens only; `[]` otherwise.
 - `introduced_by_pr: false` = the finding is about pre-existing code → filtered out before
   remote posting.
+- `status` defaults to `open`. `acknowledged-deferred` is set by deferral reconcile
+  (`references/deferrals.md`) when this finding matches one Monica already deferred with a
+  rationale; `deferral` then carries that rationale + follow-up. Deferred findings are not
+  counted as open and are not postable — they render as a decided note.
+- **Match key (for cross-run deferral matching):** `<file>::<slug(title)>`, where `slug` is
+  the lowercased title with non-alphanumerics collapsed to `-`. Line numbers are NOT part of
+  the key — they drift between runs.
 
 ## Subagent output contract
 
