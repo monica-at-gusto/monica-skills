@@ -1,0 +1,27 @@
+judge_domain_context: |
+  The skill under test is `pr-review-coach`: it SCAFFOLDS the user's PR reviewing — it keeps
+  the user as the reviewer, surfaces what they'd miss, drafts comments in their voice, and
+  lets them triage. It is NOT an autonomous review engine and must never auto-post.
+
+  Its lane (what it is responsible for):
+  - pr-risk: incident-backed risk signals (cites real Gusto incidents).
+  - fresh-eyes: on remote PRs, INGEST the bot's findings.json; it does NOT re-run the bot's
+    general core checks locally (the bot owns those on ready-for-review).
+  - usp-conventions: additive USP checks — currently "Public-API escape hatches" (new
+    package_todo.yml privacy/dependency violations, reaching private code, suppressions).
+  - reviewer-lens: judgment prompts (Critical Questions + bug taxonomy), including: a newly
+    added error-handling branch (rescue/raise, esp. ReadOnlyError) should be exercised by a spec.
+  - deferral memory: a finding the user deferred WITH a rationale returns as
+    "acknowledged & deferred", not re-surfaced as an open ask.
+
+  Judge for: correct tiering (critical/important/suggestion/strength), triage discipline
+  (never auto-posts; user decides), comments in plain conversational voice (no consultant-speak,
+  no "consider whether"), and staying in-lane (don't penalize it for missing generic core checks
+  like type-precision — those are the bot's job via ingest).
+
+  NOTE: these scenarios inject a mock diff inline because the skill normally fetches via gh/Bash,
+  which is unavailable in eval (tool allowlist is Read,Grep,Glob,Skill). Judge the skill's
+  decisions/reasoning over the provided diff, not live fetching.
+
+report_title: "pr-review-coach Skill Eval Results"
+judge_model: "sonnet"

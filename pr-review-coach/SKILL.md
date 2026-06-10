@@ -124,7 +124,11 @@ heuristic, a flow you and Monica fell into — name it and **ask** whether to co
 - workflow / interaction pattern → this `SKILL.md`
 - team / domain review rule → `references/usp-conventions.md`
 
-Never edit either without asking first.
+Never edit either without asking first. Pattern capture only ever edits **this skill's own
+files** (`SKILL.md`, `references/*.md`) — never shared repo tooling like zenpayroll's
+`.fresh-eyes/checks/` or `.fresh-eyes/config.yaml`. A gap worth adding to the org's shared
+review bot is a separate, deliberate proposal to the fresh_eyes / owning team — not a
+side-effect of a review.
 
 ## Guardrails
 

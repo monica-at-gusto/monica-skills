@@ -1,0 +1,96 @@
+scenarios:
+  # PR #347006 Bucket-B gap — the first scenario, the reason we stood this up.
+  - name: untested_readonly_error_branch
+    prompt: |
+      /pr-review-coach 999001
+
+      (Mock PR context — review against this diff.)
+      Title: "Add prioritization read fallback"
+      Diff (dsa_prioritization_service.rb):
+      ```
+      +  def prioritized_ids
+      +    FunnelQuery.for(company).ids
+      +  rescue ActiveRecord::ReadOnlyError
+      +    raise
+      +  end
+      ```
+      No spec file is changed in this PR. pr-risk reports a read-replica-routing structural
+      signal on the new rescue.
+    evaluations:
+      - type: behavior
+        expectations:
+          - "Flags that the new `rescue ActiveRecord::ReadOnlyError` branch is not exercised by any spec"
+          - "Connects pr-risk's read-replica structural signal to the missing test, not just the rescue itself"
+        auto_fail:
+          - "Stays silent about the untested error branch"
+          - "Only comments on style or naming and ignores the missing spec"
+
+  - name: remote_ingest_no_autopost
+    prompt: |
+      /pr-review-coach 999002
+
+      (Mock PR context.) fresh-eyes has already posted findings.json with:
+      - { file: "app/foo.rb", line: 12, issue: "nil deref on subscription", severity: major, check: "logic-errors-local" }
+      pr-risk reports one MEDIUM incident-pattern finding citing #4466.
+    evaluations:
+      - type: tool_calls
+        expected:
+          - tool: Skill
+            match: { skill: "pr-review-coach" }
+            label: "Invoked /pr-review-coach"
+      - type: behavior
+        expectations:
+          - "Ingests the fresh-eyes findings.json rather than re-running the core checks"
+          - "Tiers findings (critical/important/suggestion) and presents them for triage"
+          - "Leaves the review PENDING / asks before posting — does not submit on its own"
+        auto_fail:
+          - "Posts or submits a GitHub review without explicit user approval"
+
+  - name: escape_hatch_package_todo
+    prompt: |
+      /pr-review-coach 999003
+
+      (Mock PR context.) Diff adds a privacy violation to a package_todo.yml:
+      ```
+       packs/product_services/dsa/package_todo.yml
+      +  "::Merchandise::Subscription":
+      +    violations:
+      +    - privacy
+      ```
+    evaluations:
+      - type: behavior
+        expectations:
+          - "Flags the new package_todo.yml privacy violation as a Public-API escape hatch (convention finding)"
+          - "Frames it as a coaching prompt (is the pack's public API insufficient, or can this go through it?), not an auto-block"
+        auto_fail:
+          - "Ignores the package_todo.yml addition entirely"
+
+  - name: deferral_returns_acknowledged
+    prompt: |
+      /pr-review-coach 999004
+
+      (Mock context.) The deferral ledger for this target already contains:
+      - key: "app/scorer.rb::double-company-tier-query-per-load"
+        rationale: "fetch_all needs full Company records; redundancy can't be removed without churning a public signature for an MVP tool."
+        follow_up: "Follow-up ticket to thread a pre-resolved seed."
+      The current diff still triggers a "Double Company + tier query per load" finding on app/scorer.rb.
+    evaluations:
+      - type: behavior
+        expectations:
+          - "Returns the matching finding as 'acknowledged & deferred', carrying its rationale + follow-up"
+          - "Does NOT re-surface it as a fresh open ask, and does not count it among open findings"
+        auto_fail:
+          - "Re-raises the deferred finding as if it were new"
+
+  - name: practice_mode_asks_first
+    prompt: |
+      /pr-review-coach 999005 --practice
+
+      (Mock PR context.) Diff adds a method with an unguarded `subscription.tier` call.
+    evaluations:
+      - type: behavior
+        expectations:
+          - "Asks the user for THEIR read on the hunk before revealing what the lenses flagged"
+          - "Only after the user commits, grades it (right / sharpen / missed) and names what was missed"
+        auto_fail:
+          - "Dumps the lens findings up front without asking for the user's read first"
