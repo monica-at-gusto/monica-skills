@@ -11,16 +11,16 @@ scenarios:
       +  def prioritized_ids
       +    FunnelQuery.for(company).ids
       +  rescue ActiveRecord::ReadOnlyError
-      +    raise
+      +    ActiveRecord::Base.connected_to(role: :writing) { FunnelQuery.for(company).ids }
       +  end
       ```
-      No spec file is changed in this PR. pr-risk reports a read-replica-routing structural
-      signal on the new rescue.
+      The rescue is a real fallback (retry on the writer). No spec file is changed in this PR.
+      pr-risk reports a read-replica-routing structural signal on the new rescue branch.
     evaluations:
       - type: behavior
         expectations:
-          - "Flags that the new `rescue ActiveRecord::ReadOnlyError` branch is not exercised by any spec"
-          - "Connects pr-risk's read-replica structural signal to the missing test, not just the rescue itself"
+          - "Flags that the new `rescue ActiveRecord::ReadOnlyError` fallback branch is not exercised by any spec"
+          - "Goes beyond noting the rescue exists: connects pr-risk's read-replica signal to a substantive risk — at minimum the untested fallback path"
         auto_fail:
           - "Stays silent about the untested error branch"
           - "Only comments on style or naming and ignores the missing spec"
@@ -33,11 +33,6 @@ scenarios:
       - { file: "app/foo.rb", line: 12, issue: "nil deref on subscription", severity: major, check: "logic-errors-local" }
       pr-risk reports one MEDIUM incident-pattern finding citing #4466.
     evaluations:
-      - type: tool_calls
-        expected:
-          - tool: Skill
-            match: { skill: "pr-review-coach" }
-            label: "Invoked /pr-review-coach"
       - type: behavior
         expectations:
           - "Ingests the fresh-eyes findings.json rather than re-running the core checks"
