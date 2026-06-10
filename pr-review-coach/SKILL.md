@@ -56,7 +56,7 @@ Then a quick triage pass (cheap, pre-lens) — carry results as report context
 
 Collect findings from both lenses in the schema defined in `references/finding-schema.md`:
 
-- **pr-risk** — follow `references/pr-risk.md` (invoke `gusto-dev:pr-risk --fast`).
+- **pr-risk** — follow `references/pr-risk.md` (invoke `gusto-dev:pr-risk` in full mode).
 - **fresh-eyes** — follow `references/fresh-eyes.md`: on remote PRs *ingest* the bot's
   `findings.json`; locally (or if the bot hasn't posted yet) *mimic* via
   `.fresh-eyes/checks/*.md`.
