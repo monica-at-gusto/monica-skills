@@ -1,17 +1,18 @@
 # Lens: pr-risk
 
 Incident-backed risk scoring. This is the one existing review skill that is safe to drive
-from an orchestrator — it is non-interactive and ships a `--fast` mode built for exactly
-this.
+from an orchestrator — it is a non-interactive analyzer.
 
 ## How to run it
 
-Invoke the skill in the main loop (NOT inside a subagent) via the Skill tool:
+Invoke the skill in the main loop (NOT inside a subagent) via the Skill tool, in **full mode**:
 
-- Remote: `gusto-dev:pr-risk --fast <PR_NUMBER or URL>`
-- Local: `gusto-dev:pr-risk --fast` against the current branch.
+- Remote: `gusto-dev:pr-risk <PR_NUMBER or URL>`
+- Local: `gusto-dev:pr-risk` against the current branch.
 
-`--fast` keeps it to the structural/incident scan without the full interactive write-up.
+Full mode is the complete incident-backed analysis — deeper structural scan and more incident
+citations than `--fast`. It's slower and uses more tokens, but running it in the main loop means
+there's no subagent-deadlock concern. (Use `--fast` only when you explicitly want a quick pass.)
 
 ## Folding its output into the schema
 
