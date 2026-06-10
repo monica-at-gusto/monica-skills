@@ -1,6 +1,6 @@
 # USP Review Conventions (additive checklist)
 
-**STATUS: one active check (below); the rest are candidates.** Grown via SKILL.md Step 9
+**STATUS: two active checks (below); the rest are candidates.** Grown via SKILL.md Step 9
 (pattern capture) and the Kilian/Jyoti shadow-session notes. These are *additive* checks layered
 on top of the pr-risk + fresh-eyes lenses — they never override the core workflow.
 
@@ -35,6 +35,24 @@ shape) so the orchestrator only raises relevant ones.
 - finding: set `lens: "convention"`. Coaching prompt, not a directive — e.g. "a privacy
   violation got added to `package_todo.yml`; is the pack's public API missing something, or can
   this go through it?" Only flag what the PR **introduces** — never pre-existing escape hatches.
+
+### Cross-repo GraphQL arg contract
+- trigger: a `Gusto/web` PR changes the arguments passed to a GraphQL field — adds/changes an
+  argument value in a `*.graphql` operation (e.g. `limit:`, a new variable), OR the diff touches
+  a `*.graphql` / `*.graphql.d.ts` pair under `apps/`.
+- check (verify from the zenpayroll checkout, since the web diff can't show it):
+  - Locate the backing resolver/object for the field (the ticket or schema usually names it,
+    e.g. `packs/admin/.../objects/<thing>.rb`). Confirm the argument exists, its type, and its
+    `default_value`.
+  - Trace the value into the service it calls and confirm the new value is **honored** — not
+    clamped to a smaller max, ignored, or rejected by a `validate_inputs!`-style guard (range
+    check, allowlist). A value outside the accepted range surfaces only at runtime
+    (`InvalidInputError` / `GraphQL::ExecutionError`), never in web CI.
+  - If the value is fixed (e.g. `limit: 10`), check it sits inside the backend's accepted range.
+- severity: important if the value could fall outside the accepted range or be silently clamped;
+  suggestion if confirmed valid (note it in `meta.context`, e.g. "Backend: limit 1–25, 10 honored").
+- finding: set `lens: "convention"`, `confidence: high` only when you actually read the backend
+  file. The web reviewer can't see this contract — surfacing it is the whole point.
 
 ## Candidate conventions (from the shadow session — to refine before enabling)
 
