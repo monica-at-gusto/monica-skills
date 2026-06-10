@@ -7,7 +7,7 @@ deterministically.
 
 ```json
 {
-  "lens": "risk | fresh-eyes",
+  "lens": "risk | fresh-eyes | convention",
   "file": "packs/.../foo.rb",
   "line": 42,
   "side": "RIGHT | LEFT",
