@@ -21,8 +21,8 @@ Ask these of any non-trivial change; flag the ones a finding doesn't answer:
 
 ## Bug taxonomy (what to scan for)
 
-A prompt menu — not every item applies. Used to seed what fresh-eyes mimic subagents look for
-and to grade practice reads:
+A prompt menu — not every item applies. Used to seed what the lenses look for and to grade
+practice reads:
 
 - Off-by-one / boundary errors
 - Nil / undefined / empty-collection handling gaps
@@ -34,6 +34,8 @@ and to grade practice reads:
 - Unsafe casts / type mismatches
 - N+1 or unbounded queries in loops/hot paths
 - Removed test coverage for behavior that still ships
+- New error-handling branch (`rescue` / `raise` — especially `ReadOnlyError`, which pr-risk
+  flags structurally) added without a spec that exercises it
 
 ## Regression risk
 

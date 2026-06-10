@@ -27,10 +27,15 @@ pr-risk returns severity-labeled findings that cite real incidents (e.g. `#4466`
   the anchor is on the `+` side before posting.
 - `confidence`: `high` for confirmed incident-pattern matches, `medium` for novelty matches
   it flags as needing scrutiny.
+- **Carry structural signals through to test coverage.** When pr-risk flags a structural signal
+  on an error-handling branch — especially a `rescue ReadOnlyError; raise` (read-replica
+  routing) — don't stop at the rescue: also check whether the new branch is exercised by a spec,
+  and raise that as its own finding if not. (PR #347006 gap: the signal fired conceptually but we
+  didn't connect it to the missing test.)
 
 ## Fallback if Skill invocation isn't viable in context
 
 Read pr-risk's own `SKILL.md` and its `FILE_INDEX.yml` (find by glob:
 `~/.claude/plugins/**/gusto-dev/**/skills/pr-risk/`) and apply its structural-signal rules to
-the already-fetched diff inside a read-only subagent. Prefer the `--fast` invocation; this is
+the already-fetched diff inside a read-only subagent. Prefer the full-mode invocation; this is
 only a backstop.

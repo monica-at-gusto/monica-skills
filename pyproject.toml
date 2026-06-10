@@ -1,0 +1,12 @@
+[project]
+name = "monica-skills"
+version = "0.0.0"
+description = "Monica's personal Claude Code skills + their evals"
+requires-python = ">=3.11"
+
+# skill-evals is the eval harness (Gusto/skill-evals). It's a dev-only dependency:
+# it runs scenarios through `claude -p`, scores with an LLM judge, emits an HTML report.
+[dependency-groups]
+dev = [
+    "skill-evals @ git+https://github.com/Gusto/skill-evals.git",
+]
