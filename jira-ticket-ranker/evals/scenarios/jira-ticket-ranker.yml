@@ -1,0 +1,80 @@
+scenarios:
+  # The core constraint — the reason the skill exists. Shortlist, never a claim.
+  - name: shortlist_not_claim
+    prompt: |
+      /jira-ticket-ranker
+
+      (Mock profile.) Monica: strong on backend Ruby/GraphQL DSA-indicator work (shipped
+      USPDS-408, a supportTier indicator on CompanyDetails, under epic USPDS-255); thin axes =
+      velocity + upleveling; light on frontend/Salesforce.
+      (Mock backlog — open USPDS, focused mode.)
+      - USPDS-305  Highest  UNASSIGNED  "Indicator: Benefits Enrollment Window"  epic USPDS-255
+      - USPDS-308  Highest  UNASSIGNED  "Indicator: Upsell / Product Opportunities"  epic USPDS-255
+    evaluations:
+      - type: behavior
+        expectations:
+          - "Produces a ranked shortlist (does not just dump the backlog)"
+          - "Attaches a sync target (a named person) to every candidate"
+          - "Frames the output as a suggestion / permission to act, using confidence labels not numeric scores"
+        auto_fail:
+          - "Claims, assigns, or transitions a ticket, or offers to message someone to claim it"
+          - "Returns any candidate with no sync target"
+
+  # Sibling-of-shipped is the strongest Ready signal.
+  - name: sibling_of_shipped_is_ready
+    prompt: |
+      /jira-ticket-ranker
+
+      (Mock profile.) Monica shipped USPDS-408 — a supportTier INDICATOR on the CompanyDetails
+      GraphQL query, under roadmap epic USPDS-255 (Proactive Motions: Upgrade Customers).
+      (Mock backlog.)
+      - USPDS-305  Highest  UNASSIGNED  "Indicator: Benefits Enrollment Window"  epic USPDS-255
+        (build a Company-level GraphQL indicator; data source already mapped)
+      - USPDS-542  Medium   UNASSIGNED  "Premium pill dropdown missing link"  repo: web (frontend)
+    evaluations:
+      - type: behavior
+        expectations:
+          - "Ranks USPDS-305 as Ready / the top pick"
+          - "Justifies it as the same shape/epic as her shipped USPDS-408 (sibling-of-shipped anchor), on the CompanyDetails GraphQL surface"
+          - "Treats USPDS-542 as a lighter / stretch candidate (frontend is a lighter stack), not the top pick"
+        auto_fail:
+          - "Ranks the frontend ticket above the indicator ticket despite her backend/indicator strength"
+
+  # The non-obvious rule: toe-stepping risk lives in active neighbor work, not the assignee field.
+  - name: toe_stepping_held_not_ready
+    prompt: |
+      /jira-ticket-ranker
+
+      (Mock profile.) Strong in pack `packs/admin/customer_care/.../dsa_prioritization/`.
+      (Mock backlog.)
+      - USPDS-596  Medium  UNASSIGNED  "Investigate fallback rendering in deterministic_strategy.rb"
+        epic USPDS-412. NOTE: USPDS-598/599/600 are IN PROGRESS under epic USPDS-412, all owned
+        by Jyoti; USPDS-587 (in progress) may make this fallback unreachable.
+    evaluations:
+      - type: behavior
+        expectations:
+          - "Does NOT tier USPDS-596 as Ready despite it being unassigned and in her exact pack"
+          - "Holds it (Considered / sync-first) because active sibling work under the same epic is in flight (Jyoti) and it may be mooted"
+          - "Names Jyoti as the sync-first target before touching it"
+        auto_fail:
+          - "Recommends USPDS-596 as a clean Ready pickup using only 'unassigned + in my pack' reasoning"
+
+  # Velocity is a thin axis — a pure spike is a weak fit even at high priority.
+  - name: spike_is_weak_velocity_fit
+    prompt: |
+      /jira-ticket-ranker
+
+      (Mock profile.) Thin axis: velocity / artifact volume — she needs shippable PRs.
+      (Mock backlog.)
+      - USPDS-240  Highest  UNASSIGNED  "[Explore] Automated DSA notifications"  (a discovery
+        SPIKE — deliverable is a recommendation doc, no code/PR)
+      - USPDS-305  Highest  UNASSIGNED  "Indicator: Benefits Enrollment Window"  (build a GraphQL
+        indicator — yields a PR)
+    evaluations:
+      - type: behavior
+        expectations:
+          - "Does not put the spike (USPDS-240) at the top despite its Highest priority"
+          - "Explains that a pure spike produces no shippable artifact, so it's a weak fit for her thin velocity axis"
+          - "Prefers the indicator ticket that yields a PR"
+        auto_fail:
+          - "Ranks the spike as the top Ready pick on priority alone"
