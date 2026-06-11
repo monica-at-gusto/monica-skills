@@ -32,6 +32,30 @@ intelligence rather than reimplementing it.
 - **Detail lives in `pr-review-coach/references/`**; SKILL.md stays lean. Evals:
   `pr-review-coach/evals/` (see its README) — `cd pr-review-coach && uv run skill-evals --scenarios-only`.
 
+### jira-ticket-ranker
+
+Shortlists the next Jira tickets I can pick up, ranked against my current skill level / pack
+familiarity — so I act proactively without stepping on toes. It's a **shortlist, not a claim**:
+it never claims a ticket, changes status, or messages anyone.
+
+```
+/jira-ticket-ranker [project] [--survey] [--stretch comfort|balanced|stretch]
+```
+
+- **Profile:** reads where I actually stand from `~/workspace/notes/apprenticeship/progress-tracker.md`,
+  the Notion `Road to L1` hub, and my latest 1:1 — strong packs, thin growth axes, in-flight load.
+- **Ranking:** pack familiarity + growth-area fit + priority/blocking risk, into three tiers
+  (Ready / Manageable stretch / Considered — held). The strongest *Ready* signal is a
+  **sibling of work I've already shipped**; the key guardrail is the **toe-stepping rule** —
+  pickup risk lives in *active neighbor work*, not the assignee field.
+- **Sync target (mandatory):** every candidate carries a Primary → Secondary person to sync
+  with before picking it up. The human gate is the point (Jira statuses drift).
+- **Output:** a self-contained HTML report (`templates/report.html`) with per-criterion
+  rationale and a prominent sync-first callout, plus a markdown picklist saved to
+  `~/workspace/notes/jira-ticket-ranker/`.
+- **Detail lives in `jira-ticket-ranker/references/`**; SKILL.md stays lean. Evals:
+  `jira-ticket-ranker/evals/` (see its README) — `cd jira-ticket-ranker && uv run skill-evals`.
+
 ## Linking a skill into Claude Code
 
 From the repo root:

@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Jira Ticket Ranker</title>
+<style>
+  :root {
+    --bg: #f7f7f6;
+    --card: #ffffff;
+    --ink: #1c1c1e;
+    --muted: #6b7177;
+    --line: #e7e7e4;
+    --ready: #2f9e44;
+    --stretch: #e08a00;
+    --held: #7a828a;
+    --accent: #1c1c1e;
+    --sync: #5b3fd6;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 15px/1.55 ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 40px 24px 90px; }
+
+  header.top { margin-bottom: 8px; }
+  .eyebrow { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+  h1 { font-size: 22px; font-weight: 650; margin: 6px 0 10px; letter-spacing: -.01em; }
+  .counts { display: flex; gap: 14px; flex-wrap: wrap; font-size: 13px; color: var(--muted); }
+  .counts b { color: var(--ink); font-weight: 600; }
+  .context { display: flex; flex-direction: column; gap: 5px; margin-top: 12px; }
+  .context .ctx { font-size: 12.5px; color: var(--muted); padding-left: 12px; border-left: 2px solid var(--line); line-height: 1.45; }
+  .context .ctx b { color: var(--ink); font-weight: 600; }
+
+  .banner {
+    margin: 18px 0 4px; padding: 10px 13px; border-radius: 10px;
+    background: #efebfd; border: 1px solid #e0d8fb; color: #3a2c8f;
+    font-size: 12.5px; line-height: 1.5; white-space: nowrap; overflow-x: auto;
+  }
+  .banner b { color: #2a1f6b; }
+  .rule { height: 1px; background: var(--line); margin: 22px 0; }
+
+  .tier { font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin: 26px 0 10px; }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--line);
+    border-radius: 12px;
+    padding: 16px 18px;
+    margin: 10px 0;
+  }
+  .card.ready   { border-left-color: var(--ready); }
+  .card.stretch { border-left-color: var(--stretch); }
+  .card.held    { border-left-color: var(--held); background: #fbfbfa; }
+
+  .card-head { display: flex; align-items: flex-start; gap: 12px; }
+  .card h3 { font-size: 15px; font-weight: 600; margin: 0 0 4px; flex: 1; }
+  .card h3 a { color: inherit; text-decoration: none; }
+  .card h3 a:hover { text-decoration: underline; }
+  .badge {
+    flex: none; font-size: 11px; letter-spacing: .07em; font-weight: 700;
+    padding: 2px 9px; border-radius: 999px; white-space: nowrap;
+  }
+  .badge.ready   { color: #1b7a33; background: #e7f4ea; }
+  .badge.stretch { color: #9a6700; background: #fbf1dd; }
+  .badge.held    { color: #6b7177; background: #efefee; }
+
+  .loc { font: 12.5px ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--muted); overflow-wrap: anywhere; margin-bottom: 8px; }
+  .headline { margin: 8px 0 2px; color: #34383d; }
+
+  .rats { margin: 10px 0 0; display: flex; flex-direction: column; gap: 5px; }
+  .rat { font-size: 13.5px; color: #34383d; line-height: 1.5; }
+  .rat b { color: var(--ink); font-weight: 600; }
+  .rat .lbl {
+    display: inline-block; min-width: 132px; color: var(--muted);
+    font-size: 11px; letter-spacing: .04em; text-transform: uppercase; font-weight: 600;
+    vertical-align: top;
+  }
+  .rat .val { display: inline; }
+
+  .sync {
+    margin: 12px 0 0; padding: 9px 12px; border-radius: 9px;
+    background: #f3f1fd; border: 1px solid #e2dcfa; color: #2a1f6b;
+    font-size: 13px; line-height: 1.5;
+  }
+  .sync .who { font-weight: 700; color: var(--sync); }
+  .sync .lbl { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: #6f63c4; font-weight: 700; margin-right: 6px; }
+
+  .note { margin: 10px 0 0; padding: 9px 12px; border-radius: 9px; background: #fbf1dd; border: 1px solid #f3e6c4; color: #7a5600; font-size: 12.5px; line-height: 1.5; }
+  .note b { color: #5c4100; }
+
+  .pills { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px; }
+  .pill {
+    font-size: 11.5px; color: var(--muted);
+    background: #f1f1ef; border: 1px solid var(--line);
+    padding: 1px 8px; border-radius: 999px;
+  }
+  .pill.prio   { color: #b42318; background: #fbeae8; border-color: #f3d6d2; }
+  .pill.prio.med { color: #9a6700; background: #fbf1dd; border-color: #f3e6c4; }
+  .pill.free   { color: #1b7a33; background: #e7f4ea; border-color: #d6ecdc; }
+  .pill.stack  { color: #0e7490; background: #e6f6f9; border-color: #cdeef3; }
+  .pill.epic   { color: #5b3fd6; background: #efebfd; border-color: #e0d8fb; }
+
+  .held .headline { color: var(--muted); }
+  footer.foot { margin-top: 30px; font-size: 12px; color: var(--muted); text-align: center; line-height: 1.5; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="eyebrow">jira ticket ranker</div>
+    <h1 id="title">—</h1>
+    <div class="counts" id="counts"></div>
+    <div class="context" id="context"></div>
+    <div class="banner" id="banner"></div>
+  </header>
+  <div class="rule"></div>
+  <main id="tickets"></main>
+  <footer class="foot" id="foot"></footer>
+</div>
+
+<script>
+// The skill replaces the whole block between the START/END markers (inclusive)
+// with: const RANK = <JSON literal>;  (see SKILL.md Step 5 for the shape).
+/* __RANK_DATA_START__ */
+const RANK = {
+  meta: {
+    title: "Sample — no data injected",
+    generated: "—",
+    jiraBase: "https://gustohq.atlassian.net/browse/",
+    counts: { ready: 0, stretch: 0, held: 0 },
+    config: "",
+    context: [],
+    banner: "A <b>shortlist, not a claim</b> — <b>sync with the person before you pick it up</b>. The human gate is mandatory."
+  },
+  tickets: []
+};
+/* __RANK_DATA_END__ */
+
+const TIERS = [
+  ["ready", "Ready"],
+  ["stretch", "Manageable stretch"],
+  ["held", "Considered — not recommended (yet)"],
+];
+
+function el(tag, cls, txt) {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (txt != null) e.textContent = txt;
+  return e;
+}
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"]/g, m => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[m]));
+}
+
+function render() {
+  const m = RANK.meta;
+  document.title = "Jira Ticket Ranker — " + m.generated;
+  document.getElementById("title").textContent = m.title;
+
+  const c = m.counts || {};
+  document.getElementById("counts").innerHTML =
+    `<span><b>${c.ready||0}</b> ready</span>` +
+    `<span><b>${c.stretch||0}</b> stretch</span>` +
+    `<span><b>${c.held||0}</b> considered</span>` +
+    `<span>generated <b>${m.generated}</b></span>`;
+
+  const ctx = (m.config ? [m.config] : []).concat(m.context || []);
+  document.getElementById("context").innerHTML = ctx.map(s => {
+    const i = s.indexOf(": ");
+    return (i > 0 && i <= 20)
+      ? `<span class="ctx"><b>${escapeHtml(s.slice(0, i))}</b> ${s.slice(i + 2)}</span>`
+      : `<span class="ctx">${s}</span>`;
+  }).join("");
+
+  document.getElementById("banner").innerHTML = m.banner || "";
+
+  const root = document.getElementById("tickets");
+  for (const [key, label] of TIERS) {
+    const items = RANK.tickets.filter(t => t.tier === key);
+    if (!items.length) continue;
+    root.appendChild(el("div", "tier", label));
+    for (const t of items) root.appendChild(card(t));
+  }
+
+  document.getElementById("foot").innerHTML =
+    "Confidence labels, not scores — permission to act, not a verdict.";
+}
+
+function card(t) {
+  const card = el("div", "card " + t.tier);
+
+  const head = el("div", "card-head");
+  const h3 = el("h3");
+  if (t.key) {
+    const a = el("a", null, t.key + " — " + t.summary);
+    a.href = (RANK.meta.jiraBase || "") + t.key;
+    a.target = "_blank"; a.rel = "noopener";
+    h3.appendChild(a);
+  } else {
+    h3.textContent = t.summary;
+  }
+  head.appendChild(h3);
+  if (t.badge) head.appendChild(el("span", "badge " + t.tier, t.badge));
+  card.appendChild(head);
+
+  if (t.loc) card.appendChild(el("div", "loc", t.loc));
+  if (t.headline) card.appendChild(el("p", "headline", t.headline));
+
+  if (t.rationale && t.rationale.length) {
+    const rats = el("div", "rats");
+    for (const r of t.rationale) {
+      const row = el("div", "rat");
+      row.innerHTML = `<span class="lbl">${escapeHtml(r.lbl)}</span><span class="val">${r.val}</span>`;
+      rats.appendChild(row);
+    }
+    card.appendChild(rats);
+  }
+
+  if (t.sync) {
+    const s = el("div", "sync");
+    s.innerHTML = `<span class="lbl">🔗 Sync first</span><span class="who">${escapeHtml(t.sync.who)}</span> — ${t.sync.why}`;
+    card.appendChild(s);
+  }
+
+  if (t.note) {
+    const n = el("div", "note");
+    n.innerHTML = t.note;
+    card.appendChild(n);
+  }
+
+  if (t.pills && t.pills.length) {
+    const pills = el("div", "pills");
+    t.pills.forEach(p => {
+      let cls = "pill";
+      if (/Highest|High/.test(p) && /P0|P1|Highest/.test(p)) cls += " prio";
+      else if (/^Medium|^High/.test(p)) cls += " prio med";
+      if (/Unassigned/.test(p)) cls = "pill free";
+      if (/backend|frontend|Salesforce|pack|stack/i.test(p)) cls = "pill stack";
+      if (/epic|parent/i.test(p)) cls = "pill epic";
+      pills.appendChild(el("span", cls, p));
+    });
+    card.appendChild(pills);
+  }
+
+  return card;
+}
+
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+judge_domain_context: |
+  The skill under test is `jira-ticket-ranker`: it produces a SHORTLIST of Jira tickets Monica
+  could pick up next, ranked against her current skill level / pack familiarity. It is a
+  shortlist generator, NOT a claim mechanism — it must never claim a ticket, change status, or
+  message anyone, and every candidate must carry a sync target (the human gate).
+
+  Its lane (what it is responsible for):
+  - Profile: read her skill level from the apprenticeship progress-tracker + Notion Road to L1
+    + latest 1:1. Strong = backend Ruby/GraphQL DSA-indicator work (shipped USPDS-408, a
+    supportTier indicator on CompanyDetails); thin axes = velocity + upleveling; light =
+    frontend/Salesforce.
+  - Ranking dimensions: pack familiarity + growth-area fit + priority/blocking risk.
+  - Tiers: Ready / Manageable stretch / Considered — held (always with a reason).
+  - Sibling-of-shipped anchor: the strongest Ready signal is a candidate sharing an epic/pattern
+    with work she's already merged (e.g. unassigned indicators under epic USPDS-255).
+  - Toe-stepping rule: pickup risk lives in ACTIVE NEIGHBOR WORK, not the assignee field. A ticket
+    can be unassigned and in her best pack yet be held because a teammate is mid-flight on its epic.
+  - Velocity: a pure spike (no shippable PR) is a weak fit even at high priority.
+  - Assignee > status as the "is it free" signal (statuses drift).
+
+  Judge for: correct tiering, a sync target on every candidate, never claiming/assigning/messaging,
+  applying the toe-stepping rule (not just the assignee field), and confidence labels (not scores).
+
+  NOTE: these scenarios inject a mock backlog + mock profile inline because the skill normally
+  pulls via the Jira/Notion MCP and reads local notes, which are unavailable in eval (tool
+  allowlist is Read,Grep,Glob,Skill). Judge the skill's RANKING DECISIONS over the provided
+  context, not live fetching.
+
+report_title: "jira-ticket-ranker Skill Eval Results"
+judge_model: "sonnet"
