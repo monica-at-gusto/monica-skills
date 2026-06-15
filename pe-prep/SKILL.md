@@ -43,14 +43,25 @@ every signal; build the six sections; attach a receipt to every bullet; build th
 footer from the note's own `Pattern to watch` lines. With `--growth`, weight Career/Goals and go
 lighter on Team/Blockers. With a quoted `"<topic>"`, focus the whole agenda on that topic.
 
-### Step 4 — Render
+### Step 4 — Render & present (THIS IS THE DELIVERABLE)
 Determine `<target-date>` (next 1:1 occurrence; default today if unknown). Fill
 `templates/agenda.md` (full, with receipts) and `templates/lattice-block.md` (trimmed).
 
-### Step 5 — Write & copy
-Write the agenda to `~/workspace/notes/prudhvi-1-1/<target-date>.md`. If a file already exists
-for that date, show a diff and ask before overwriting. Copy the Lattice block to the clipboard
-(`pbcopy`; write the block to a temp file first if it is large). Print the Lattice block in chat.
+**Your reply MUST contain the complete rendered agenda — every tier, every bullet, with its
+receipt — as plain text, and it must come FIRST in your reply, before any commentary.** Render
+it directly. Do NOT summarize it, outline it, describe what it *will* contain, wrap it in a
+"here's my plan" framing, or defer it to a file write or an approval step. Presenting the agenda
+is informational output, not an action that needs approval — produce it immediately and in full,
+even when no write/clipboard tools are available. If you catch yourself writing "I will…" or
+"I'll write the plan" about the agenda, stop and write the agenda itself instead.
+
+### Step 5 — Persist (side effects, not the deliverable)
+After presenting the agenda, also write the full version to
+`~/workspace/notes/prudhvi-1-1/<target-date>.md` (if a file exists for that date, show a diff and
+ask before overwriting) and copy the Lattice block to the clipboard (`pbcopy`; write to a temp
+file first if large). If these tools are unavailable in the current environment, still deliver
+the rendered agenda from Step 4 — the file write and clipboard are conveniences, never a
+substitute for presenting the agenda.
 
 ### Step 6 — Post-1:1 nudge
 Tell Monica: the agenda is in `prudhvi-1-1/<target-date>.md`; after the (in-person) 1:1, jot what
@@ -58,6 +69,9 @@ was actually discussed under "What we actually discussed" — that seeds the nex
 
 ## Guardrails
 
+- **Always emit the finished agenda.** Reading and synthesis without rendering the tiered agenda
+  in your response is a failure. Produce the full agenda even when the file write or clipboard
+  aren't available — the rendered agenda is the output, not a plan to be approved.
 - **Candidates, not a script.** Monica picks and edits; never decide what she'll say.
 - **Altitude: non-technical.** Elevate signals to career/goals/team/blocker framing; drop code
   minutiae. The 1:1 is not a standup.
