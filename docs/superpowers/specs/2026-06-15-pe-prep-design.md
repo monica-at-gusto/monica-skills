@@ -1,0 +1,187 @@
+# pe-prep — Design Spec
+
+**Date:** 2026-06-15
+**Status:** Approved (brainstorming) — pending implementation plan
+**Author:** Monica Cruz (with Claude)
+
+## Summary
+
+`pe-prep` is a personal Claude Code skill that prepares **forward-looking talking points
+for a 1:1 with a People Empowerer (PE)** — default Prudhvi. It reads scattered context
+since the last 1:1 and produces a paste-ready Lattice agenda, organized around what a
+manager 1:1 is actually for: **career, goals, team, and blockers** — explicitly *not* a
+technical sync.
+
+It is a thin **composer**, not a new scraper: it leans on auto-captured sources (Granola,
+git/PRs) as its reliable spine and treats manual notes as enrichment, so it stays useful
+even when note-keeping lapses.
+
+## Motivation
+
+Monica's 1:1 prep today is **reactive** — things go into Lattice only when they spontaneously
+surface. The stuff that *doesn't* pop up (a growth thread from weeks ago, a parked question,
+a pattern across recent work) never reaches the agenda. `pe-prep` is the proactive
+counterpart: it assembles, from across her real sources, the few things worth raising.
+
+### Why this is distinct from existing skills
+
+The `eng-performance-reviews` skills (`ic-impact-prep`, `weekly-brag`) are **backward-looking
+accomplishment records** for review time (monthly/quarterly cadence, output = impact log /
+review doc). `pe-prep` is **forward-looking conversation prep** (per-1:1 cadence, output =
+Lattice agenda) and pulls from sources those skills don't touch (Granola, Notion Road-to-L1,
+the manual 1:1 notes). It is a complement, not a duplicate. It should *read* the Impact Log
+if present (for the "worth naming" material) but never reimplements it.
+
+## Sources — what each one can and cannot see
+
+The central design fact: **the 1:1 with Prudhvi is in-person and is NOT recorded in Granola.**
+So there is no auto-fallback for the 1:1's own content — the manual notes are the only record.
+Sources are therefore split by what they can observe:
+
+| Layer | Only source that sees it | Capture | Role |
+|---|---|---|---|
+| What was discussed in the last 1:1 | `~/workspace/notes/prudhvi-1-1/<latest>.md` | ⚠️ manual, no fallback | carry-over, parked questions, behavioral patterns |
+| Tactical/team activity (standups, sprint, working sessions) | Granola | ✅ auto, reliable | elevated into team/blocker raises |
+| Career / growth axes & gaps | Notion `Road to L1` + `L1 Axes — Evidence Tracker` | manual, updated regularly | growth asks |
+| Goals / commitments (incl. explicit "ask Prudhvi" items) | Notion `Actionables` (child of Road to L1) | manual | goals & expectations to align on |
+| Calibration verdict / active levers | `~/workspace/notes/apprenticeship/progress-tracker.md` | manual | extra color when fresh |
+| Carry-over status / wins | git log + PRs (`gh`) | ✅ auto | reconciliation + wins |
+| Wins to name (optional) | Impact Log Google Doc | manual | "worth naming" material |
+
+**Spine:** Granola (find the most recent "Monica / Prudhvi" meeting as the time anchor when one
+was recorded; otherwise anchor on the latest `prudhvi-1-1/` note date) + git/PRs. **Enrichment:**
+manual notes — used when present, never a hard dependency.
+
+**Granola is bounded** to meetings *since the last 1:1* to keep transcript noise out.
+
+### Reuse contract
+
+Both `pe-prep` and `jira-ticket-ranker` read the same growth sources (latest 1:1, Road-to-L1,
+progress-tracker). `pe-prep`'s `references/profile-sources.md` should describe these sources as
+the shared contract and mirror `jira-ticket-ranker`'s logic, so a change to Monica's note
+structure is a one-place update and the two skills do not drift.
+
+## Output structure — tiers aligned to the manager-1:1 purpose
+
+The agenda is organized around the four canonical 1:1 buckets, plus a lead carry-over section
+and an optional behavioral footer:
+
+| Section | Source | Altitude |
+|---|---|---|
+| **Since last time** | last note + git/PRs | carry-over: done ✓ / open ⏳ / parked questions |
+| **Career & growth** | Road-to-L1, axes | axis gaps, horizon framing |
+| **Goals & expectations** | Actionables, last 1:1 | throughput, volume, expectations to align on |
+| **Team** | Granola (elevated) | collaboration, cross-team, pairing |
+| **Blockers** | Granola (elevated) | manager-resolvable: priority, scope, people — *not* code |
+| **Worth remembering** (footer, optional) | last note's `Pattern to watch` | echo of her own behavioral notes |
+
+Every talking point carries a **receipt** (the file / PR / Granola meeting / Notion page it
+came from) in the full version.
+
+### Core synthesis rule: altitude filtering
+
+Granola standups are technical; the 1:1 is not. The skill's defining job is to **elevate** raw
+signals into 1:1 language and **drop** pure code minutiae.
+
+- "blocked on the USPDS-593 rebase merge conflicts" → "a cross-team review bottleneck worth
+  flagging" (a blocker the manager can help with)
+- A PR's line-level detail → omitted unless it maps to a goal, a blocker, or a win
+
+Code-level detail belongs in standups and Kilian syncs, not the PE 1:1.
+
+### Carry-over reconciliation (suggested, verify)
+
+Open action items and parked/deferred questions from the last 1:1 note are checked against git
+history and PRs:
+- Matched to a commit/PR → labeled ✓ done → moves to *wins / worth naming*
+- No match → ⏳ still open → stays a follow-up
+
+The match is **fuzzy** (prose item ↔ commit/PR), so the status is always presented as
+**suggested — verify before saying it aloud**, mirroring `jira-ticket-ranker`'s "a suggestion,
+not a verdict" discipline.
+
+Also surface explicitly-parked questions, e.g. `[ ] (Future 1:1) Ask the deferred Optional B:
+6-month vs 2-3 year horizon framing` — these are prime talking points.
+
+### "Worth remembering" footer (v1: echo-only)
+
+v1 surfaces the `Pattern to watch` / `Meta observations` lines Monica already wrote in her notes
+(under-claiming, perfectionism, closing early despite a prepared question) — **quoting her own
+words, generating no new analysis.** Its receipt is the note line itself, keeping it inside the
+don't-fabricate guardrail. This is opt-in behavior approved for v1.
+
+## Self-sustaining capture loop
+
+Because the 1:1 is in-person and unrecordable, the skill closes its own input gap: it writes the
+agenda **into `~/workspace/notes/prudhvi-1-1/<target-date>.md`** (not a throwaway `/tmp` file).
+
+- **Before the 1:1:** the file is the agenda.
+- **After the 1:1:** Monica annotates what was actually discussed (verbal, in-person).
+- **Next run:** that annotated file is read as "the last 1:1."
+
+Writing the note becomes a side effect of using the skill rather than a separate chore — this is
+the primary defense against the note-staleness Monica flagged. The skill also nudges her,
+post-generation, to annotate outcomes after the meeting.
+
+## Output forms (two from one run)
+
+1. **Living agenda** → `~/workspace/notes/prudhvi-1-1/<target-date>.md`, full version *with
+   receipts*, organized by the tiers above. The seed for the post-1:1 note.
+2. **Paste-ready Lattice block** → trimmed version (clean bullets, receipts dropped), copied to
+   clipboard via `pbcopy` and printed in-chat.
+
+**No HTML report.** Unlike `jira-ticket-ranker` / `pr-review-coach` (browsable reports), this
+skill's destinations are Lattice + a markdown note; HTML would be surface area that rots.
+(Could be added later if ever wanted.)
+
+## Modes / invocation
+
+```
+/pe-prep [person] [--growth] ["<topic>"]
+```
+
+- **default** — since-last-1:1 prep, all sections
+- **`--growth`** — growth-weighted (leans on Road-to-L1 + Actionables; lighter on tactical)
+- **`"<topic>"`** — ad-hoc conversation prep (promo case, hard team topic); gather + synthesis
+  focused on that topic
+- **`person`** — defaults to Prudhvi; parameterized so it survives a manager change or works for
+  a skip-level
+
+The skill determines the `<target-date>` for the agenda file (next 1:1 occurrence; default to
+today if unknown).
+
+## Guardrails
+
+- **Candidates, not a script** — Monica picks and edits; the skill never decides what she'll say
+  (mirrors `pr-review-coach`).
+- **Altitude filter** — non-technical; elevate signals to career/team/goal/blocker framing, drop
+  code minutiae.
+- **Every point carries a receipt** — no fabricated or ungrounded talking points (mirrors
+  `weekly-brag`'s don't-fabricate rule).
+- **Carry-over status is suggested, verify** — never assert "done" without her confirmation.
+- **Graceful degradation** — if the last 1:1 note is missing/stale, say so plainly and lean on
+  Granola + Actionables + git, rather than pretending to have full 1:1 context.
+- **Read-only on all sources**; writes only its own agenda file + clipboard. Never posts to
+  Lattice or messages anyone (no Lattice API exists anyway).
+- **Bounded Granola** — only meetings since the last 1:1.
+- **Personal/sensitive content stays local** — the agenda lives in `~/workspace/notes/`; nothing
+  is pushed externally.
+- **Post-1:1 nudge** — remind her to annotate outcomes into the file (feeds the next run).
+
+## Structure (mirrors existing skills)
+
+- Lean `SKILL.md` delegating detail to `references/`
+- `references/profile-sources.md` — the shared source contract (mirrors `jira-ticket-ranker`)
+- `references/` — synthesis rules (altitude filter, tier mapping, carry-over reconciliation)
+- `templates/` — agenda markdown + Lattice paste block
+- `evals/` — scenario harness (`uv run skill-evals`)
+- Symlinked into `~/.claude/skills/pe-prep`
+
+## Out of scope for v1 (v2 notes)
+
+- **Cross-note behavioral pattern detection** — detecting recurring patterns *across* many 1:1
+  notes and correlating with outcomes ("under-claimed 3 of the last 4 times"). Genuinely needs
+  history; v1 only echoes single-note `Pattern to watch` lines.
+- **HTML report** — only if a browsable artifact is ever wanted.
+- **Lattice write integration** — no API today; copy-paste only.
+```
