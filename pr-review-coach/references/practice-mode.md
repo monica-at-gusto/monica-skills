@@ -16,6 +16,28 @@ Monica's current weak spots. Use them to:
 
 No history → no focus; just run the loop normally.
 
+## Before the loop — domain-familiarity calibration
+
+Also run this before showing any hunk; it sets the scaffolding level and whether to offer a primer
+(both driven by the same assessment).
+
+1. **Assess domain familiarity.** Gauge how well Monica knows this PR's domain from: her worked
+   Jira tickets, packs she's touched, the `reviewing-skill-profile` memory, and the conventions log
+   below. State your read and let her confirm — she may know a domain better/worse than the signals
+   suggest, and has final say.
+2. **Set scaffolding from that read:**
+   - **Known domain** → minimal-to-no scaffolding: show whole hunks with just *"What's your read?"*,
+     NO "angles to consider" list. This trains hunk-discovery (finding concerns cold) — the angle
+     prompts otherwise do that work for her.
+   - **Unfamiliar domain** → offer a **5-minute domain primer** first (e.g. "here's what
+     JWKS/MIAW/read-path mean") so the vocabulary tax is paid up front instead of eating her review
+     budget mid-hunk. Then keep light scaffolding.
+3. **Load the conventions log** during calibration:
+   `~/workspace/notes/reviews_practice/repo-conventions.md` (local file — cheap to read/append per
+   session). Don't re-teach a rule she's already logged; grade against the conventions she should
+   know. After the loop, append any NEW convention that surfaced as a miss. Promote to a shared
+   Notion page only if/when Monica asks (when it'd help the team, not just her).
+
 ## Loop (per area of concern)
 
 1. **Set up the hunk.** Show one changed hunk worth scrutinizing (don't reveal what the
