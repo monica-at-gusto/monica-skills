@@ -1,0 +1,87 @@
+scenarios:
+  # The defining rule — the 1:1 is not a technical sync. Altitude filtering is why the skill exists.
+  - name: altitude_not_technical
+    prompt: |
+      /pe-prep
+
+      (Mock — last 1:1 note prudhvi-1-1/2026-06-01.md, action items all open.)
+      (Mock Granola since 2026-06-01:)
+      - USPDS-Standup: Monica spent two days on a gnarly rebase of PR 593 with merge conflicts in
+        deterministic_strategy.rb; also waiting 4 days on Jyoti's review to land it.
+      - DSA Working Session: team debated whether the supportTier enum should be nullable.
+    evaluations:
+      - type: behavior
+        expectations:
+          - "Frames the PR 593 review wait as a blocker worth raising (a cross-team review bottleneck), not as code detail"
+          - "Keeps the agenda at career/goals/team/blocker altitude — does NOT include line-level code detail like merge-conflict specifics or the nullable-enum debate as a talking point"
+          - "Organizes output under the manager-1:1 tiers (career / goals / team / blockers), not a standup dump"
+        auto_fail:
+          - "Surfaces code-level minutiae (merge conflict internals, enum nullability) as 1:1 talking points"
+          - "Produces a technical status update instead of a career/team/blocker-framed agenda"
+
+  # Carry-over reconciliation must be SUGGESTED, never asserted (fuzzy match).
+  - name: carryover_suggested_not_asserted
+    prompt: |
+      /pe-prep
+
+      (Mock last 1:1 note prudhvi-1-1/2026-06-01.md action items:)
+      - [ ] Spin up jira-ticket-ranker work in a separate chat
+      - [ ] Set up worktree + plan-lifecycle flow for parallel work
+      (Mock git log since 2026-06-01:)
+      - ed01335 Add jira-ticket-ranker skill
+    evaluations:
+      - type: behavior
+        expectations:
+          - "Marks the jira-ticket-ranker item as done but as a SUGGESTED status (e.g. 'done — verify'), citing commit ed01335 as the receipt"
+          - "Keeps the worktree/plan-lifecycle item as still-open (no matching commit/PR)"
+          - "Surfaces the done item as a win worth naming"
+        auto_fail:
+          - "Asserts the jira-ticket-ranker item is done with no verify caveat"
+          - "Marks the worktree item done despite no git/PR evidence"
+
+  # Parked/deferred questions are prime talking points and must surface.
+  - name: parked_question_surfaces
+    prompt: |
+      /pe-prep
+
+      (Mock last 1:1 note prudhvi-1-1/2026-05-26.md action items:)
+      - [ ] (Future 1:1) Ask the deferred Optional B: 6-month vs 2-3 year horizon framing
+    evaluations:
+      - type: behavior
+        expectations:
+          - "Surfaces the parked horizon-framing question under 'Since last time' (or Career & growth) as something to raise this 1:1"
+          - "Cites the note as the receipt"
+        auto_fail:
+          - "Omits the explicitly-parked question entirely"
+
+  # The behavioral footer is ECHO-ONLY in v1 — quote her own lines, no new analysis.
+  - name: footer_echo_only
+    prompt: |
+      /pe-prep
+
+      (Mock last 1:1 note prudhvi-1-1/2026-05-26.md "Pattern to watch":)
+      - Closed with "no more questions" when there was still a prepared question — under-claiming.
+    evaluations:
+      - type: behavior
+        expectations:
+          - "Includes a 'Worth remembering' footer that quotes the under-claiming line from the note"
+          - "Attributes it to the note (the receipt) rather than presenting it as the skill's own diagnosis"
+        auto_fail:
+          - "Invents NEW behavioral analysis or psychoanalysis not present in the note"
+          - "Presents the pattern as the skill's own conclusion rather than an echo of her note"
+
+  # No recent 1:1 note — degrade honestly, don't fabricate 1:1 context.
+  - name: degrades_without_note
+    prompt: |
+      /pe-prep
+
+      (Mock — NO prudhvi-1-1 note is available.)
+      (Mock Notion Actionables:)
+      - [ ] Ship 2-3 small projects by Mo-6 — ask Prudhvi about volume expectations. (Scale/Execution)
+    evaluations:
+      - type: behavior
+        expectations:
+          - "States plainly that no fresh 1:1 note was found and carry-over may be incomplete"
+          - "Still produces a useful agenda from the other sources (e.g. surfaces the volume-expectations ask from Actionables)"
+        auto_fail:
+          - "Fabricates carry-over items or pretends to know what was discussed in a prior 1:1"
