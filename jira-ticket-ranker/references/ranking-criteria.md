@@ -3,6 +3,21 @@
 Confidence **labels, not scores** — the output gives permission to act, not a difficulty
 number. Three tiers: **Ready**, **Manageable stretch**, **Considered — not recommended (yet)**.
 
+## Precedence: already assigned to Monica
+
+Before ranking the unassigned pool, surface any open ticket **already assigned to Monica Cruz
+(MC)** — these take precedence over fresh pickups. She may not have updated Jira yet, so the
+move is to *ask*, not assume:
+
+- Call these out first, separately from the ranked shortlist, with a one-line **"status check"**
+  prompt — e.g. *"USPDS-611 is assigned to you and still in Backlog — is it started / done /
+  parked? Update Jira or tell me so I rank around its real state."*
+- Treat her assigned tickets as **in-flight load** for the toe-stepping check below: a fresh
+  candidate that collides with (or is downstream of) one of her own assigned tickets inherits
+  that ticket's sequencing — see *the downstream-of-her-own-ticket cluster* under toe-stepping.
+- Don't re-rank her own assigned work as if it were a free pickup; the question for those is
+  "what's their real status," not "is it safe to grab."
+
 ## The three ranking dimensions
 
 Rank each candidate on these (the defaults agreed in the first run; the user can re-weight):
@@ -37,6 +52,20 @@ on its epic. Before tiering a candidate **Ready**, check:
 If yes → drop it out of Ready into **Considered — held / "sync first"**, even if familiarity is
 perfect. (First run: USPDS-596 was her exact file but entangled with Jyoti's active recipe
 work + possibly mooted by USPDS-587 → held with a "sync Jyoti first" note.)
+
+### The downstream-of-her-own-ticket cluster
+
+A self-authored stopgap often spawns a chain of follow-up tickets (backend successor → FE
+consumer → docs/audit). Rank the *chain*, not each link in isolation:
+
+- The **immediate backend/next successor she owns the context for** is a strong **Ready** — high
+  velocity, and there's no toe-stepping because she controls both ends of the handoff. (2026-06-15:
+  USPDS-627, the `details_text` backend successor to her own USPDS-611, ranked Ready.)
+- **Further-downstream links are held by *sequencing/blocking*, not collision** — they can't
+  start until the upstream link lands. Tier them **held** with the blocker named, not rejected.
+  (USPDS-628 blocked by 627; USPDS-629 documents a payload still moving under 627 + 623.)
+- A "moving-target" audit/doc ticket that depends on several in-flight links is **held until they
+  settle** — and note it's a weak **velocity** fit anyway (doc-only, no feature PR).
 
 ## Other rules learned
 
