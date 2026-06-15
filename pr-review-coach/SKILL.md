@@ -84,7 +84,9 @@ files. (Stub until populated — see Step 9.)
 - **Practice (`--practice`):** run the swing-then-sharpen loop in chat FIRST
   (`references/practice-mode.md`) — ask her read on each hunk before revealing findings, then
   grade right / sharpen / missed. Record her read and verdict on each finding, then Step 7
-  renders the scorecard.
+  renders the scorecard. Practice mode also reads recent `~/workspace/notes/reviews_practice/`
+  logs at the start to focus on her weak spots, and writes a progress log + scorecard takeaways
+  when the session completes (see `references/practice-mode.md`).
 
 Draft every postable comment **in her voice** — plain, conversational, 1–3 sentences, no
 "consider whether", no consultant-speak; state the issue and a concrete suggestion. Set each

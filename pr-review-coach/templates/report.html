@@ -67,6 +67,9 @@
   .card.deferred { border-left-color: var(--line); background: #fbfbfa; }
   .deferral { margin: 8px 0 0; color: #34383d; }
   .deferral b { color: var(--ink); font-weight: 600; }
+  .card.improve { border-left-color: #6e7781; background: #fbfbfa; }
+  .improve-list { margin: 0; padding-left: 18px; }
+  .improve-list li { margin: 4px 0; color: #34383d; }
   .loc { font: 12.5px ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--muted); overflow-wrap: anywhere; }
   .detail { margin: 8px 0 0; color: #34383d; }
   .fix { margin: 8px 0 0; color: #34383d; }
@@ -213,6 +216,16 @@ function render() {
   if (deferred.length) {
     root.appendChild(el("div", "tier", "Acknowledged & deferred"));
     for (const f of deferred) root.appendChild(deferredCard(f));
+  }
+
+  const takeaways = PRC.meta.takeaways || [];
+  if (takeaways.length) {
+    root.appendChild(el("div", "tier", "Room for improvement"));
+    const box = el("div", "card improve");
+    const ul = el("ul", "improve-list");
+    takeaways.forEach(t => ul.appendChild(el("li", null, t)));
+    box.appendChild(ul);
+    root.appendChild(box);
   }
 }
 

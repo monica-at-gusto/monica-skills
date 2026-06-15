@@ -3,6 +3,19 @@
 Triggered by `--practice` / "quiz me". The goal is to grow Monica's reviewing judgment, so
 she commits to a read BEFORE seeing the lens findings.
 
+## Before the loop — read recent practice history
+
+While fetching the diff (Step 2), also read the most recent few logs in
+`~/workspace/notes/reviews_practice/` (Glob the dir; if it doesn't exist yet, this is the first
+session — skip and proceed). Tally which categories recur under `missed` / `sharpen` — those are
+Monica's current weak spots. Use them to:
+
+- **bias hunk selection** toward those categories (quiz where she's been weak), and
+- **tell her up front** what to watch — carry it in `meta.context`, e.g.
+  "Focus from recent practice: auth-coverage, test-coverage".
+
+No history → no focus; just run the loop normally.
+
 ## Loop (per area of concern)
 
 1. **Set up the hunk.** Show one changed hunk worth scrutinizing (don't reveal what the
@@ -23,8 +36,27 @@ she commits to a read BEFORE seeing the lens findings.
 
 - Offer to turn the confirmed findings into draft comments (same voice rules as triage), so a
   practice session can still produce a real review.
+- **Write a progress log** to `~/workspace/notes/reviews_practice/<YYYY-MM-DD>-<target>.md`
+  (Write creates the dir). This is what the *next* session reads. Use the format below.
+- **Scorecard takeaways:** populate `meta.takeaways` with the room-for-improvement synthesis so
+  the rendered scorecard closes with it (see `references/html-report.md`).
 - Pattern capture (SKILL.md Step 9) is especially valuable here: if a category keeps showing
   up as a "miss," that's a candidate convention for `usp-conventions.md`.
+
+## Progress log format
+
+Machine-readable enough to re-tally next time, human-readable enough to skim. Categories are
+free-form but reuse prior ones where they fit (so trends are visible across sessions):
+
+```
+# Practice — <YYYY-MM-DD> — <PR/target>
+- right: <categories, comma-separated>
+- sharpen: <categories>
+- missed: <categories>
+
+## Room for improvement
+<1–3 sentences: the throughline this session, and what to watch next time>
+```
 
 ## Tone
 

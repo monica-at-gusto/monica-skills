@@ -26,10 +26,16 @@ only injects data and opens it.
   "meta": { "target": "20151", "ticket": "USPDS-593", "title": "<PR title or branch>", "mode": "remote|local|practice",
             "counts": { "critical": 1, "important": 1, "suggestion": 1, "strength": 1 },
             "context": ["CI: failing — 2 checks", "Large PR (1,240 lines) — consider splitting",
-                        "Ticket USPDS-593: scope matches"] },
+                        "Ticket USPDS-593: scope matches"],
+            "takeaways": ["Auth-coverage is the recurring gap — you missed it here and last session.",
+                          "Strong on nil-handling; keep it up."] },
   "findings": [ /* finding objects */ ]
 }
 ```
+
+`meta.takeaways` (practice mode only) is the **"Room for improvement"** synthesis written at the
+end of a `--practice` session. The template renders it as a closing section below the findings.
+The same text is saved to the `~/workspace/notes/reviews_practice/` log (`references/practice-mode.md`).
 
 `meta.ticket` (optional) is the Jira ID parsed during Step 2 triage; it drives the browser tab
 `<title>` (`PR Review Coach: USPDS-593`), falling back to `meta.target` when no ticket is found.
