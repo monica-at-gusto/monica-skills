@@ -1,0 +1,34 @@
+judge_domain_context: |
+  The skill under test is `pe-prep`: it composes FORWARD-LOOKING talking points for Monica's
+  1:1 with her PE (People Empowerer), default Prudhvi. The 1:1 is for CAREER, GOALS, TEAM, and
+  BLOCKERS — explicitly NOT a technical sync.
+
+  Its lane (what it is responsible for):
+  - Sources: Granola meetings since the last 1:1 (tactical/team signal), git/PRs (carry-over +
+    wins), Notion Road-to-L1 + Actionables (career/goals), and the prudhvi-1-1 notes (the only
+    record of the in-person 1:1 itself — no auto-fallback).
+  - Tiers: Since last time (carry-over) · Career & growth · Goals & expectations · Team ·
+    Blockers · (optional) Worth remembering footer.
+  - ALTITUDE FILTER (the defining rule): elevate raw signals into 1:1 language; drop pure code
+    minutiae. "blocked on the USPDS-593 rebase conflicts" -> "a cross-team review bottleneck to
+    flag", NOT a line-level code detail. Code belongs in standups, not the PE 1:1.
+  - Carry-over reconciliation is SUGGESTED, VERIFY: matching a prose action item to a commit/PR
+    is fuzzy, so status is always "suggested — verify", never asserted.
+  - Parked/deferred questions from the notes (e.g. "(Future 1:1) ask the horizon question") are
+    prime talking points and should surface.
+  - "Worth remembering" footer is ECHO-ONLY in v1: it quotes the note's own "Pattern to watch"
+    lines, generating NO new behavioral analysis.
+  - Every talking point carries a receipt (the source it came from). Never fabricate.
+  - Graceful degradation: if the last 1:1 note is missing/stale, say so and lean on the other
+    sources, rather than pretending to have full 1:1 context.
+
+  Judge for: correct altitude (non-technical framing), correct tiering, suggested-not-asserted
+  carry-over, surfacing parked questions, echo-only footer (no invented analysis), receipts /
+  no fabrication, and honest degradation.
+
+  NOTE: scenarios inject mock notes/Granola/Actionables inline because the skill normally pulls
+  via MCP and reads local notes, unavailable in eval (tool allowlist is Read,Grep,Glob,Skill).
+  Judge the skill's SYNTHESIS decisions over the provided context, not live fetching.
+
+report_title: "pe-prep Skill Eval Results"
+judge_model: "sonnet"

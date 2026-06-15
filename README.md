@@ -56,6 +56,28 @@ it never claims a ticket, changes status, or messages anyone.
 - **Detail lives in `jira-ticket-ranker/references/`**; SKILL.md stays lean. Evals:
   `jira-ticket-ranker/evals/` (see its README) — `cd jira-ticket-ranker && uv run skill-evals`.
 
+### pe-prep
+
+Composes forward-looking talking points for my 1:1 with my PE (default Prudhvi) — career, goals,
+team, and blockers, **not** a technical sync. Output is a paste-ready Lattice agenda.
+
+```
+/pe-prep [person] [--growth] ["<topic>"]
+```
+
+- **Sources:** Granola since the last 1:1 + git/PRs (the reliable spine), enriched by Notion
+  Road-to-L1 + Actionables and my `prudhvi-1-1/` notes. The in-person 1:1 isn't recorded, so the
+  manual note is the only record of it — used if present, never a hard dependency.
+- **Altitude filter:** elevates standup/code signal into career/team/goal/blocker language; drops
+  code minutiae. The defining synthesis rule.
+- **Self-sustaining loop:** writes the agenda into `prudhvi-1-1/<date>.md`, which I annotate after
+  the 1:1 — so it seeds the next run and the note never goes stale.
+- **Carry-over reconciliation:** matches last meeting's action items against git/PRs (suggested,
+  verify) to sort them into wins vs follow-ups.
+- **Output:** the living agenda note + a trimmed Lattice block copied to the clipboard. No HTML.
+- **Detail lives in `pe-prep/references/`**; SKILL.md stays lean. Evals: `pe-prep/evals/` —
+  `cd pe-prep && uv run skill-evals`.
+
 ## Linking a skill into Claude Code
 
 From the repo root:
