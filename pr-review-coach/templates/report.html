@@ -185,6 +185,12 @@ function el(tag, cls, txt) {
 }
 
 function render() {
+  // Assign a stable, unique numeric id to every finding. The data contract does
+  // not guarantee findings carry an `id`; without one, decisions[f.id] collapses
+  // onto the string key "undefined" (all cards overwrite each other) and the blob
+  // serializes id as null. Index-based ids keep decision tracking 1:1 with cards.
+  PRC.findings.forEach((f, i) => { f.id = i + 1; });
+
   const tag = PRC.meta.ticket || PRC.meta.target;
   document.title = "PR Review Coach" + (tag ? ": " + tag : "");
   document.getElementById("title").textContent = PRC.meta.title || PRC.meta.target;
@@ -317,11 +323,15 @@ function buildBlob() {
     _type: "pr-review-coach-decisions",
     target: PRC.meta.target,
     mode: PRC.meta.mode,
-    decisions: Object.entries(decisions).map(([id, d]) => ({
-      id: Number(id), action: d.action,
-      file: d.file, line: d.line, side: d.side,
-      body: d.action === "post" ? d.body : undefined,
-    })),
+    // Only emit findings marked "post" — skips are ignored downstream (Step 8),
+    // so including them just clutters the blob and inflates the visible count.
+    decisions: Object.entries(decisions)
+      .filter(([, d]) => d.action === "post")
+      .map(([id, d]) => ({
+        id: Number(id), action: d.action,
+        file: d.file, line: d.line, side: d.side,
+        body: d.body,
+      })),
   };
   return JSON.stringify(out, null, 2);
 }
