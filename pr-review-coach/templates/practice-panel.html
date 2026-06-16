@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Practice — Reference Panel</title>
+<style>
+  :root {
+    --bg: #f7f7f6; --card: #ffffff; --ink: #1c1c1e; --muted: #6b7177;
+    --line: #e7e7e4; --conv: #a83265; --watch: #5b3fd6;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 14px/1.5 ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    -webkit-font-smoothing: antialiased; display: flex; justify-content: center; padding: 32px 16px;
+  }
+  .panel { width: 340px; }
+  .eyebrow { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+  h1 { font-size: 16px; font-weight: 650; margin: 5px 0 2px; letter-spacing: -.01em; }
+  .sub { font-size: 12px; color: var(--muted); }
+  .section { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin: 22px 0 8px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-left: 3px solid var(--line); border-radius: 10px; padding: 11px 13px; margin: 8px 0; }
+  .card.conv  { border-left-color: var(--conv); }
+  .card.watch { border-left-color: var(--watch); background: #faf8ff; }
+  .card h3 { font-size: 13.5px; font-weight: 600; margin: 0 0 5px; }
+  .trigger { font-size: 11.5px; color: var(--muted); margin: 0 0 7px; }
+  .trigger b { color: var(--ink); font-weight: 600; }
+  ul.checks { margin: 0; padding-left: 16px; }
+  ul.checks li { font-size: 12.5px; color: #34383d; margin: 3px 0; }
+  code { font: 11.5px ui-monospace, Menlo, monospace; background: #f1f1ef; padding: 0 4px; border-radius: 4px; white-space: nowrap; }
+  .watch-row { display: flex; align-items: baseline; gap: 8px; margin: 6px 0; }
+  .chip { font-size: 11.5px; font-weight: 600; color: var(--watch); background: #efebfd; border: 1px solid #e0d8fb; border-radius: 999px; padding: 1px 9px; white-space: nowrap; flex: none; }
+  .watch-row .why { font-size: 12px; color: var(--muted); }
+  .watch-note { font-size: 11.5px; color: var(--muted); margin-top: 8px; font-style: italic; }
+  footer { margin-top: 22px; font-size: 11px; color: var(--muted); text-align: center; }
+</style>
+</head>
+<body>
+  <div class="panel">
+    <div class="panel-head">
+      <div class="eyebrow">practice · reference</div>
+      <h1>While you read</h1>
+      <div class="sub" id="sub"></div>
+    </div>
+    <main id="content"></main>
+    <footer>Reference only · reveals nothing the lenses flagged</footer>
+  </div>
+<script>
+// The skill replaces the whole block between the START/END markers (inclusive)
+// with: const PANEL = <JSON literal>;
+/* __PRC_PANEL_START__ */
+const PANEL = {
+  meta: { target: "sample", title: "Sample — no data injected" },
+  conventions: [],
+  watch: []
+};
+/* __PRC_PANEL_END__ */
+
+function el(tag, cls, txt) {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (txt != null) e.textContent = txt;
+  return e;
+}
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"]/g, m => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;" }[m]));
+}
+// Escape first, then turn `backtick` spans into <code> so identifiers stay intact.
+function inlineCode(s) {
+  return escapeHtml(s).replace(/`([^`]+)`/g, "<code>$1</code>");
+}
+
+function renderConventions(root) {
+  if (!PANEL.conventions.length) return;
+  root.appendChild(el("div", "section", "Repo conventions"));
+  for (const c of PANEL.conventions) {
+    const card = el("div", "card conv");
+    card.appendChild(el("h3", null, c.name));
+    if (c.trigger) { const p = el("p", "trigger"); p.innerHTML = `<b>when</b> ` + inlineCode(c.trigger); card.appendChild(p); }
+    if (c.checks && c.checks.length) {
+      const ul = el("ul", "checks");
+      c.checks.forEach(ck => { const li = el("li"); li.innerHTML = inlineCode(ck); ul.appendChild(li); });
+      card.appendChild(ul);
+    }
+    root.appendChild(card);
+  }
+}
+
+function renderWatch(root) {
+  if (!PANEL.watch.length) return;
+  root.appendChild(el("div", "section", "Watch for — your recent gaps"));
+  const card = el("div", "card watch");
+  PANEL.watch.forEach(w => {
+    const row = el("div", "watch-row");
+    row.appendChild(el("span", "chip", w.category));
+    if (w.why) row.appendChild(el("span", "why", w.why));
+    card.appendChild(row);
+  });
+  card.appendChild(el("p", "watch-note", "Themes from your practice log — not hints for this hunk. Form your read first."));
+  root.appendChild(card);
+}
+
+function render() {
+  const m = PANEL.meta || {};
+  document.getElementById("sub").textContent =
+    [m.target ? "PR #" + m.target : null, m.title].filter(Boolean).join(" · ");
+  const root = document.getElementById("content");
+  renderConventions(root);
+  renderWatch(root);
+  if (!root.children.length) {
+    root.appendChild(el("p", "watch-note",
+      "No conventions logged yet and no prior practice history — this panel fills in as you go."));
+  }
+}
+render();
+</script>
+</body>
+</html>
