@@ -87,6 +87,8 @@ files. (Stub until populated — see Step 9.)
   renders the scorecard. Practice mode also reads recent `~/workspace/notes/reviews_practice/`
   logs at the start to focus on her weak spots, and writes a progress log + scorecard takeaways
   when the session completes (see `references/practice-mode.md`).
+  At the start of the loop it also opens a live HTML reference panel (conventions + weak-spot
+  themes, no findings) beside the chat — see `references/practice-panel.md`.
 
 Draft every postable comment **in her voice** — plain, conversational, 1–3 sentences, no
 "consider whether", no consultant-speak; state the issue and a concrete suggestion. Set each
