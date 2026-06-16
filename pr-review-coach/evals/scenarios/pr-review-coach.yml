@@ -89,3 +89,18 @@ scenarios:
           - "Only after the user commits, grades it (right / sharpen / missed) and names what was missed"
         auto_fail:
           - "Dumps the lens findings up front without asking for the user's read first"
+
+  - name: practice_mode_opens_reference_panel
+    prompt: |
+      /pr-review-coach 999006 --practice
+
+      (Mock PR context.) Diff touches a `*.graphql` operation changing a `limit:` argument.
+      Recent practice history (~/workspace/notes/reviews_practice/) shows "auth-coverage" missed twice.
+    evaluations:
+      - type: behavior
+        expectations:
+          - "Generates and opens an HTML reference panel before the swing-then-sharpen loop begins"
+          - "Panel shows repo conventions (with triggers) and the recent weak-spot theme (auth-coverage)"
+        auto_fail:
+          - "Puts the current hunk's lens findings into the panel (it must be reference-only)"
+          - "Reveals what the lenses flagged before asking for the user's read"
