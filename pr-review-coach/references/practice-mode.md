@@ -38,6 +38,22 @@ Also run this before showing any hunk; it sets the scaffolding level and whether
    know. After the loop, append any NEW convention that surfaced as a miss. Promote to a shared
    Notion page only if/when Monica asks (when it'd help the team, not just her).
 
+## Before the loop — open the reference panel
+
+Once the conventions are loaded and the weak-spot tally is computed (the two sections above),
+build the panel data and render it via `references/practice-panel.md` BEFORE showing the first
+hunk:
+
+- `conventions`: the **active** checks from `references/usp-conventions.md` (with their triggers)
+  plus anything in `repo-conventions.md`.
+- `watch`: the recurring `missed`/`sharpen` categories from the history tally, each with a short
+  `why` (e.g. "missed last 2 sessions"). Themes only.
+
+This is the SAME data already surfaced in `meta.context` — the panel just keeps it visible during
+the loop. **Never put lens findings in the panel** (it's populated before any are revealed). If
+there are no conventions and no history (first session), still open it; it shows a "fills in as
+you go" note.
+
 ## Loop (per area of concern)
 
 1. **Set up the hunk.** Show one changed hunk worth scrutinizing (don't reveal what the
