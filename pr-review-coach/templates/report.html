@@ -108,7 +108,17 @@
     border: 1px solid var(--line); border-radius: 8px; padding: 9px 11px;
   }
   .card.skipped { opacity: .55; }
-  .card.skipped textarea { display: none; }
+  .draft { margin-top: 10px; }
+  .draft-preview {
+    padding: 9px 11px; border: 1px solid var(--line); border-radius: 8px;
+    background: #fcfcfb; color: #34383d; font-size: 13.5px; white-space: pre-wrap; cursor: text;
+  }
+  .draft-preview.empty { color: var(--muted); font-style: italic; }
+  /* State via classes (not inline styles) so the skipped rule can always win. */
+  .draft textarea { display: none; margin-top: 0; }
+  .draft.editing .draft-preview { display: none; }
+  .draft.editing textarea { display: block; }
+  .card.skipped .draft { display: none; }
 
   .bar {
     position: fixed; left: 0; right: 0; bottom: 0;
@@ -294,11 +304,30 @@ function card(f, key) {
   controls.appendChild(seg);
   card.appendChild(controls);
 
+  // Progressive disclosure, no button: show the draft as static text; click it
+  // to edit inline; blur (clicking away / Post / Skip) collapses back. State is
+  // toggled via the `editing` class — never inline styles — so the skipped rule
+  // can always hide the whole block regardless of edit state.
+  const EMPTY = "No draft — click to write a comment.";
+  const draft = el("div", "draft");
+  const preview = el("div", "draft-preview");
   const ta = el("textarea");
   ta.value = f.draft_body || "";
   ta.placeholder = "Comment to post…";
+
+  function syncPreview() {
+    const v = ta.value.trim();
+    preview.textContent = v || EMPTY;
+    preview.classList.toggle("empty", !v);
+  }
+  syncPreview();
+
+  preview.addEventListener("click", () => { draft.classList.add("editing"); ta.focus(); });
   ta.addEventListener("input", () => { decisions[f.id].body = ta.value; });
-  card.appendChild(ta);
+  ta.addEventListener("blur", () => { syncPreview(); draft.classList.remove("editing"); });
+
+  draft.append(preview, ta);
+  card.appendChild(draft);
 
   function setAction(a) {
     decisions[f.id].action = a;
@@ -378,7 +407,9 @@ function buildNotesMarkdown() {
   if ((m.context || []).length) lines.push("");
   const labels = { critical: "Critical", important: "Important", suggestion: "Suggestion", strength: "Strengths" };
   for (const key of ["critical", "important", "suggestion", "strength"]) {
-    const items = PRC.findings.filter(f => f.severity === key && f.status !== "acknowledged-deferred");
+    // Only posted findings — skips are excluded from the notes record.
+    const items = PRC.findings.filter(f => f.severity === key && f.status !== "acknowledged-deferred"
+      && decisions[f.id] && decisions[f.id].action === "post");
     if (!items.length) continue;
     lines.push("## " + labels[key]);
     items.forEach(f => {
@@ -388,8 +419,7 @@ function buildNotesMarkdown() {
       if (f.suggested_action) lines.push(`  fix → ${f.suggested_action}`);
       const tags = [f.lens, f.check, f.confidence && f.confidence + " confidence"].filter(Boolean)
         .concat((f.incident_refs || []).map(r => "incident " + r));
-      const dec = decisions[f.id] ? ` [${decisions[f.id].action}]` : "";
-      if (tags.length || dec) lines.push(`  (${tags.join(" · ")})${dec}`);
+      if (tags.length) lines.push(`  (${tags.join(" · ")})`);
     });
     lines.push("");
   }

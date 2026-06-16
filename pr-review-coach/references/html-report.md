@@ -53,7 +53,10 @@ parenthetical lists.
 
 Each finding uses the `finding-schema.md` fields plus three UI fields:
 
-- `draft_body` — the comment text drafted **in Monica's voice** (prefills the editable box).
+- `draft_body` — the comment text drafted **in Monica's voice**. Rendered as a static preview
+  (progressive disclosure, no button): click the preview to edit inline; blurring (clicking away,
+  Post, or Skip) collapses it back. Skipped cards hide the whole draft block. Edit/skipped state
+  is toggled via CSS classes, never inline styles, so the skipped rule always wins.
 - `default_action` — `"post"` for critical/important, `"skip"` for suggestion/strength.
 - Practice mode only: `your_read` (what she said about the hunk) and `verdict`
   (`"right" | "sharpen" | "missed"`) → renders the scorecard badge + "Your read" line.
@@ -76,10 +79,11 @@ Pills are color-coded by lens (`risk`, `fresh-eyes`) and by `confidence`.
   Monica pastes it back; the skill posts the `action: "post"` entries (Step 8).
 - **Copy for PR** → human-readable markdown of the *posted* findings grouped by tier (+ a
   Strengths section and a Deferred block), for her to paste straight into the PR herself.
-- **Copy for notes** → a *fuller* record: heading (ticket + title), the `meta.context` lines,
-  ALL findings grouped by tier with detail / fix / tags / her decision, plus the Deferred
-  section with rationale. For pasting into her ticket chat or a `~/workspace/notes/<ticket>/
-  reviews/` file. The skill never writes notes itself — she places this record.
+- **Copy for notes** → a record of the **posted** findings: heading (ticket + title), the
+  `meta.context` lines, posted findings grouped by tier with detail / fix / tags, plus the
+  Deferred section with rationale. Skipped findings are excluded (same as Copy for PR). For
+  pasting into her ticket chat or a `~/workspace/notes/<ticket>/reviews/` file. The skill never
+  writes notes itself — she places this record.
 
 Both serialize the same live triage state; the clipboard write has a visible-textarea fallback
 so manual copy always works (important: a `file://` page may block the clipboard API).
