@@ -116,8 +116,14 @@ vocabulary once and it holds everywhere — repeating a key on each chart is red
 Workbench colors (red=exclude, green=keep, blue=struct, amber=changed) plus the diamond=decision shape,
 charts are self-evident, so **default to no legend**.
 
-Add one only when it earns its place: a chart using **less-obvious encodings** (e.g. a before/after with
-"changed" deltas), or when **sharing with someone new to the vocabulary**. When you do:
+**Legend PRN — rule of thumb:**
+- **No legend** for the self-evident vocabulary: neutral *step* rectangles, green *success/keep*, red
+  *fail/exclude*, and the neutral *decision* diamond — a reader decodes those on sight.
+- **Add a legend** when the chart goes beyond that: the **change classes** (added / removed / changed),
+  a **kale path-highlight**, **blue struct/result** nodes, custom shapes — i.e. before/after and other
+  complex charts — or when sharing cold.
+
+When you include one:
 
 - **Own fence, scoped spacing.** Give the legend its own ` ```mermaid ` fence with a `%%{init}%%` so its
   gaps are independent of the flow (a legend embedded in the flow is stuck sharing the flow's `rankSpacing`).
@@ -140,6 +146,17 @@ flowchart TB
     style LExc fill:#ffedeb,stroke:#c53336,color:#1c1c1c
     style LKeep fill:#e0f6e5,stroke:#008954,color:#1c1c1c
 ```
+
+## Highlighting a path to follow (complex charts)
+
+For a chart with many branches, draw the eye along the one flow the reader should trace by coloring its
+edges **kale** (`#0a8080` — the brand accent; edges are otherwise neutral, so no collision) and thicker —
+e.g. `linkStyle 3,5,7 stroke:#0a8080,stroke-width:3.5px`.
+
+`linkStyle` targets edges by **index** (0-based, in order of definition), so count the edges along the
+path — or just name the path to trace and (re)generate the chart with the right indices. It's plain
+`.md`, so the highlight travels to GitHub/Notion. A chart with a path-highlight should carry a legend
+(above), including a kale "path to follow" swatch.
 
 ## Worked example (decision-level, with fail-direction ⚠)
 
