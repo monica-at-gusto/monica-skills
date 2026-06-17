@@ -54,7 +54,9 @@ why for every candidate, including held ones. A candidate without a sync target 
    `context[]`, `banner`) and `tickets[]` (`key`, `tier` [`ready`|`stretch`|`held`], `badge`,
    `summary`, `loc`, `headline`, `rationale[]` [`{lbl, val}` — one per ranking dimension],
    `sync` [`{who, why}`], optional `note`, `pills[]`). Write to
-   `/tmp/jira-ticket-ranker-<project>-<date>.html` and `open` it.
+   `/tmp/jira-ticket-ranker-<project>-<date>.html` and `open` it. The `context[]` intro **must lead
+   with an "Assigned to you" block** built from the Step 1b live query (each as a status-check line —
+   `• KEY: summary — status (note)` — not a ranked pickup), followed by the run's ranking context.
 2. **Notes:** write the same shortlist as markdown to
    `~/workspace/notes/jira-ticket-ranker/<date>-picklist.md` (run config, profile sources, each
    candidate with rationale + sync target, the held set, and a "criteria notes" section
@@ -90,3 +92,8 @@ skill's own files.
 - Verify a candidate doesn't collide with active neighbor work or her in-flight tickets before
   calling it Ready.
 - The ranking can be wrong — it's a suggestion, not a verdict. Say so.
+- **Single responsibility — rank tickets, don't coach.** Outputs are limited to ranked tickets,
+  sync targets, and honest hold-reasons (including ranking-relevant context like a perf-gated lane
+  or a stale description). Do **not** emit career advice, 1:1 / manager-prep framing, or
+  velocity/calibration commentary — that's the `pe-prep` skill's job. The profile is read as ranking
+  *input* (familiarity, growth axes); it is not a license to produce coaching *output*.

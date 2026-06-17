@@ -9,6 +9,22 @@ deep-fetch only the finalists.**
 `mcp__jiraconfluencegusto__getAccessibleAtlassianResources` → Gusto's cloudId is
 `3fd33630-4e39-4689-ad04-db32e3843117` (site `gustohq.atlassian.net`). Pass it to every call.
 
+## Step 1b — Live "assigned to Monica" query (always run first)
+
+**Before the bulk index**, run a targeted query for tickets already assigned to her — it's cheap,
+always-current, and immune to the bulk-snapshot lag + Explore-parse attribution risk that can
+otherwise drop or misattribute her own tickets:
+
+`mcp__jiraconfluencegusto__searchJiraIssuesUsingJql`, jql
+`project = <PROJECT> AND assignee = currentUser() AND statusCategory != Done ORDER BY updated DESC`,
+fields `["summary","status","priority","parent","reporter","updated","issuetype"]`, markdown.
+
+These feed the **"Assigned to you"** intro block (status-check prompts, not pickups — see the
+assigned-to-MC precedence rule in `ranking-criteria.md`). Never rely on the bulk index alone for
+her assignments: it's a point-in-time snapshot and reassignments made minutes earlier won't show.
+(2026-06-17: USPDS-635 had just been reassigned to her and USPDS-592 freshly assigned — both
+reported by Jyoti — and the stale bulk snapshot missed/misattributed both.)
+
 ## Step 2 — Lean index (NO descriptions)
 
 `mcp__jiraconfluencegusto__searchJiraIssuesUsingJql`:
