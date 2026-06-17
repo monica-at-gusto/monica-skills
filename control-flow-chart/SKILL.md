@@ -44,15 +44,22 @@ Follow `references/mermaid-conventions.md`. Non-negotiables:
 - **Annotate fail-directions:** make explicit what nil / error / missing data does at each branch,
   and flag with ⚠ any node that conflates "unknown" with a real value. Style: exclude/risk red,
   keep/safe green.
-- **Legend is optional (off by default).** The palette is consistent and documented in the
-  conventions, so a reader learns it once — skip the per-chart key unless the chart uses non-obvious
-  encodings (deltas) or you're sharing with someone new. **One color = one meaning** — amber is
-  reserved for "changed"; decisions are the diamond *shape* (neutral salt, never a role color). Palette
-  + type come from **Gusto Workbench tokens**. See `references/mermaid-conventions.md`.
+- **Legend — emit one whenever the chart goes beyond the self-evident vocabulary.** *Skip* it for
+  plain charts (neutral *step*, green *success*, red *fail*, neutral *decision* diamond) — those decode
+  on sight. But the moment a chart uses **change-classes** (added / removed / changed), a
+  **path-highlight**, **blue struct/result** nodes, or a custom shape — i.e. **every before/after or
+  multi-variant chart** — you **must** add a legend: its own ` ```mermaid ` fence with `%%{init}%%`,
+  scoped to the encodings actually used. **One color = one meaning** — amber = "changed"; decisions are
+  the diamond *shape* (neutral salt, never a role color). Palette + type = **Gusto Workbench tokens**.
+  See `references/mermaid-conventions.md`.
 - **Make changes obvious:** whenever a chart represents a change — a before/after pair, a
-  current→proposed variant, or a refinement of a prior version — highlight the **delta**, never
-  leave the reader to diff it. Mark added / removed / changed nodes with the change `classDef`s and
-  add a one-line **What changed:** caption above the chart. See `references/mermaid-conventions.md`.
+  current→proposed variant, or a refinement — highlight the **delta** with the change `classDef`s
+  (added / removed / changed) and a one-line **What changed:** caption. **A chart with change-classes is
+  by definition not self-evident → it gets a legend** (see the legend bullet above). See
+  `references/mermaid-conventions.md`.
+- **Path-highlight (complex / multi-branch charts):** proactively **offer** to trace the single flow the
+  reader should follow — color its edges kale via `linkStyle` (see conventions). You can't guess which
+  flow matters, so ask; when given one, highlight it and add a kale "path to follow" swatch to the legend.
 
 ## Step 3 — Save, then preview (never chat-dump)
 
