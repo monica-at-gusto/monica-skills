@@ -67,6 +67,24 @@ consumer → docs/audit). Rank the *chain*, not each link in isolation:
 - A "moving-target" audit/doc ticket that depends on several in-flight links is **held until they
   settle** — and note it's a weak **velocity** fit anyway (doc-only, no feature PR).
 
+## Freshness & current exclusions
+
+Two signals added 2026-06-17 after a sync with Kilian — both came from a human, not from Jira:
+
+- **Ticket age / description currency.** Old tickets can carry outdated descriptions — data
+  sources, file paths, or architecture that have since moved. Do **not** tier an old ticket
+  **Ready** on its summary alone: check `updated`, and if the description predates recent
+  architecture (or the owner says it's stale), hold it as **"needs a refresh first"** and name the
+  sync to confirm scope. (2026-06-17: USPDS-305 looked like a clean sibling-of-shipped Ready, but
+  Kilian flagged it as an old ticket with an outdated description → held.)
+- **Exclude new DSA indicators (current, time-bound).** Per Kilian (2026-06-17), implementing
+  *new* indicators carries performance concerns — each one adds fetch cost in `DsaIndicatorService`
+  (cf. the active perf work in USPDS-527 / USPDS-551). Treat "Indicator: X" tickets (e.g. the
+  USPDS-255 indicator set: 305, 308, …) as **held / excluded** until that perf concern lifts. This
+  is a dated team constraint, **not permanent — revisit when the indicator-perf work lands.**
+  Tickets that render *existing* fields (e.g. USPDS-612 surfacing the existing `bucket` field) are
+  **not** new indicators and are unaffected.
+
 ## Other rules learned
 
 - **Assignee > status** as the "is it free" filter — statuses drift. The unassigned tickets
