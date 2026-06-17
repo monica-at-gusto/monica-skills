@@ -42,8 +42,12 @@ Follow `references/mermaid-conventions.md`. Non-negotiables:
 - Chart the flow *being changed*, not the whole system (unless scope is *system*).
 - Label every decision node with its real condition; label every edge with the value that takes it.
 - **Annotate fail-directions:** make explicit what nil / error / missing data does at each branch,
-  and flag with ⚠ any node that conflates "unknown" with a real value. Style: exclude/risk red,
-  keep/safe green.
+  and flag with ⚠ any node that conflates "unknown" with a real value.
+- **Color every outcome terminal** — success/keep = green, failure/error/raise = red. **Never leave an
+  outcome terminal neutral** (neutral is for intermediate *steps* only). The bug to avoid is
+  half-coloring: success terminals green while failure terminals are left neutral.
+- **Wrap wide decision labels** with `<br/>` — a diamond's interior is ~half its bounding box, so wide
+  text clips at the points. Keep diamond labels short or split them across lines.
 - **Legend — emit one whenever the chart goes beyond the self-evident vocabulary.** *Skip* it for
   plain charts (neutral *step*, green *success*, red *fail*, neutral *decision* diamond) — those decode
   on sight. But the moment a chart uses **change-classes** (added / removed / changed), a

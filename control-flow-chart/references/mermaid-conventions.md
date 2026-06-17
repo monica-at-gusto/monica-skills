@@ -10,6 +10,9 @@ Use `flowchart TD` (top-down). Quote node labels in `["..."]` (rectangles) and `
 ("Array of Hash") or rely on the preview script's HTML-escaping; raw angle brackets can
 confuse rendering on some surfaces.
 
+**Wrap wide decision labels** with `<br/>`. A diamond's interior is ~half its bounding box, so wide text
+clips at the points — keep diamond labels short or split them across lines (`"rescue:<br/>strategy_invoked?"`).
+
 ```mermaid
 flowchart TD
     Start["entry point"] --> D{"condition?"}
@@ -24,6 +27,9 @@ One method / predicate, every branch traced. Rules:
 - Each edge is labeled with the **value** that takes it (`yes` / `no` / `nil` / `true`).
 - **Terminal nodes are the actual outcomes** in the domain's vocabulary (KEEP / EXCLUDE,
   not `return true`).
+- **Color every terminal by outcome:** success/keep green, failure/error/raise red — never leave an
+  outcome terminal neutral (neutral is for intermediate steps). Half-coloring (success green, failures
+  neutral) is the bug to avoid.
 
 ## System-level chart ("zoom out")
 
