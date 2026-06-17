@@ -40,7 +40,7 @@
         }
       } catch (e) { /* fall back to whatever font is available */ }
       await mermaid.run();
-      const CHART_SCALE = 1.7;  // ◀ CHART SIZE KNOB — relative to natural displayed size; 1.0 = as-rendered, try 0.8–1.8 (font unchanged)
+      const CHART_SCALE = 1.85;  // ◀ CHART SIZE KNOB — relative to natural displayed size; 1.0 = as-rendered, try 0.8–2.0 (font unchanged)
       // Scale relative to the NATURAL displayed width (not viewBox — that overshot). width + height:auto
       // preserves the viewBox aspect, so it scales uniformly with no foreignObject reflow / clipping.
       document.querySelectorAll('.chart svg').forEach(svg => {
