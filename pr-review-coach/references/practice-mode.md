@@ -37,6 +37,10 @@ Also run this before showing any hunk; it sets the scaffolding level and whether
    session). Don't re-teach a rule she's already logged; grade against the conventions she should
    know. After the loop, append any NEW convention that surfaced as a miss. Promote to a shared
    Notion page only if/when Monica asks (when it'd help the team, not just her).
+   - **If none of the logged conventions (or weak-spot history) are relevant to this PR's changes,
+     say so explicitly up front** — e.g. "none of your logged conventions apply here; this is a pure
+     logic/dataflow review." This makes the omission read as *intentional*, so Monica knows the
+     sheet was checked and set aside, not silently forgotten.
 
 ## Before the loop — open the reference panel
 
@@ -53,6 +57,23 @@ This is the SAME data already surfaced in `meta.context` — the panel just keep
 the loop. **Never put lens findings in the panel** (it's populated before any are revealed). If
 there are no conventions and no history (first session), still open it; it shows a "fills in as
 you go" note.
+
+## Orient — establish "why does this PR exist?" (before the loop)
+
+Before the first hunk, anchor the review in the PR's purpose — leading with intent stops Monica
+evaluating lines in a vacuum (the failure mode in the PR #349312 session: she judged a dropped
+fallback without first reconstructing the motivating bug).
+
+1. **Ask Monica to state, in one line, why this PR exists** — the motivating bug or gap — inferred
+   from the diff. She may read the PR description; real reviewers always do.
+2. **Confirm or correct** against the PR's actual stated intent. If she's stuck, give it — the
+   motivating intent is orientation, not a withheld finding.
+3. **Then frame every hunk against it:** "does this change correctly address that purpose, and what
+   *else* does it change?"
+
+Boundary: the *motivating intent* is fair to surface (it's what a reviewer reads up front); the
+*lens findings* — the subtle bugs, edge cases, behavior changes, test gaps — stay withheld for her
+swing. Knowing why a PR exists does NOT reveal whether the fix is correct or complete.
 
 ## Loop (per area of concern)
 
