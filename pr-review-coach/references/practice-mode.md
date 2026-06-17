@@ -81,6 +81,11 @@ swing. Knowing why a PR exists does NOT reveal whether the fix is correct or com
    lenses flagged). Ask: *"What's your read here — anything you'd comment on, and why?"*
    Use `references/reviewer-lens.md` (bug taxonomy + Critical Questions) to pick hunks worth
    quizzing and to frame the grading.
+   - **Present the hunk as BEFORE / AFTER code blocks, not a raw unified `+`/`-` diff.**
+     Reconstruct the old and new versions as two labeled blocks ("BEFORE:" / "AFTER:"). The
+     monochrome terminal makes inline `+`/`-` markers hard to parse (confirmed in the PR #349312
+     session — Monica couldn't tell added from removed). For an add-only or delete-only hunk, show
+     the single block and label which it is.
 2. **Wait for her swing.** Let her commit to a verdict in her own words. Do not hint.
 3. **Sharpen, point by point.** Compare her read against the merged lens findings for that
    hunk and grade each point:
