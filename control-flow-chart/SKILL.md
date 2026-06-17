@@ -44,6 +44,11 @@ Follow `references/mermaid-conventions.md`. Non-negotiables:
 - **Annotate fail-directions:** make explicit what nil / error / missing data does at each branch,
   and flag with ⚠ any node that conflates "unknown" with a real value. Style: exclude/risk red,
   keep/safe green.
+- **Legend is optional (off by default).** The palette is consistent and documented in the
+  conventions, so a reader learns it once — skip the per-chart key unless the chart uses non-obvious
+  encodings (deltas) or you're sharing with someone new. **One color = one meaning** — amber is
+  reserved for "changed"; decisions are the diamond *shape* (neutral salt, never a role color). Palette
+  + type come from **Gusto Workbench tokens**. See `references/mermaid-conventions.md`.
 - **Make changes obvious:** whenever a chart represents a change — a before/after pair, a
   current→proposed variant, or a refinement of a prior version — highlight the **delta**, never
   leave the reader to diff it. Mark added / removed / changed nodes with the change `classDef`s and

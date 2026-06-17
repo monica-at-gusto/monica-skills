@@ -6,13 +6,89 @@
   <title>Control flow — __TITLE__</title>
   <script type="module">
     import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs';
-    mermaid.initialize({ startOnLoad: true, theme: 'default', securityLevel: 'loose', flowchart: { htmlLabels: true, curve: 'basis' } });
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: 'base',
+      securityLevel: 'loose',
+      themeVariables: {
+        // Gusto Workbench tokens (web/libs/workbench/tokens). Unstyled nodes + decisions = neutral salt.
+        primaryColor: '#fafafa',        // salt.100
+        primaryBorderColor: '#c8c8c8',  // salt.500
+        primaryTextColor: '#1c1c1c',    // salt.1900
+        lineColor: '#858585',           // salt.1000
+        edgeLabelBackground: '#ffffff', // salt.0
+        fontFamily: '"GCentra", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", Helvetica, Arial, sans-serif',
+        fontSize: '17px',  // text proportion within the chart (overall size is CHART_SCALE below)
+      },
+      // Room between nodes/ranks; breathing space around subgraph titles.
+      flowchart: {
+        htmlLabels: true, curve: 'basis',
+        nodeSpacing: 55, rankSpacing: 42, padding: 14,
+        subGraphTitleMargin: { top: 8, bottom: 14 },
+      },
+    });
+
+    // Render only AFTER GCentra has loaded, so Mermaid measures node widths with the real font.
+    // Otherwise it sizes boxes to the fallback and the wider GCentra text clips on the right edge.
+    async function render() {
+      try {
+        if (document.fonts && document.fonts.load) {
+          await Promise.all([
+            document.fonts.load('400 14px GCentra'),
+            document.fonts.load('600 14px GCentra'),
+          ]);
+        }
+      } catch (e) { /* fall back to whatever font is available */ }
+      await mermaid.run();
+      const CHART_SCALE = 1.7;  // ◀ CHART SIZE KNOB — relative to natural displayed size; 1.0 = as-rendered, try 0.8–1.8 (font unchanged)
+      // Scale relative to the NATURAL displayed width (not viewBox — that overshot). width + height:auto
+      // preserves the viewBox aspect, so it scales uniformly with no foreignObject reflow / clipping.
+      document.querySelectorAll('.chart svg').forEach(svg => {
+        const w = svg.getBoundingClientRect().width;
+        if (w) {
+          svg.style.width = (w * CHART_SCALE) + 'px';
+          svg.style.maxWidth = 'none';
+          svg.style.height = 'auto';
+        }
+      });
+    }
+    render();
   </script>
   <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif; margin: 2rem auto; max-width: 1100px; background: #fafafa; color: #1b1b1b; }
-    h1 { font-size: 0.95rem; color: #6a6a6a; font-weight: 600; letter-spacing: 0.02em; }
-    .chart { background: #fff; border: 1px solid #e6e6e6; border-radius: 10px; padding: 1.75rem; margin: 1.5rem 0; overflow-x: auto; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+    /* Load Gusto Workbench's GCentra from the local Workbench install (machine-specific path;
+       falls back to the system stack if absent). */
+    @font-face {
+      font-family: 'GCentra';
+      src: url('file:///Users/monica.cruz/workspace/web/libs/workbench/typefaces-gcentra/files/gcentra-book.woff2') format('woff2');
+      font-weight: 400; font-style: normal; font-display: swap;
+    }
+    @font-face {
+      font-family: 'GCentra';
+      src: url('file:///Users/monica.cruz/workspace/web/libs/workbench/typefaces-gcentra/files/gcentra-medium.woff2') format('woff2');
+      font-weight: 600; font-style: normal; font-display: swap;
+    }
+    body { font-family: 'GCentra', -apple-system, BlinkMacSystemFont, system-ui, sans-serif; margin: 2.5rem auto; max-width: 1200px; padding: 0 1.5rem; background: #fafafa; color: #1c1c1c; }
+    h1 { font-size: 0.95rem; color: #0a8080; font-weight: 600; letter-spacing: 0.02em; }  /* kale.800 brand accent */
+    .chart { background: #fff; border: 1px solid #e5e5e5; border-radius: 14px; padding: 2rem 2.5rem; margin: 2rem auto; overflow-x: auto; box-shadow: 0 1px 3px rgba(0,0,0,0.04); width: fit-content; max-width: 100%; }  /* card back, hugs + centers the chart */
     .chart pre.mermaid { margin: 0; }
+    /* Size is controlled by themeVariables.fontSize above — NOT CSS zoom, which reflows the
+       htmlLabel foreignObjects at the scaled size and clips the text. */
+
+    /* Round the corners of rectangular step/outcome nodes. */
+    .chart .node rect { rx: 12px; ry: 12px; }
+    /* stroke-linejoin softens the stroke join slightly, but a diamond's FILL stays angular —
+       CSS can't round a polygon's corners. Decisions are intentionally sharp (flowchart grammar:
+       sharp diamond = branch, rounded rect = step). Keep a clean thin border. */
+    /* Decision diamonds: neutral salt fill + a prominent 2px border (matches the weight of the
+       colored rects, but stays neutral — color is reserved for outcomes). !important overrides
+       Mermaid's inline theme stroke. */
+    .chart .node polygon, .chart .node path { fill: #fafafa !important; stroke: #9f9f9f !important; stroke-width: 2px !important; stroke-linejoin: round; }
+
+    /* Edge labels left as Mermaid defaults (custom chips around yes/no wouldn't align cleanly). */
+
+    /* Legend cluster: round it, lighten it, bigger heading. */
+    .chart .cluster rect { rx: 10px; ry: 10px; fill: #fafafa; stroke: #e5e5e5; }  /* salt.100 / salt.300 */
+    .chart .cluster-label, .chart .cluster .cluster-label .nodeLabel { font-size: 15px; font-weight: 600; }
   </style>
 </head>
 <body>
