@@ -62,9 +62,9 @@ flowchart TD
     A["unchanged"] --> B["changed branch"]:::changed
     B -->|new path| C["new outcome"]:::added
     B -.->|removed| D["old outcome"]:::removed
-    classDef added fill:#d4edda,stroke:#28a745,stroke-width:2px,stroke-dasharray:5 3,color:#1b1b1b;
-    classDef removed fill:#f8d7da,stroke:#dc3545,stroke-width:2px,stroke-dasharray:5 3,color:#777;
-    classDef changed fill:#fff3cd,stroke:#d39e00,stroke-width:3px,color:#1b1b1b;
+    classDef added fill:#e0f6e5,stroke:#008954,stroke-width:2px,stroke-dasharray:5 3,color:#1c1c1c;
+    classDef removed fill:#ffedeb,stroke:#c53336,stroke-width:2px,stroke-dasharray:5 3,color:#999;
+    classDef changed fill:#ffdea1,stroke:#c99500,stroke-width:3px,color:#1c1c1c;
 ```
 
 - **added** — green, dashed border (new node/edge).
@@ -77,14 +77,68 @@ flowchart TD
 
 ## Styling palette
 
-Keep it consistent so colors carry meaning:
-- **red** (`fill:#f8d7da,stroke:#dc3545`) — exclude / suppress / risky / ⚠ fail-direction
-- **green** (`fill:#d4edda,stroke:#28a745`) — keep / safe / happy path
-- **blue** (`fill:#d1ecf1,stroke:#0c5460`) — a returned struct / result / hand-off
-- **amber** (`fill:#fff3cd,stroke:#d39e00`) — the key decision node
+Keep it consistent so colors carry meaning. **One color = one meaning** — never reuse a hue
+for two ideas, or the chart stops being legible (this was the original sin: amber meant both
+"decision" and "changed").
+Palette: **Gusto Workbench tokens** (source: `web/libs/workbench/tokens/tokens/color/palette.json`).
+Color names below are the *role*; the shades are real Workbench semantic palettes (light fill / dark stroke).
+- **red / strawberry** — exclude / suppress / risky / ⚠ fail-direction · `fill:#ffedeb,stroke:#c53336`
+- **green / asparagus** — keep / safe / happy path · `fill:#e0f6e5,stroke:#008954`
+- **blue / cornflower** — a returned struct / result / hand-off · `fill:#ebf1ff,stroke:#006cc1`
+- **amber / ginger** — **changed behavior** only (the `changed` class; see "Making changes obvious").
+  Reserved for deltas · `fill:#ffdea1,stroke:#c99500`
+
+**Shape carries "is a decision," not a *role* color.** A decision is already a diamond (`{"..."}`);
+never give it red/green/blue/amber — those are reserved for outcome and delta. Decisions (and plain
+steps) stay **neutral salt**; the preview gives diamonds a prominent **2px** border
+(`fill:#fafafa,stroke:#9f9f9f`, text salt.1900 `#1c1c1c`) so they read as peers of the colored outcome
+boxes while staying uncolored — **color marks the *outcome*, shape marks the *question*.** Neutral is
+deliberate: ginger already owns "changed," so a colored decision would re-create the very collision we
+removed. Brand **kale** (`#0a8080`) is a non-semantic accent (headings), never a node color.
+
+Diamonds are **sharp-cornered** by design: CSS can't round a polygon's fill (only a `<rect>` has `rx`),
+and the sharp-diamond-vs-rounded-rectangle contrast is exactly what distinguishes a *branch* from a
+*step*. The preview only softens the stroke joins (`stroke-linejoin:round`).
+
+**Type:** GCentra (Workbench `type.family`) with system fallbacks, set in the preview's `themeVariables`:
+`"GCentra", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", Helvetica, Arial, sans-serif`. It
+renders if GCentra is installed locally and falls back gracefully otherwise; GitHub/Notion pick their own
+font regardless (preview-only luxury).
 
 ```mermaid
-style RiskNode fill:#f8d7da,stroke:#dc3545,stroke-width:2px,color:#1b1b1b
+style RiskNode fill:#ffedeb,stroke:#c53336,stroke-width:2px,color:#1c1c1c
+```
+
+## Legend (optional — off by default)
+
+The palette is **consistent across every chart** and documented right here, so a reader learns the
+vocabulary once and it holds everywhere — repeating a key on each chart is redundant. With the intuitive
+Workbench colors (red=exclude, green=keep, blue=struct, amber=changed) plus the diamond=decision shape,
+charts are self-evident, so **default to no legend**.
+
+Add one only when it earns its place: a chart using **less-obvious encodings** (e.g. a before/after with
+"changed" deltas), or when **sharing with someone new to the vocabulary**. When you do:
+
+- **Own fence, scoped spacing.** Give the legend its own ` ```mermaid ` fence with a `%%{init}%%` so its
+  gaps are independent of the flow (a legend embedded in the flow is stuck sharing the flow's `rankSpacing`).
+- **Scope it to what the chart uses** — only the colors/shapes actually present; a full-palette key is noise.
+- **One swatch per meaning**, styled like the real nodes. Vertical stack via `direction TB` + invisible
+  links (`A ~~~ B ~~~ C`); shrink with `classDef lg font-size:11px;`.
+
+```mermaid
+%%{init: {'flowchart': {'rankSpacing': 8, 'nodeSpacing': 12, 'padding': 6}}}%%
+flowchart TB
+    subgraph Legend [" Legend "]
+        direction TB
+        LStep["step / process"]:::lg
+        LExc["exclude / ⚠ fail-direction"]:::lg
+        LKeep["keep / safe"]:::lg
+        LDec{"decision"}:::lg
+    end
+    LStep ~~~ LExc ~~~ LKeep ~~~ LDec
+    classDef lg font-size:11px;
+    style LExc fill:#ffedeb,stroke:#c53336,color:#1c1c1c
+    style LKeep fill:#e0f6e5,stroke:#008954,color:#1c1c1c
 ```
 
 ## Worked example (decision-level, with fail-direction ⚠)
@@ -102,12 +156,24 @@ flowchart TD
     OB -->|yes| RP{"funnel ranPayroll == true?"}
     RP -->|yes| Keep2["KEEP"]
     RP -->|"no / nil"| Exclude
-    style Exclude fill:#f8d7da,stroke:#dc3545,stroke-width:2px,color:#1b1b1b
-    style Keep fill:#d4edda,stroke:#28a745,stroke-width:2px,color:#1b1b1b
-    style Keep2 fill:#d4edda,stroke:#28a745,stroke-width:2px,color:#1b1b1b
+    style Exclude fill:#ffedeb,stroke:#c53336,stroke-width:2px,color:#1c1c1c
+    style Keep fill:#e0f6e5,stroke:#008954,stroke-width:2px,color:#1c1c1c
+    style Keep2 fill:#e0f6e5,stroke:#008954,stroke-width:2px,color:#1c1c1c
 ```
 
-## Preview caveat
+(No legend — the palette is consistent and documented above. Decision diamonds render neutral salt with
+a prominent border via the preview theme; the colored terminals carry the meaning.)
 
-The HTML preview loads `mermaid` from a CDN, so it needs internet to render. The saved `.md`
-is offline-durable and renders in GitHub/Notion regardless.
+## Preview rendering
+
+The preview (`scripts/render_preview.py` → `templates/preview.html`) themes the chart with **Workbench
+tokens + GCentra**, wraps it in a single centered card, and exposes a size knob:
+- **`CHART_SCALE`** (in `preview.html`) — overall size, scaling the whole SVG via its **viewBox**
+  (uniform, no text clipping). `fontSize` is the in-chart text base; displayed size ≈ `fontSize × CHART_SCALE`.
+- Render **waits for GCentra to load before drawing** (`document.fonts.load` → `mermaid.run()`), so node
+  boxes are measured with the real font and text never clips. **Do not use CSS `zoom`** to resize — it
+  reflows the htmlLabel `foreignObject`s and clips the text.
+
+The preview loads `mermaid` from a CDN (needs internet). Styling lives in the preview, so it travels as a
+**screenshot** (the chosen workflow), *not* via the raw ` ```mermaid ` source — a GitHub/Notion render of
+the `.md` uses their default theme. The saved `.md` is the editable source of truth.
