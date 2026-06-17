@@ -59,6 +59,20 @@ why for every candidate, including held ones. A candidate without a sync target 
    `~/workspace/notes/jira-ticket-ranker/<date>-picklist.md` (run config, profile sources, each
    candidate with rationale + sync target, the held set, and a "criteria notes" section
    capturing what mattered this run).
+3. **Shareable (opt-in only, must be PDF):** do **not** generate a colleague-safe version by default —
+   make one only when Monica explicitly asks. The handoff artifact **must be a PDF** (it previews inline
+   in Slack/Gmail/Drive with no download step; a raw `.html` renders as source text until downloaded).
+   Process, all under the `shareables/` subdirectory (not the notes root):
+   - Build a sanitized HTML at
+     `~/workspace/notes/jira-ticket-ranker/shareables/jira-ticket-ranker-<project>-<date>-shareable.html`
+     — strip personal-profile material (calibration/velocity notes, in-flight "assigned to you" status
+     lines, growth-axis self-assessments like "your lighter stack" / "thin frontend axis") while keeping
+     the rankings, rationale dimensions, and sync targets intact; retitle so it doesn't read as a
+     personal to-do list.
+   - Render it to `…-shareable.pdf` (same subdirectory) with a **headless Chromium browser**
+     (`--headless=new --print-to-pdf`). The page builds its content via JS, so a non-JS converter
+     (`cupsfilter`/`wkhtmltopdf`) produces a blank page — a real browser engine is required.
+   - The **PDF is the artifact to hand off**; keep the sanitized HTML only as its render source.
 
 ## Step 6 — Pattern capture
 
