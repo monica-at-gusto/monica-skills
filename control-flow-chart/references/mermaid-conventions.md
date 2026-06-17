@@ -154,9 +154,10 @@ edges **kale** (`#0a8080` — the brand accent; edges are otherwise neutral, so 
 e.g. `linkStyle 3,5,7 stroke:#0a8080,stroke-width:3.5px`.
 
 `linkStyle` targets edges by **index** (0-based, in order of definition), so count the edges along the
-path — or just name the path to trace and (re)generate the chart with the right indices. It's plain
-`.md`, so the highlight travels to GitHub/Notion. A chart with a path-highlight should carry a legend
-(above), including a kale "path to follow" swatch.
+path. **Drawing to explain vs explore:** if the chart exists to make a point (a bug, a fix's route, where
+it breaks), trace *that* path automatically — the author knows it because the path *is* the thesis. Only
+ask which flow to trace when the chart is exploratory. It's plain `.md`, so the highlight travels to
+GitHub/Notion. A chart with a path-highlight should carry a legend (above) with a kale "path to follow" swatch.
 
 ## Worked example (decision-level, with fail-direction ⚠)
 

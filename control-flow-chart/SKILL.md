@@ -57,9 +57,11 @@ Follow `references/mermaid-conventions.md`. Non-negotiables:
   (added / removed / changed) and a one-line **What changed:** caption. **A chart with change-classes is
   by definition not self-evident → it gets a legend** (see the legend bullet above). See
   `references/mermaid-conventions.md`.
-- **Path-highlight (complex / multi-branch charts):** proactively **offer** to trace the single flow the
-  reader should follow — color its edges kale via `linkStyle` (see conventions). You can't guess which
-  flow matters, so ask; when given one, highlight it and add a kale "path to follow" swatch to the legend.
+- **Path-highlight (complex / multi-branch charts):** trace the single flow the chart is *about* with a
+  kale `linkStyle` (see conventions). **If the chart exists to make a point** — illustrate a bug, justify
+  a refactor, show the route a change takes — trace *that* path automatically; you're making the claim, so
+  you already know which flow matters. Only **ask** when the chart is exploratory and no one flow is the
+  subject. Add a kale "path to follow" swatch to the legend.
 
 ## Step 3 — Save, then preview (never chat-dump)
 
