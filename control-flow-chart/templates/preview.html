@@ -40,13 +40,17 @@
         }
       } catch (e) { /* fall back to whatever font is available */ }
       await mermaid.run();
-      const CHART_SCALE = 1.85;  // ◀ CHART SIZE KNOB — relative to natural displayed size; 1.0 = as-rendered, try 0.8–2.0 (font unchanged)
+      const CHART_SCALE = 1.85;   // ◀ FLOW size knob — relative to natural; 1.0 = as-rendered, try 0.8–2.0
+      const LEGEND_SCALE = 0.7;   // ◀ LEGEND size knob — kept small: a legend is a compact key, not a flow
       // Scale relative to the NATURAL displayed width (not viewBox — that overshot). width + height:auto
       // preserves the viewBox aspect, so it scales uniformly with no foreignObject reflow / clipping.
+      // Legends (their own fence, titled "Legend") scale separately so the flow knob doesn't blow them up.
       document.querySelectorAll('.chart svg').forEach(svg => {
+        const isLegend = (svg.textContent || '').includes('Legend');
+        const scale = isLegend ? LEGEND_SCALE : CHART_SCALE;
         const w = svg.getBoundingClientRect().width;
         if (w) {
-          svg.style.width = (w * CHART_SCALE) + 'px';
+          svg.style.width = (w * scale) + 'px';
           svg.style.maxWidth = 'none';
           svg.style.height = 'auto';
         }

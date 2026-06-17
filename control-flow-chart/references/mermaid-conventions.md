@@ -120,8 +120,13 @@ charts are self-evident, so **default to no legend**.
 - **No legend** for the self-evident vocabulary: neutral *step* rectangles, green *success/keep*, red
   *fail/exclude*, and the neutral *decision* diamond — a reader decodes those on sight.
 - **Add a legend** when the chart goes beyond that: the **change classes** (added / removed / changed),
-  a **kale path-highlight**, **blue struct/result** nodes, custom shapes — i.e. before/after and other
-  complex charts — or when sharing cold.
+  a **kale path-highlight**, **blue struct/result** nodes, custom shapes, **dotted/secondary edges** —
+  i.e. before/after and other complex charts — or when sharing cold.
+- **An edge *style* is an encoding too.** **Prefer solid edges** — let the edge *label* carry the nuance
+  (e.g. "pipeline error, strategy already set"). Use a dotted edge (`-.->`) only when a secondary /
+  fall-through distinction is genuinely load-bearing, and then **key it** with a dotted swatch in the
+  legend (`A -.-> B` labeled e.g. "secondary / fall-through"). Never leave an unexplained line style — and
+  note a dotted *edge* ≠ a dashed *node border* (which means "added").
 
 When you include one:
 
