@@ -35,10 +35,25 @@ reported by Jyoti — and the stale bulk snapshot missed/misattributed both.)
   — **omit `description`**; it's the bloat.
 - **maxResults:** 100. **responseContentFormat:** `markdown`.
 
-Even without descriptions this can exceed the token limit and get saved to a file. When it
-does: **delegate the parse to an `Agent` (Explore)** — have it read the saved file in chunks
-and return a compact table (Key · Type · Priority · Status · Assignee · Components · Summary),
-plus counts of UNASSIGNED and which components recur. The raw payload stays out of main context.
+Even without descriptions this exceeds the token limit and gets saved to a file — **as raw JSON,
+even when `responseContentFormat: markdown` was requested.** Do **not** delegate the parse to an
+`Agent` (Explore): that proved lossy (2026-06-18 — an Explore parse returned ~53 of 100 rows and
+under-counted unassigned as 10 vs the true 34). Instead **trim the saved JSON with `jq` and read
+the lean output directly** — deterministic, complete, ~28× smaller, no subagent:
+
+```bash
+jq -r '.issues[] | [.key, .fields.issuetype.name, .fields.priority.name, .fields.status.name,
+  (.fields.assignee.displayName // "UNASSIGNED"), (.fields.parent.key // "-"),
+  (.fields.parent.fields.summary // "-"), .fields.summary] | @tsv' <saved-file> > /tmp/jira-lean-<date>.tsv
+```
+
+~430KB of envelope (avatar URLs, `self` links, expanded parent/schema) → ~15KB of TSV, small
+enough to read straight into context.
+
+**Paginate — the backlog is >100 open (more than one page).** The JSON carries `isLast` and
+`nextPageToken`. If `isLast: false`, re-call `searchJiraIssuesUsingJql` with that `nextPageToken`,
+trim each page, and concatenate until `isLast: true`. **Completeness = reached `isLast: true`**,
+not a row tally.
 
 ## Step 3 — Pick finalists from the index
 
@@ -66,10 +81,11 @@ open / Backlog / unassigned the whole time):
    keys against this run's parse. For any tracked key **missing** from the parse, run a direct
    `getJiraIssue` to confirm its real status — **never infer "Done/closed" from "the parse didn't
    return it."** Only a direct status read may drop a tracked ticket.
-2. **Count reconciliation (parse-step assertion).** Have the Explore agent report how many issue
-   rows it parsed, and compare to the JQL `total` (the open set is ≤100 — a single page — so the
-   total is known). If parsed < total, the parse is lossy → re-parse or fetch the gap. This catches
-   silent drops of brand-new tickets too, which the watchlist can't (no prior record).
+2. **Completeness via pagination, not parsing.** With the deterministic `jq` parse (Step 2),
+   per-row drops are no longer the risk — *truncation* is. The open set is **>100 (multi-page)**, so
+   confirm you paginated until `isLast: true`; a run that stops at page 1 silently misses the tail.
+   (Supersedes the earlier "count vs total" idea — new-Jira JQL returns `isLast`/`nextPageToken`,
+   not a `total`.)
 
 ## Notes
 
