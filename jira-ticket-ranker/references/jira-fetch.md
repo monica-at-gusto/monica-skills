@@ -54,6 +54,23 @@ deep-fetch — enough to rank a focused 1–3 (or a 5–10 survey) with real acc
 sibling-of-shipped anchor and the toe-stepping check (find In Progress siblings under the same
 parent). Read each description for the real data source / acceptance criteria before tiering.
 
+## Parse-integrity guardrails (never infer "Done" from "absent")
+
+The bulk index is parsed by an `Agent` (Explore) reading a multi-thousand-line dump — that parse
+can silently drop rows. Two checks keep a dropped row from being mistaken for a closed ticket
+(2026-06-17/18: USPDS-623 was dropped twice and wrongly reported "ABSENT — likely Done"; it was
+open / Backlog / unassigned the whole time):
+
+1. **Carry-over watchlist (render-time precondition).** Every prior-run picklist already lists the
+   keys we surfaced (Ready + stretch + held + assigned). Before rendering, cross-reference those
+   keys against this run's parse. For any tracked key **missing** from the parse, run a direct
+   `getJiraIssue` to confirm its real status — **never infer "Done/closed" from "the parse didn't
+   return it."** Only a direct status read may drop a tracked ticket.
+2. **Count reconciliation (parse-step assertion).** Have the Explore agent report how many issue
+   rows it parsed, and compare to the JQL `total` (the open set is ≤100 — a single page — so the
+   total is known). If parsed < total, the parse is lossy → re-parse or fetch the gap. This catches
+   silent drops of brand-new tickets too, which the watchlist can't (no prior record).
+
 ## Notes
 
 - The `update_needed` label is noise here (most tickets carry it) — don't read meaning into it.
