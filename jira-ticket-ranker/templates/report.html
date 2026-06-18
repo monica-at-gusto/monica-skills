@@ -5,106 +5,117 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Jira Ticket Ranker</title>
 <style>
+  /* Colors + type mapped to @gusto/workbench-tokens v21.1.0 */
   :root {
-    --bg: #f7f7f6;
-    --card: #ffffff;
-    --ink: #1c1c1e;
-    --muted: #6b7177;
-    --line: #e7e7e4;
-    --ready: #2f9e44;
-    --stretch: #e08a00;
-    --held: #7a828a;
-    --accent: #1c1c1e;
-    --sync: #5b3fd6;
+    --type-family: "GCentra", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", Helvetica, Arial, sans-serif;
+    --bg: #fafafa;                 /* neutral surface-recessed */
+    --card: #ffffff;               /* neutral surface */
+    --ink: #1c1c1c;                /* neutral primary text */
+    --muted: #6b6b6b;              /* neutral tertiary text */
+    --line: #e5e5e5;               /* neutral-300 / divider */
+    --ready: #007a4b;              /* success primary */
+    --stretch: #b98900;            /* warning-600 */
+    --held: #929292;               /* neutral accent border */
+    --accent: #0a8080;             /* brand primary */
+    --sync: #6e56cf;               /* intelligence primary */
   }
   * { box-sizing: border-box; }
   body {
     margin: 0;
     background: var(--bg);
     color: var(--ink);
-    font: 15px/1.55 ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font: 14px/1.43 var(--type-family);   /* type-size-75 / lineHeightRatio-75 */
     -webkit-font-smoothing: antialiased;
   }
   .wrap { max-width: 760px; margin: 0 auto; padding: 40px 24px 90px; }
 
   header.top { margin-bottom: 8px; }
-  .eyebrow { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
-  h1 { font-size: 22px; font-weight: 650; margin: 6px 0 10px; letter-spacing: -.01em; }
-  .counts { display: flex; gap: 14px; flex-wrap: wrap; font-size: 13px; color: var(--muted); }
-  .counts b { color: var(--ink); font-weight: 600; }
+  .eyebrow { font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+  h1 { font-size: 24px; font-weight: 500; margin: 6px 0 10px; letter-spacing: -.01em; }   /* type-size-400, medium */
+  .counts { display: flex; gap: 14px; flex-wrap: wrap; font-size: 14px; color: var(--muted); }
+  .counts b { color: var(--ink); font-weight: 500; }
   .context { display: flex; flex-direction: column; gap: 5px; margin-top: 12px; }
-  .context .ctx { font-size: 12.5px; color: var(--muted); padding-left: 12px; border-left: 2px solid var(--line); line-height: 1.45; }
-  .context .ctx b { color: var(--ink); font-weight: 600; }
+  .context .ctx { font-size: 12px; color: var(--muted); padding-left: 12px; border-left: 2px solid var(--line); line-height: 1.45; }
+  .context .ctx b { color: var(--ink); font-weight: 500; }
 
   .banner {
-    margin: 18px 0 4px; padding: 10px 13px; border-radius: 10px;
-    background: #efebfd; border: 1px solid #e0d8fb; color: #3a2c8f;
-    font-size: 12.5px; line-height: 1.5; white-space: nowrap; overflow-x: auto;
+    margin: 18px 0 4px; padding: 10px 13px; border-radius: 8px;
+    background: #f0fcfb; border: 1px solid #cce8e7; color: #003737;   /* brand tints */
+    font-size: 12px; line-height: 1.5;
   }
-  .banner b { color: #2a1f6b; }
+  .banner b { color: #182928; }
   .rule { height: 1px; background: var(--line); margin: 22px 0; }
 
-  .tier { font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin: 26px 0 10px; }
+  .tier { font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin: 26px 0 10px; font-weight: 500; }
 
   .card {
     background: var(--card);
     border: 1px solid var(--line);
     border-left: 3px solid var(--line);
-    border-radius: 12px;
+    border-radius: 8px;
     padding: 16px 18px;
     margin: 10px 0;
   }
   .card.ready   { border-left-color: var(--ready); }
   .card.stretch { border-left-color: var(--stretch); }
-  .card.held    { border-left-color: var(--held); background: #fbfbfa; }
+  .card.held    { border-left-color: var(--held); background: #fafafa; }
 
-  .card-head { display: flex; align-items: flex-start; gap: 12px; }
-  .card h3 { font-size: 15px; font-weight: 600; margin: 0 0 4px; flex: 1; }
+  .card-head { display: flex; flex-direction: column; align-items: flex-start; gap: 7px; }
+  .card h3 {
+    font-size: 16px; font-weight: 500; margin: 0; max-width: 100%;   /* type-size-100, medium */
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
   .card h3 a { color: inherit; text-decoration: none; }
   .card h3 a:hover { text-decoration: underline; }
   .badge {
-    flex: none; font-size: 11px; letter-spacing: .07em; font-weight: 700;
+    align-self: flex-start; font-size: 11px; letter-spacing: .06em; font-weight: 500;
     padding: 2px 9px; border-radius: 999px; white-space: nowrap;
   }
-  .badge.ready   { color: #1b7a33; background: #e7f4ea; }
-  .badge.stretch { color: #9a6700; background: #fbf1dd; }
-  .badge.held    { color: #6b7177; background: #efefee; }
+  .badge.ready   { color: #007a4b; background: #e0f6e5; }   /* success */
+  .badge.stretch { color: #896500; background: #fff2df; }   /* warning */
+  .badge.held    { color: #6b6b6b; background: #f3f3f3; }   /* neutral */
 
-  .loc { font: 12.5px ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--muted); overflow-wrap: anywhere; margin-bottom: 8px; }
-  .headline { margin: 8px 0 2px; color: #34383d; }
+  .loc { font: 12px ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--muted); overflow-wrap: anywhere; margin-bottom: 8px; }
+  .headline { margin: 8px 0 2px; color: #313131; }   /* neutral-1700 */
 
-  .rats { margin: 10px 0 0; display: flex; flex-direction: column; gap: 5px; }
-  .rat { font-size: 13.5px; color: #34383d; line-height: 1.5; }
-  .rat b { color: var(--ink); font-weight: 600; }
-  .rat .lbl {
-    display: inline-block; min-width: 132px; color: var(--muted);
-    font-size: 11px; letter-spacing: .04em; text-transform: uppercase; font-weight: 600;
-    vertical-align: top;
+  .rats { margin: 12px 0 0; display: flex; flex-direction: column; gap: 9px; }
+  .rat {
+    font-size: 14px; color: #313131; line-height: 1.43;
+    display: grid; grid-template-columns: 118px 1fr; gap: 0 16px; align-items: baseline;
   }
-  .rat .val { display: inline; }
+  .rat b { color: var(--ink); font-weight: 500; }
+  .rat .lbl {
+    color: var(--muted);
+    font-size: 11px; letter-spacing: .04em; text-transform: uppercase; font-weight: 500;
+    line-height: 1.7;
+  }
+  .rat .val { display: block; }
+  @media (max-width: 540px) {
+    .rat { grid-template-columns: 1fr; gap: 1px; }
+  }
 
   .sync {
-    margin: 12px 0 0; padding: 9px 12px; border-radius: 9px;
-    background: #f3f1fd; border: 1px solid #e2dcfa; color: #2a1f6b;
+    margin: 12px 0 0; padding: 9px 12px; border-radius: 8px;
+    background: #f9f5fe; border: 1px solid #e6dff9; color: #320a93;   /* intelligence tints */
     font-size: 13px; line-height: 1.5;
   }
-  .sync .who { font-weight: 700; color: var(--sync); }
-  .sync .lbl { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: #6f63c4; font-weight: 700; margin-right: 6px; }
+  .sync .who { font-weight: 500; color: var(--sync); }
+  .sync .lbl { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: #6e56cf; font-weight: 500; margin-right: 6px; }
 
-  .note { margin: 10px 0 0; padding: 9px 12px; border-radius: 9px; background: #fbf1dd; border: 1px solid #f3e6c4; color: #7a5600; font-size: 12.5px; line-height: 1.5; }
-  .note b { color: #5c4100; }
+  .note { margin: 10px 0 0; padding: 9px 12px; border-radius: 8px; background: #fff2df; border: 1px solid #ffdea1; color: #6b4e00; font-size: 12px; line-height: 1.5; }   /* warning tints */
+  .note b { color: #402d00; }
 
   .pills { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px; }
   .pill {
-    font-size: 11.5px; color: var(--muted);
-    background: #f1f1ef; border: 1px solid var(--line);
+    font-size: 11px; color: var(--muted);
+    background: #f3f3f3; border: 1px solid var(--line);
     padding: 1px 8px; border-radius: 999px;
   }
-  .pill.prio   { color: #b42318; background: #fbeae8; border-color: #f3d6d2; }
-  .pill.prio.med { color: #9a6700; background: #fbf1dd; border-color: #f3e6c4; }
-  .pill.free   { color: #1b7a33; background: #e7f4ea; border-color: #d6ecdc; }
-  .pill.stack  { color: #0e7490; background: #e6f6f9; border-color: #cdeef3; }
-  .pill.epic   { color: #5b3fd6; background: #efebfd; border-color: #e0d8fb; }
+  .pill.prio   { color: #c53336; background: #ffedeb; border-color: #ffdad7; }   /* error */
+  .pill.prio.med { color: #896500; background: #fff2df; border-color: #ffdea1; } /* warning */
+  .pill.free   { color: #007a4b; background: #e0f6e5; border-color: #bceece; }   /* success */
+  .pill.stack  { color: #0a8080; background: #e5f4f3; border-color: #cce8e7; }   /* brand */
+  .pill.epic   { color: #6e56cf; background: #f4eefd; border-color: #e6dff9; }   /* intelligence */
 
   .held .headline { color: var(--muted); }
   footer.foot { margin-top: 30px; font-size: 12px; color: var(--muted); text-align: center; line-height: 1.5; }
@@ -127,6 +138,10 @@
 <script>
 // The skill replaces the whole block between the START/END markers (inclusive)
 // with: const RANK = <JSON literal>;  (see SKILL.md Step 5 for the shape).
+// meta supports: title, generated, jiraBase, counts {ready,stretch,held},
+//   backlog (string — total open scanned, e.g. "127"), config, context[], banner.
+// tickets[]: key, tier (ready|stretch|held), badge, summary, headline,
+//   rationale[] {lbl,val}, sync {who,why}, optional note, pills[].
 /* __RANK_DATA_START__ */
 const RANK = {
   meta: {
@@ -134,9 +149,10 @@ const RANK = {
     generated: "—",
     jiraBase: "https://gustohq.atlassian.net/browse/",
     counts: { ready: 0, stretch: 0, held: 0 },
+    backlog: "",
     config: "",
     context: [],
-    banner: "A <b>shortlist, not a claim</b> — <b>sync with the person before you pick it up</b>. The human gate is mandatory."
+    banner: "A <b>shortlist, not a claim</b> — sync with the owner before you pick anything up."
   },
   tickets: []
 };
@@ -164,10 +180,12 @@ function render() {
   document.getElementById("title").textContent = m.title;
 
   const c = m.counts || {};
+  const backlogSpan = m.backlog ? `<span>scanned <b>${m.backlog}</b> open</span>` : "";
   document.getElementById("counts").innerHTML =
     `<span><b>${c.ready||0}</b> ready</span>` +
     `<span><b>${c.stretch||0}</b> stretch</span>` +
     `<span><b>${c.held||0}</b> considered</span>` +
+    backlogSpan +
     `<span>generated <b>${m.generated}</b></span>`;
 
   const ctx = (m.config ? [m.config] : []).concat(m.context || []);
@@ -196,9 +214,12 @@ function card(t) {
   const card = el("div", "card " + t.tier);
 
   const head = el("div", "card-head");
+  if (t.badge) head.appendChild(el("span", "badge " + t.tier, t.badge));
   const h3 = el("h3");
+  const fullTitle = (t.key ? t.key + " — " : "") + t.summary;
+  h3.title = fullTitle;
   if (t.key) {
-    const a = el("a", null, t.key + " — " + t.summary);
+    const a = el("a", null, fullTitle);
     a.href = (RANK.meta.jiraBase || "") + t.key;
     a.target = "_blank"; a.rel = "noopener";
     h3.appendChild(a);
@@ -206,7 +227,6 @@ function card(t) {
     h3.textContent = t.summary;
   }
   head.appendChild(h3);
-  if (t.badge) head.appendChild(el("span", "badge " + t.tier, t.badge));
   card.appendChild(head);
 
   if (t.loc) card.appendChild(el("div", "loc", t.loc));
