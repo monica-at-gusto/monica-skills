@@ -50,7 +50,8 @@ why for every candidate, including held ones. A candidate without a sync target 
 
 1. **Page:** read `templates/report.html`; replace the block between the
    `__RANK_DATA_START__` / `__RANK_DATA_END__` markers with `const RANK = <json>;`. The JSON
-   carries `meta` (`title`, `generated` [today's date], `jiraBase`, `counts`, `config`,
+   carries `meta` (`title`, `generated` [today's date], `jiraBase`, `counts`, `backlog`
+   [string — total open tickets scanned, e.g. `"127"`; renders as "scanned N open"], `config`,
    `context[]`, `banner`) and `tickets[]` (`key`, `tier` [`ready`|`stretch`|`held`], `badge`,
    `summary`, `loc`, `headline`, `rationale[]` [`{lbl, val}` — one per ranking dimension],
    `sync` [`{who, why}`], optional `note`, `pills[]`). Write to
