@@ -53,7 +53,9 @@ enough to read straight into context.
 **Paginate — the backlog is >100 open (more than one page).** The JSON carries `isLast` and
 `nextPageToken`. If `isLast: false`, re-call `searchJiraIssuesUsingJql` with that `nextPageToken`,
 trim each page, and concatenate until `isLast: true`. **Completeness = reached `isLast: true`**,
-not a row tally.
+not a row tally. **`nextPageToken`s expire in ~1–2 minutes** — fire the paginate calls
+back-to-back (don't narrate, run other tools, or hand-copy the token across turns between them),
+or the token invalidates and you have to restart from page 1.
 
 ## Step 3 — Pick finalists from the index
 

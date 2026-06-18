@@ -180,7 +180,7 @@ function render() {
   document.getElementById("title").textContent = m.title;
 
   const c = m.counts || {};
-  const backlogSpan = m.backlog ? `<span>scanned <b>${m.backlog}</b> open</span>` : "";
+  const backlogSpan = m.backlog ? `<span><b>${m.backlog}</b> tickets scanned</span>` : "";
   document.getElementById("counts").innerHTML =
     `<span><b>${c.ready||0}</b> ready</span>` +
     `<span><b>${c.stretch||0}</b> stretch</span>` +
