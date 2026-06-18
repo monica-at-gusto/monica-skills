@@ -33,8 +33,14 @@ def main() -> None:
         for block in blocks
     )
 
+    # Title = "<JIRA-TICKET> · <chart slug>". The ticket is the notes parent dir (…/notes/USPDS-592/);
+    # fall back to "control-flow-chart" for ad-hoc charts (e.g. in /tmp) where the parent isn't a ticket.
+    parent = md_path.parent.name
+    ticket = parent if re.fullmatch(r"[A-Z][A-Z0-9]+-\d+", parent) else "control-flow-chart"
+    title = f"{ticket} · {md_path.stem}"
+
     out = Path("/tmp") / f"control-flow-{md_path.stem}.html"
-    out.write_text(template.replace("<!--CHARTS-->", charts).replace("__TITLE__", md_path.stem))
+    out.write_text(template.replace("<!--CHARTS-->", charts).replace("__TITLE__", title))
 
     subprocess.run(["open", str(out)], check=False)
     print(f"Preview opened: {out}  ({len(blocks)} chart{'s' if len(blocks) != 1 else ''})")
