@@ -10,6 +10,11 @@ judge_domain_context: |
     (the only record of the in-person 1:1 itself — no auto-fallback).
   - A source-coverage line (bullets per source, primary attribution) + a conditional staleness
     flag replace the earlier chart idea; counts are documented as text, not charted.
+  - Jira (assigned tickets since the anchor + tickets named in notes/Slack) → wins (Done),
+    current focus/blockers (In Review/In Progress). CROSS-CHECK Jira against git/Slack: this team
+    lags on Jira hygiene, so Jira status is a claim, not truth. When git/Slack show work merged but
+    Jira says Backlog, reconcile to the real (merged) state AND surface the mismatch as a
+    visibility talking point — never report shipped work as not-done just because Jira lags.
   - Tiers: Since last time (carry-over) · Career & growth · Goals & expectations · Team ·
     Blockers · (optional) Worth remembering footer.
   - ALTITUDE FILTER (the defining rule): elevate raw signals into 1:1 language; drop pure code
