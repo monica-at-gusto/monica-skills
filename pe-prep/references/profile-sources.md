@@ -16,19 +16,30 @@ they can observe. (This mirrors `jira-ticket-ranker`'s profile sources; keep the
    recorded; otherwise the latest `prudhvi-1-1/` note date. Pull standups, sprint planning,
    working sessions for tactical/team signal — to be ELEVATED, not quoted (see
    `synthesis-rules.md`).
-3. **git/PRs since the anchor date** — `git log` and `gh pr list --author=@me` /
+3. **Slack, bounded to since the anchor** — two scopes:
+   - **Prudhvi DMs** — resolve the user with `slack_search_users` ("prudhvi" / `@prudhvi`), then
+     read the DM via `slack_read_thread` / `slack_search_public_and_private` (`from:@prudhvi` to
+     her, and hers to him). This is async **manager signal** → feeds **Career & growth** and
+     **Goals & expectations** (asks he made, feedback, things he flagged), plus parked follow-ups.
+   - **USP channels (auto-detected)** — `slack_search_channels` for `usp` / `uspds` / `dsa`,
+     keep the ones she's a member of, then `slack_read_channel` for messages since the anchor.
+     Team/blocker signal → **Team** and **Blockers**, ELEVATED not dumped (channels are noisy).
+   Slack is sensitive: read-only, altitude-filtered hard, and DM content stays local.
+4. **git/PRs since the anchor date** — `git log` and `gh pr list --author=@me` /
    `gh search prs --author=@me`. Used for carry-over reconciliation and wins.
-4. **Notion Road to L1 + L1 Axes — Evidence Tracker** (`notion-search` "Road to L1", then
+5. **Notion Road to L1 + L1 Axes — Evidence Tracker** (`notion-search` "Road to L1", then
    `notion-fetch`). Career/growth: axis gaps, horizon framing.
-5. **Notion Actionables** (child of Road to L1). Goals/commitments with a "by when" + axis,
+6. **Notion Actionables** (child of Road to L1). Goals/commitments with a "by when" + axis,
    including explicit **"ask Prudhvi"** items — these are direct talking points.
-6. **`~/workspace/notes/apprenticeship/progress-tracker.md`** — calibration verdict, active
+7. **`~/workspace/notes/apprenticeship/progress-tracker.md`** — calibration verdict, active
    levers. Extra color when fresh.
-7. **Impact Log Google Doc** (optional, via `gdocs fetch`) — "worth naming" material. Degrade if
+8. **Impact Log Google Doc** (optional, via `gdocs fetch`) — "worth naming" material. Degrade if
    absent.
 
 ## Spine vs enrichment
 
-- **Spine (reliable, auto):** Granola + git/PRs.
-- **Enrichment (manual, use-if-present):** the notes, Road-to-L1, Actionables, progress-tracker,
-  Impact Log. Never a hard dependency — the skill must still produce a useful agenda without them.
+- **Spine (reliable, auto):** Granola + Slack + git/PRs. These need no manual upkeep, so the
+  skill stays useful even when note-keeping lapses.
+- **Enrichment (manual, use-if-present):** the 1:1 notes, Road-to-L1, Actionables,
+  progress-tracker, Impact Log. Never a hard dependency — still produce a useful agenda without
+  them (the in-person 1:1's *content*, though, only the note can supply).
