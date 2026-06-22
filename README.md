@@ -65,18 +65,26 @@ team, and blockers, **not** a technical sync. Output is a paste-ready Lattice ag
 /pe-prep [person] [--growth] ["<topic>"]
 ```
 
-- **Sources:** Granola + Slack (Prudhvi DMs + auto-detected USP channels) + git/PRs (the reliable
-  spine), enriched by Notion Road-to-L1 + Actionables and my `prudhvi-1-1/` notes. The in-person
-  1:1 isn't recorded, so the manual note is the only record of it — used if present, never a hard
-  dependency.
+- **Sources:** Granola + Slack (Prudhvi DMs + auto-detected USP channels) + git/PRs + Jira (the
+  reliable spine), enriched by Notion Road-to-L1 + Actionables and my `prudhvi-1-1/` notes. The
+  in-person 1:1 isn't recorded, so the manual note is the only record of it — used if present,
+  never a hard dependency.
+- **Jira cross-check:** Jira status is a *claim*, not truth (the team lags on hygiene). The skill
+  reconciles it against git/Slack and, when shipped work is still in Backlog, flags the mismatch
+  as a visibility talking point rather than reporting the work as not-done.
 - **Altitude filter:** elevates standup/code signal into career/team/goal/blocker language; drops
   code minutiae. The defining synthesis rule.
 - **Self-sustaining loop:** writes the agenda into `prudhvi-1-1/<date>.md`, which I annotate after
   the 1:1 — so it seeds the next run and the note never goes stale.
-- **Carry-over reconciliation:** matches last meeting's action items against git/PRs (suggested,
-  verify) to sort them into wins vs follow-ups.
-- **Output:** a Workbench-styled HTML report (linked receipts, source-coverage line, **Copy-for-Lattice**
-  button) + the living agenda note + a trimmed Lattice block on the clipboard.
+- **Carry-over reconciliation:** matches last meeting's action items against git/PRs + Jira
+  (suggested, verify) to sort them into wins vs follow-ups.
+- **Patterns + tags:** detects recurring L1/L2 behaviors from my scratchpads (≥2 entries = a
+  pattern, one-offs don't count) into a *Patterns I've shown this cycle* section; tags wins
+  `(highlight)`, asks `(blocker)`, and the performance axis (`velocity`…) on each bullet — written
+  in my plain spoken voice.
+- **Output:** a Workbench-styled HTML report (linked receipts, source-coverage line, per-bullet
+  checkboxes + a **Copy-for-Lattice** button that copies only the bullets I tick) + the living
+  agenda note in `prudhvi-1-1/<date>.md`.
 - **Detail lives in `pe-prep/references/`**; SKILL.md stays lean. Evals: `pe-prep/evals/` —
   `cd pe-prep && uv run skill-evals`.
 
