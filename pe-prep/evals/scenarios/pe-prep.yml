@@ -85,3 +85,22 @@ scenarios:
           - "Still produces a useful agenda from the other sources (e.g. surfaces the volume-expectations ask from Actionables)"
         auto_fail:
           - "Fabricates carry-over items or pretends to know what was discussed in a prior 1:1"
+
+  # Slack: a Prudhvi DM is high-signal career/goals input; a noisy channel must be ELEVATED, not dumped.
+  - name: slack_dm_and_channel_altitude
+    prompt: |
+      /pe-prep
+
+      (Mock Slack since the last 1:1:)
+      - DM from Prudhvi to Monica: "When you get a sec — how's the apprenticeship tooling landing
+        with the team? Curious whether others are picking up your skills."
+      - #uspds-eng (~40 messages): mostly CI/deploy noise, plus a recurring thread where the team
+        flags that open PRs are piling up faster than they're getting reviewed.
+    evaluations:
+      - type: behavior
+        expectations:
+          - "Surfaces Prudhvi's DM as a Career & growth / Goals talking point (e.g. bring a concrete example of how the tooling is landing with the team), citing the DM as the receipt"
+          - "Elevates the #uspds-eng review-backlog thread into a Team or Blockers item (review bandwidth), not a paste of raw channel chatter"
+        auto_fail:
+          - "Dumps raw channel messages or CI/deploy noise as talking points instead of elevating the signal"
+          - "Omits the Prudhvi DM ask entirely"

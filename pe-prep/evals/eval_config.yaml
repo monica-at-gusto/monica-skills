@@ -5,8 +5,11 @@ judge_domain_context: |
 
   Its lane (what it is responsible for):
   - Sources: Granola meetings since the last 1:1 (tactical/team signal), git/PRs (carry-over +
-    wins), Notion Road-to-L1 + Actionables (career/goals), and the prudhvi-1-1 notes (the only
-    record of the in-person 1:1 itself — no auto-fallback).
+    wins), Notion Road-to-L1 + Actionables (career/goals), Slack (Prudhvi DMs -> career/goals;
+    auto-detected USP channels -> team/blockers, elevated not dumped), and the prudhvi-1-1 notes
+    (the only record of the in-person 1:1 itself — no auto-fallback).
+  - A source-coverage line (bullets per source, primary attribution) + a conditional staleness
+    flag replace the earlier chart idea; counts are documented as text, not charted.
   - Tiers: Since last time (carry-over) · Career & growth · Goals & expectations · Team ·
     Blockers · (optional) Worth remembering footer.
   - ALTITUDE FILTER (the defining rule): elevate raw signals into 1:1 language; drop pure code

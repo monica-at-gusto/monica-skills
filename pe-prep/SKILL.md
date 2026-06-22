@@ -1,16 +1,17 @@
 ---
 name: pe-prep
-description: Compose forward-looking talking points for my 1:1 with my PE (default Prudhvi) — career, goals, team, and blockers, NOT a technical sync. Pulls from Granola (since last 1:1), git/PRs, Notion Road-to-L1 + Actionables, and my prudhvi-1-1 notes; writes a paste-ready Lattice agenda into prudhvi-1-1/<date>.md. Use before a 1:1 / PE sync, to prep career or growth talking points, or invoke /pe-prep. Candidates, not a script — I pick and edit.
+description: Compose forward-looking talking points for my 1:1 with my PE (default Prudhvi) — career, goals, team, and blockers, NOT a technical sync. Pulls from Granola (since last 1:1), git/PRs, Notion Road-to-L1 + Actionables, Slack (Prudhvi DMs + USP channels), and my prudhvi-1-1 notes; renders a Workbench-styled HTML report (linked receipts, source-coverage line, Copy-for-Lattice button) and writes a paste-ready agenda into prudhvi-1-1/<date>.md. Use before a 1:1 / PE sync, to prep career or growth talking points, or invoke /pe-prep. Candidates, not a script — I pick and edit.
 argument-hint: "[person (default Prudhvi)] [--growth] [\"<topic>\"]"
-allowed-tools: [Read, Write, Edit, Grep, Glob, Agent, AskUserQuestion, "Bash(open *)", "Bash(pbcopy)", "Bash(git log *)", "Bash(git -C * log *)", "Bash(gh pr list *)", "Bash(gh search prs *)", mcp__granolagusto__list_meetings, mcp__granolagusto__query_granola_meetings, mcp__granolagusto__get_meetings, mcp__notiongusto__notion-search, mcp__notiongusto__notion-fetch, mcp__gdocsgusto__fetch]
+allowed-tools: [Read, Write, Edit, Grep, Glob, Agent, AskUserQuestion, "Bash(open *)", "Bash(pbcopy)", "Bash(git log *)", "Bash(git -C * log *)", "Bash(gh pr list *)", "Bash(gh search prs *)", mcp__granolagusto__list_meetings, mcp__granolagusto__query_granola_meetings, mcp__granolagusto__get_meetings, mcp__notiongusto__notion-search, mcp__notiongusto__notion-fetch, mcp__gdocsgusto__fetch, mcp__slackgustoofficialmcp__slack_search_users, mcp__slackgustoofficialmcp__slack_search_channels, mcp__slackgustoofficialmcp__slack_search_public_and_private, mcp__slackgustoofficialmcp__slack_read_channel, mcp__slackgustoofficialmcp__slack_read_thread, mcp__slackgustoofficialmcp__slack_read_user_profile]
 ---
 
 # pe-prep
 
 Compose forward-looking talking points for Monica's 1:1 with her PE (default Prudhvi). The 1:1
-is for **career, goals, team, and blockers — not a technical sync**. Output is a paste-ready
-Lattice agenda, written into `~/workspace/notes/prudhvi-1-1/<target-date>.md` so it doubles as
-the seed for that meeting's note. **Candidates, not a script** — Monica picks and edits.
+is for **career, goals, team, and blockers — not a technical sync**. Output is a Workbench-styled
+HTML report (opened in the browser) plus a paste-ready Lattice agenda, written into
+`~/workspace/notes/prudhvi-1-1/<target-date>.md` so it doubles as the seed for that meeting's
+note. **Candidates, not a script** — Monica picks and edits.
 
 ## Invocation
 
@@ -28,9 +29,9 @@ otherwise use the defaults and say which you used.
 ### Step 1 — Build the source picture
 Follow `references/profile-sources.md`. Determine the anchor date (most recent recorded
 "Monica / Prudhvi" Granola meeting, else the latest `prudhvi-1-1/` note date). Read the last 1:1
-note, bounded Granola since the anchor, git/PRs since the anchor, Road-to-L1 + Actionables, and
-(optional) progress-tracker + Impact Log. If the last note is missing/stale, flag it for
-degradation.
+note, bounded Granola since the anchor, git/PRs since the anchor, Road-to-L1 + Actionables,
+**Slack (Prudhvi DMs + auto-detected USP channels, since the anchor)**, and (optional)
+progress-tracker + Impact Log. If the last note is missing/stale, flag it for degradation.
 
 ### Step 2 — Reconcile carry-over
 Follow `references/synthesis-rules.md` (Carry-over). Match each open action item AND parked
@@ -44,8 +45,10 @@ footer from the note's own `Pattern to watch` lines. With `--growth`, weight Car
 lighter on Team/Blockers. With a quoted `"<topic>"`, focus the whole agenda on that topic.
 
 ### Step 4 — Render & present (THIS IS THE DELIVERABLE)
-Determine `<target-date>` (next 1:1 occurrence; default today if unknown). Fill
-`templates/agenda.md` (full, with receipts) and `templates/lattice-block.md` (trimmed).
+Determine `<target-date>` (next 1:1 occurrence; default today if unknown). Compute the
+**source-coverage line** (bullets per source, by primary receipt — see synthesis-rules) and the
+**staleness flag**. Fill `templates/agenda.md` (full, with receipts), `templates/lattice-block.md`
+(trimmed), and the `templates/report.html` data block (its `__AGENDA_DATA__` contract).
 
 **Your reply MUST contain the complete rendered agenda — every tier, every bullet, with its
 receipt — as plain text, and it must come FIRST in your reply, before any commentary.** Render
@@ -56,12 +59,14 @@ even when no write/clipboard tools are available. If you catch yourself writing 
 "I'll write the plan" about the agenda, stop and write the agenda itself instead.
 
 ### Step 5 — Persist (side effects, not the deliverable)
-After presenting the agenda, also write the full version to
+After presenting the agenda, persist it three ways: (1) write the full version to
 `~/workspace/notes/prudhvi-1-1/<target-date>.md` (if a file exists for that date, show a diff and
-ask before overwriting) and copy the Lattice block to the clipboard (`pbcopy`; write to a temp
-file first if large). If these tools are unavailable in the current environment, still deliver
-the rendered agenda from Step 4 — the file write and clipboard are conveniences, never a
-substitute for presenting the agenda.
+ask before overwriting); (2) build the HTML report — fill `templates/report.html`'s
+`__AGENDA_DATA__` block, write to `/tmp/pe-prep-<target-date>.html`, and `open` it (it carries the
+source-coverage line, linked receipts, and a **Copy-for-Lattice** button); (3) copy the Lattice
+block to the clipboard (`pbcopy`; temp file first if large). If any tool is unavailable, still
+deliver the rendered agenda from Step 4 — persistence is a convenience, never a substitute for
+presenting the agenda.
 
 ### Step 6 — Post-1:1 nudge
 Tell Monica: the agenda is in `prudhvi-1-1/<target-date>.md`; after the (in-person) 1:1, jot what
@@ -75,12 +80,17 @@ was actually discussed under "What we actually discussed" — that seeds the nex
 - **Candidates, not a script.** Monica picks and edits; never decide what she'll say.
 - **Altitude: non-technical.** Elevate signals to career/goals/team/blocker framing; drop code
   minutiae. The 1:1 is not a standup.
-- **Every point carries a receipt.** No fabricated or ungrounded talking points.
+- **Every point carries a receipt.** No fabricated or ungrounded talking points. Link receipts to
+  their source when one exists (note `file://`, git commit, Notion page, Slack permalink).
 - **Carry-over is suggested, verify.** Never assert "done" without her confirmation.
 - **Footer is echo-only (v1).** Quote her own `Pattern to watch` lines; generate no new analysis.
-- **Graceful degradation.** If the last 1:1 note is missing/stale, say so and lean on the other
-  sources; don't invent 1:1 context.
-- **Read-only on sources.** Writes only the agenda file + clipboard. Never posts to Lattice or
-  messages anyone.
-- **Bounded Granola** — only meetings since the last 1:1.
-- **Stays local.** The agenda lives in `~/workspace/notes/`; nothing is pushed externally.
+- **Graceful degradation.** If the last 1:1 note is missing/stale, say so (and reflect it in the
+  staleness flag); lean on the other sources; don't invent 1:1 context.
+- **Read-only on sources.** Writes only the agenda file, the HTML report, and clipboard. Never
+  posts to Lattice/Slack or messages anyone.
+- **Bounded Granola + Slack** — only meetings/messages since the last 1:1; altitude-filter Slack
+  hard (channels are noisy — elevate, never dump).
+- **Slack stays private + local.** Prudhvi DMs inform career/goals; DM content lives only in the
+  local agenda/report, never posted anywhere.
+- **Stays local.** The agenda + report live on disk (`~/workspace/notes/`, `/tmp/`); nothing is
+  pushed externally.
