@@ -57,6 +57,12 @@ li:last-child{border-bottom:none;}
 .chip.done{background:#e3f3ec;color:var(--strength);}
 .chip.open{background:#f0f0f0;color:var(--muted);}
 .chip.ask{background:#eaf0f0;color:var(--accent);}
+.chip.win{background:#e3f3ec;color:var(--accent);font-weight:500;}
+.chip.blocker{background:#fbe9e9;color:var(--critical);font-weight:500;}
+.axis{display:inline-block;font-size:10.5px;border:1px solid var(--line-strong);color:var(--faint);border-radius:4px;padding:0 6px;margin-right:7px;vertical-align:1px;letter-spacing:.02em;}
+li{display:flex;align-items:baseline;gap:9px;}
+.pick{flex:none;margin-top:4px;cursor:pointer;accent-color:var(--accent);}
+li.unpicked{opacity:.4;}
 .receipt{display:block;color:var(--faint);font-size:12px;font-style:italic;margin-top:3px;}
 .receipt a{color:var(--accent);font-style:normal;text-decoration:underline;text-decoration-color:var(--line-strong);text-underline-offset:2px;}
 .receipt a:hover{text-decoration-color:var(--accent);}
@@ -79,6 +85,7 @@ li:last-child{border-bottom:none;}
 <textarea class="hiddenbox" id="latticeText"></textarea>
 <script>
 const AGENDA = __AGENDA_DATA__;
+var BULLETS = [];
 
 function esc(s){ return String(s==null?"":s).replace(/[&<>]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;"}[c];}); }
 function receiptHtml(rs){
@@ -110,8 +117,11 @@ function receiptHtml(rs){
     h += '<section><h2>'+esc(sec.title)+'</h2><ul>';
     sec.bullets.forEach(function(b){
       var chip = b.chip ? '<span class="chip '+esc(b.chipClass||"")+'">'+esc(b.chip)+'</span>' : '';
+      var axis = b.axis ? '<span class="axis">'+esc(b.axis)+'</span>' : '';
       var rec = receiptHtml(b.receipts);
-      h += '<li>'+chip+esc(b.text)+(rec ? '<span class="receipt">'+rec+'</span>' : '')+'</li>';
+      var idx = BULLETS.length; BULLETS.push({sec: sec.title, text: b.text});
+      h += '<li><input type="checkbox" class="pick" data-idx="'+idx+'" checked>'
+         + '<span class="bd">'+chip+axis+esc(b.text)+(rec ? '<span class="receipt">'+rec+'</span>' : '')+'</span></li>';
     });
     h += '</ul></section>';
   });
@@ -124,14 +134,27 @@ function receiptHtml(rs){
   document.getElementById("latticeText").value = AGENDA.lattice || "";
 })();
 
+function buildLattice(){
+  var order=[], bySec={};
+  document.querySelectorAll('input.pick:checked').forEach(function(cb){
+    var b=BULLETS[+cb.dataset.idx]; if(!bySec[b.sec]){bySec[b.sec]=[];order.push(b.sec);} bySec[b.sec].push(b.text);
+  });
+  var out='1:1 with '+AGENDA.person+' — '+AGENDA.date+'\n';
+  order.forEach(function(sname){ out+='\n'+sname+':\n'+bySec[sname].map(function(t){return '- '+t;}).join('\n')+'\n'; });
+  return out.trim();
+}
 function copyOut(text, ok){
   var done=false;
   try{ navigator.clipboard.writeText(text); done=true; }catch(e){}
-  if(!done){ var ta=document.getElementById("latticeText"); ta.select(); try{document.execCommand("copy");done=true;}catch(e){} }
+  if(!done){ var ta=document.getElementById("latticeText"); ta.value=text; ta.select(); try{document.execCommand("copy");done=true;}catch(e){} }
   document.getElementById("toast").textContent = done ? ok : "Select the box and copy manually.";
 }
+document.addEventListener("change",function(e){
+  if(e.target.classList && e.target.classList.contains("pick")){ e.target.closest("li").classList.toggle("unpicked", !e.target.checked); }
+});
 document.getElementById("copyLattice").addEventListener("click",function(){
-  copyOut(document.getElementById("latticeText").value, "Copied — paste into your Lattice 1:1 agenda.");
+  var n=document.querySelectorAll('input.pick:checked').length;
+  copyOut(buildLattice(), 'Copied '+n+' point'+(n===1?'':'s')+' — paste into your Lattice 1:1 agenda.');
 });
 </script>
 </body>

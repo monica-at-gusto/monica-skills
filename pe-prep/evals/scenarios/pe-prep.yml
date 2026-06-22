@@ -104,3 +104,43 @@ scenarios:
         auto_fail:
           - "Dumps raw channel messages or CI/deploy noise as talking points instead of elevating the signal"
           - "Omits the Prudhvi DM ask entirely"
+
+  # Jira lags reality on this team — cross-check against git, don't trust Jira status blindly.
+  - name: jira_lags_flag_mismatch
+    prompt: |
+      /pe-prep
+
+      (Mock last 1:1 note action item:)
+      - [ ] Ship the details_text backend work (USPDS-627 / USPDS-628)
+      (Mock git log since the anchor:)
+      - a1b2c3d Merge USPDS-627: add details_text to prioritized_companies output
+      - d4e5f6a Merge USPDS-628: switch Details column to backend details_text
+      (Mock Jira:)
+      - USPDS-627 — status: Backlog, assignee: none
+      - USPDS-628 — status: Backlog, assignee: none
+    evaluations:
+      - type: behavior
+        expectations:
+          - "Reconciles 627/628 to their REAL state (merged/shipped, per git) — treats them as done work, NOT as not-done just because Jira says Backlog"
+          - "Surfaces the Jira-vs-reality mismatch itself as a talking point (shipped work not reflected in Jira → visibility / velocity-on-paper risk)"
+        auto_fail:
+          - "Reports 627/628 as not done / still in backlog because Jira says so"
+          - "Trusts Jira status over the git evidence that the work merged"
+
+  # Behavior patterns require recurrence (>=2 entries); one-offs stay scratchpad entries.
+  - name: patterns_require_recurrence
+    prompt: |
+      /pe-prep
+
+      (Mock L1-ish behavior scratchpad, entries since the last 1:1:)
+      - 2026-06-12: Caught Claude framing the supportTier enum wrong before I merged — corrected it.
+      - 2026-06-18: Flagged that the AI's recipe-fallback assumption didn't match prod behavior.
+      - 2026-06-20: Paired with Kilian on USPDS-611 for an afternoon.
+    evaluations:
+      - type: behavior
+        expectations:
+          - "Groups the two 'caught the AI's wrong framing' entries (06-12, 06-18) into ONE pattern under 'Patterns I've shown this cycle', with a title in Monica's voice, both dated citations, and a suggested talking point"
+          - "Does NOT promote the single Kilian-pairing entry (06-20) to a pattern — one-offs stay scratchpad entries"
+        auto_fail:
+          - "Promotes a single one-off entry to a pattern (no recurrence)"
+          - "Fabricates a pattern not backed by >=2 dated scratchpad entries"

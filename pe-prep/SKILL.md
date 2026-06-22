@@ -1,8 +1,8 @@
 ---
 name: pe-prep
-description: Compose forward-looking talking points for my 1:1 with my PE (default Prudhvi) — career, goals, team, and blockers, NOT a technical sync. Pulls from Granola (since last 1:1), git/PRs, Notion Road-to-L1 + Actionables, Slack (Prudhvi DMs + USP channels), and my prudhvi-1-1 notes; renders a Workbench-styled HTML report (linked receipts, source-coverage line, Copy-for-Lattice button) and writes a paste-ready agenda into prudhvi-1-1/<date>.md. Use before a 1:1 / PE sync, to prep career or growth talking points, or invoke /pe-prep. Candidates, not a script — I pick and edit.
+description: Compose forward-looking talking points for my 1:1 with my PE (default Prudhvi) — career, goals, team, blockers; NOT a technical sync. Pulls from my prudhvi-1-1 notes, Granola, Jira, git, Slack (Prudhvi DMs + USP channels) and Notion; renders a Workbench HTML report (linked receipts, source-coverage line, Copy-for-Lattice) plus a paste-ready agenda in prudhvi-1-1/<date>.md. Use before a 1:1 / PE sync, to prep career or growth talking points, or invoke /pe-prep. Candidates, not a script — I pick and edit.
 argument-hint: "[person (default Prudhvi)] [--growth] [\"<topic>\"]"
-allowed-tools: [Read, Write, Edit, Grep, Glob, Agent, AskUserQuestion, "Bash(open *)", "Bash(pbcopy)", "Bash(git log *)", "Bash(git -C * log *)", "Bash(gh pr list *)", "Bash(gh search prs *)", mcp__granolagusto__list_meetings, mcp__granolagusto__query_granola_meetings, mcp__granolagusto__get_meetings, mcp__notiongusto__notion-search, mcp__notiongusto__notion-fetch, mcp__gdocsgusto__fetch, mcp__slackgustoofficialmcp__slack_search_users, mcp__slackgustoofficialmcp__slack_search_channels, mcp__slackgustoofficialmcp__slack_search_public_and_private, mcp__slackgustoofficialmcp__slack_read_channel, mcp__slackgustoofficialmcp__slack_read_thread, mcp__slackgustoofficialmcp__slack_read_user_profile]
+allowed-tools: [Read, Write, Edit, Grep, Glob, Agent, AskUserQuestion, "Bash(open *)", "Bash(pbcopy)", "Bash(git log *)", "Bash(git -C * log *)", "Bash(gh pr list *)", "Bash(gh search prs *)", mcp__granolagusto__list_meetings, mcp__granolagusto__query_granola_meetings, mcp__granolagusto__get_meetings, mcp__notiongusto__notion-search, mcp__notiongusto__notion-fetch, mcp__gdocsgusto__fetch, mcp__slackgustoofficialmcp__slack_search_users, mcp__slackgustoofficialmcp__slack_search_channels, mcp__slackgustoofficialmcp__slack_search_public_and_private, mcp__slackgustoofficialmcp__slack_read_channel, mcp__slackgustoofficialmcp__slack_read_thread, mcp__slackgustoofficialmcp__slack_read_user_profile, mcp__jiraconfluencegusto__getAccessibleAtlassianResources, mcp__jiraconfluencegusto__searchJiraIssuesUsingJql, mcp__jiraconfluencegusto__getJiraIssue]
 ---
 
 # pe-prep
@@ -29,22 +29,35 @@ otherwise use the defaults and say which you used.
 ### Step 1 — Build the source picture
 Follow `references/profile-sources.md`. Determine the anchor date (most recent recorded
 "Monica / Prudhvi" Granola meeting, else the latest `prudhvi-1-1/` note date). Read the last 1:1
-note, bounded Granola since the anchor, git/PRs since the anchor, Road-to-L1 + Actionables,
-**Slack (Prudhvi DMs + auto-detected USP channels, since the anchor)**, and (optional)
-progress-tracker + Impact Log. If the last note is missing/stale, flag it for degradation.
+note, bounded Granola since the anchor, git/PRs since the anchor, **Jira (your assigned tickets
+since the anchor + tickets named in notes/Slack)**, Road-to-L1 + Actionables, **Slack (Prudhvi
+DMs + auto-detected USP channels, since the anchor)**, **behavior scratchpads (Notion L1-ish +
+L2-ish, entries since the anchor)**, and (optional) progress-tracker + Impact Log. Also pull any
+**ad-hoc sources Monica names for this run** (PRN — a specific channel, doc, or local file like
+`notes/scratchpad/`); don't check those by default. If the last note is missing/stale, flag it for
+degradation.
 
 ### Step 2 — Reconcile carry-over
-Follow `references/synthesis-rules.md` (Carry-over). Match each open action item AND parked
-question from the last note against git/PRs; label **✓ done (suggested)** or **⏳ still open**.
-Never assert done.
+Follow `references/synthesis-rules.md` (Carry-over + **Jira cross-check**). Match each open action
+item AND parked question against git/PRs AND Jira; label **✓ done (suggested)** or **⏳ still
+open**. Jira status is a *claim*, not truth on this team — when git/Slack say shipped but Jira says
+Backlog, reconcile to the real state AND surface the mismatch as a talking point. Never assert done.
 
-### Step 3 — Synthesize & tier
+### Step 3 — Detect behavior patterns
+Follow `references/synthesis-rules.md` (Behavior pattern detection). Read the L1-ish/L2-ish
+scratchpads (+ any PRN source Monica named), filter to entries after the last 1:1, and group by
+recurring theme/axis. A pattern needs **≥2 entries** — never promote a one-off; surface the top
+3–5, each with a title in Monica's voice, 2–3 dated citations, and a suggested talking point. If
+nothing clusters to ≥2, omit the Patterns section.
+
+### Step 4 — Synthesize & tier
 Follow `references/synthesis-rules.md` (Altitude + Tiers + Footer). Apply the altitude filter to
-every signal; build the six sections; attach a receipt to every bullet; build the echo-only
-footer from the note's own `Pattern to watch` lines. With `--growth`, weight Career/Goals and go
-lighter on Team/Blockers. With a quoted `"<topic>"`, focus the whole agenda on that topic.
+every signal; build the seven sections (incl. **Patterns I've shown this cycle**, between Career
+and Goals); attach a receipt to every bullet; build the echo-only footer from the note's own
+`Pattern to watch` lines. With `--growth`, weight Career/Goals and go lighter on Team/Blockers.
+With a quoted `"<topic>"`, focus the whole agenda on that topic.
 
-### Step 4 — Render & present (THIS IS THE DELIVERABLE)
+### Step 5 — Render & present (THIS IS THE DELIVERABLE)
 Determine `<target-date>` (next 1:1 occurrence; default today if unknown). Compute the
 **source-coverage line** (bullets per source, by primary receipt — see synthesis-rules) and the
 **staleness flag**. Fill `templates/agenda.md` (full, with receipts), `templates/lattice-block.md`
@@ -58,32 +71,42 @@ is informational output, not an action that needs approval — produce it immedi
 even when no write/clipboard tools are available. If you catch yourself writing "I will…" or
 "I'll write the plan" about the agenda, stop and write the agenda itself instead.
 
-### Step 5 — Persist (side effects, not the deliverable)
+### Step 6 — Persist (side effects, not the deliverable)
 After presenting the agenda, persist it three ways: (1) write the full version to
 `~/workspace/notes/prudhvi-1-1/<target-date>.md` (if a file exists for that date, show a diff and
 ask before overwriting); (2) build the HTML report — fill `templates/report.html`'s
 `__AGENDA_DATA__` block, write to `/tmp/pe-prep-<target-date>.html`, and `open` it (it carries the
 source-coverage line, linked receipts, and a **Copy-for-Lattice** button); (3) copy the Lattice
 block to the clipboard (`pbcopy`; temp file first if large). If any tool is unavailable, still
-deliver the rendered agenda from Step 4 — persistence is a convenience, never a substitute for
+deliver the rendered agenda from Step 5 — persistence is a convenience, never a substitute for
 presenting the agenda.
 
-### Step 6 — Post-1:1 nudge
+### Step 7 — Post-1:1 nudge
 Tell Monica: the agenda is in `prudhvi-1-1/<target-date>.md`; after the (in-person) 1:1, jot what
 was actually discussed under "What we actually discussed" — that seeds the next run.
 
 ## Guardrails
 
-- **Always emit the finished agenda.** Reading and synthesis without rendering the tiered agenda
-  in your response is a failure. Produce the full agenda even when the file write or clipboard
-  aren't available — the rendered agenda is the output, not a plan to be approved.
+- **Always emit the finished agenda — from whatever context you already have.** If the needed data
+  is already in context (e.g. provided inline), synthesize from it; do NOT re-fetch, and NEVER skip
+  rendering, hedge, or fall back to "a plan" because sources look unread or budget looks low.
+  Reading without rendering is the failure mode. Produce the full agenda even when write/clipboard
+  tools are unavailable — the rendered agenda is the output, not a plan to be approved.
 - **Candidates, not a script.** Monica picks and edits; never decide what she'll say.
 - **Altitude: non-technical.** Elevate signals to career/goals/team/blocker framing; drop code
   minutiae. The 1:1 is not a standup.
 - **Every point carries a receipt.** No fabricated or ungrounded talking points. Link receipts to
   their source when one exists (note `file://`, git commit, Notion page, Slack permalink).
 - **Carry-over is suggested, verify.** Never assert "done" without her confirmation.
+- **Jira lags — cross-check, don't trust blindly.** Treat Jira status as a claim; reconcile against
+  git/Slack. Surface shipped-but-still-in-Backlog mismatches as a visibility talking point; never
+  let Jira's lag undercount her work.
 - **Footer is echo-only (v1).** Quote her own `Pattern to watch` lines; generate no new analysis.
+- **Plain, speakable voice + `(highlight)` tags.** Write bullets in Monica's plain spoken voice —
+  no coinages, no framework jargon as shorthand (say "velocity," not "your thin axis"). Tag genuine
+  wins with `(highlight)` and things she needs help/unblocking on with `(blocker)`; she under-claims
+  and under-asks, so the tags nudge her to raise both. Tag bullets with the **performance axis**
+  they build (`velocity`, `upleveling`, …) as a neutral pill instead of naming the axis in prose.
 - **Graceful degradation.** If the last 1:1 note is missing/stale, say so (and reflect it in the
   staleness flag); lean on the other sources; don't invent 1:1 context.
 - **Read-only on sources.** Writes only the agenda file, the HTML report, and clipboard. Never
