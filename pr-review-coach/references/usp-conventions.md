@@ -1,6 +1,6 @@
 # USP Review Conventions (additive checklist)
 
-**STATUS: two active checks (below); the rest are candidates.** Grown via SKILL.md Step 9
+**STATUS: three active checks (below); the rest are candidates.** Grown via SKILL.md Step 9
 (pattern capture) and the Kilian/Jyoti shadow-session notes. These are *additive* checks layered
 on top of the pr-risk + fresh-eyes lenses — they never override the core workflow.
 
@@ -53,6 +53,25 @@ shape) so the orchestrator only raises relevant ones.
   suggestion if confirmed valid (note it in `meta.context`, e.g. "Backend: limit 1–25, 10 honored").
 - finding: set `lens: "convention"`, `confidence: high` only when you actually read the backend
   file. The web reviewer can't see this contract — surfacing it is the whole point.
+
+### Infra config: verify against the cited source, skip pr-risk
+- trigger: the diff is primarily declarative infra config — `*.tf` (especially SLO/monitor
+  definitions under `resources/datadog-slos/`), or similar IaC — rather than application code.
+- check:
+  - **Verify values against their cited source.** When the PR cites an ADR / doc / standard for
+    its numbers (thresholds, tiers, targets), open that source and confirm the values match. The
+    description claiming a value is "ADR-sourced" is not the same as it being correct.
+  - **Diff against the sibling it mirrors.** Most infra config copies an existing file's shape
+    (e.g. `command_bar.tf`). Fetch that file and confirm the structure matches — then scrutinize
+    every value that *differs* from the template. A deviation is either a deliberate correction
+    (flag it so a reviewer diffing the files knows) or a mistake.
+  - **Skip the pr-risk lens.** It's an incident-pattern matcher trained on application-code
+    incidents (hot zones, `ReadOnlyError` rescues, N+1s, migrations); a declarative config block
+    gives it no surface. Running it produces noise, not signal. Note the skip in `meta.context`.
+- severity: suggestion for a documented-but-unexplained template deviation; important if a value
+  contradicts its cited source.
+- finding: set `lens: "convention"`, `confidence: high` only when you actually read the ADR/source
+  and the sibling file. Surfacing a value mismatch a reviewer can't easily catch is the point.
 
 ## Candidate conventions (from the shadow session — to refine before enabling)
 
