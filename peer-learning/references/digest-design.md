@@ -47,9 +47,11 @@ issue" pills → patterns.
   teal diagram → SHIPPED IN teal chips.
 - **Diagrams render clean or get omitted** — a broken/overflowing chart is worse than none; ship a
   chartless card before a mangled one. Keep them simple (labeled boxes + arrows, teal).
-- **Flags are terse** — a small `★ New` / `↺ Recurring` / `Encore` tag or one short margin-note line,
-  never an explanatory paragraph. (The Issue-1 cold-start note is the lone exception — it explains the
-  *absence* of flags before there's history.)
+- **Flags are terse, and only Recurring/Encore carry a blurb.** `★ New` = just the tag, no blurb
+  (self-evident — it's a first appearance, nothing to explain). `↺ Recurring` and `Encore` get **one
+  short line** of context: Recurring → the trend/count (e.g. "3rd sprint running"); Encore → the
+  personal link (e.g. "you reviewed this in PR #347615, Jun 15"). Never a paragraph. (The Issue-1
+  cold-start note is the lone exception — it explains the *absence* of flags before there's history.)
 - Word budget: see `voice.md` (lead 40–55, body 60–90, why 25–35, asides ≤25).
 
 ## Not in the digest
