@@ -43,6 +43,10 @@ issue" pills → patterns.
 - **One pattern per card.** A second pattern → its own card (never a "bonus pattern" aside).
   A detail *of* the pattern (an edge case) may stay as an aside.
 - **Byline:** full name · ticket · repo(s). No "Seen across N PRs" (redundant with SHIPPED IN).
+- **Card header (`feat-kicker`) = number + badge only.** No kicker label ("Pattern of the Sprint" /
+  "Multi-PR Arc" / "Worth Stealing") — it was redundant with the position/byline/badge and the three
+  labels weren't a coherent set (rank vs shape vs tagline). The number is the only ordinal marker
+  (it matches the pills).
 - Flow: drop-cap lead → body → why-it-matters → (optional) margin-note/aside → (optional) bespoke
   teal diagram → SHIPPED IN teal chips.
 - **Diagrams render clean or get omitted** — a broken/overflowing chart is worse than none; ship a
