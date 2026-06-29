@@ -35,15 +35,16 @@ then resolve each to its merged PR(s) via `gh` (ticket IDs live in PR titles/bra
 roster + merge window across the three repos. **Read-only on all repos.** If the board/Jira is
 unavailable, fall back to a pure-GitHub merged window and note the fallback in the digest.
 
-## Step 3 — Heuristic prefilter (deterministic) → shortlist ~6–8
+## Step 3 — Heuristic prefilter (deterministic, metadata only) → shortlist ~6–8
 
-Score each merged PR by the signals in `references/curation-rubric.md` (net-new abstraction,
-packs/repos touched, review-discussion depth, test changes, novelty-vs-history). Keep an
-inspectable "why didn't PR X make it?" trail.
+Score each candidate by the **metadata** signals in `references/curation-rubric.md` (new files,
+packs/repos touched, review-discussion depth, spec changes, size, novelty) — **no diff fetching
+here**; that's the slow step on a busy monorepo. Keep an inspectable "why didn't PR X make it?" trail.
 
 ## Step 4 — Editorial curation (LLM judge) → 1–3 patterns
 
-Run the curation rubric over the shortlist + history. For each chosen pattern produce: canonical
+**Fetch full diffs for the shortlist only** (the run's single diff-fetch), then run the curation
+rubric over them + history. For each chosen pattern produce: canonical
 name + category, flags (`references/flags.md`), the blended-voice blurb + one-line "why it
 matters" (`references/voice.md`), repo-labeled ticket/PR links, and a mermaid spec (reuse
 control-flow-chart). Cap at 3; if more strong candidates exist, list the ones cut ("also shipped,
