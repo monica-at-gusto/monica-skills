@@ -46,7 +46,10 @@ The team ships across three repos — the digest and substrate must be repo-awar
    `gh search prs --merged --merged-at <window> --author <login>` (repeat per login, across the
    repos), or `gh pr list --author <login> --state merged --search "merged:<window>"`.
    Cross-check ticket IDs from the titles to attribute each PR to its ticket.
-4. Fetch diffs for the candidate set.
+4. Fetch **metadata only** for the candidate set — `gh search prs` already returns title, files,
+   additions/deletions, and comment/review counts in one query. **Do NOT fetch per-PR diffs here.**
+   Diff-fetching the whole set is the slow step on a busy monorepo; diffs are pulled later, only for
+   the ~6–8 shortlist (curation-rubric Stage B).
 
 **Why author-filter, not window-cap:** a recency-sorted window cap (e.g. 300 PRs over 2 weeks on
 zenpayroll + web — hit on the first run) can drop roster PRs that fall past the cap in a busy
