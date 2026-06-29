@@ -21,3 +21,17 @@ A blend of three things, in this order of priority:
 
 One sentence, the thing she'd actually repeat. The failure mode this closes, or the move worth
 stealing — not a restatement of what the code does.
+
+## Length budget (keep it skimmable)
+
+A card is a ~1-screen read, not an essay. Aim per element (prose only — code, diagram, and links
+don't count):
+
+- **Lead** (drop-cap paragraph): 40–55 words — the hook.
+- **Body**: 60–90 words — the one pattern, explained.
+- **Why it matters**: 25–35 words — one sentence, the takeaway.
+- **Margin note / aside**: ≤ 25 words.
+
+~150–200 words of prose per card total. The budget forces tighter writing, not dropped substance —
+cut filler and hedges, never the precise technical terms. If a card needs more than this, it's
+probably two patterns; split it (or send the second to "also shipped").

@@ -3,116 +3,155 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Peer Learning — Issue Mockup</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,900;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<title>The USP Sprint Reader - Issue No. 1 x Jun 16–29, 2026</title>
 <style>
+  /* Real Gusto brand typeface, served locally — no CDN dependency at read time. */
+  @font-face{
+    font-family:'GCentra';
+    src:url('file:///Users/monica.cruz/workspace/web/libs/workbench/typefaces-gcentra/files/gcentra-book.woff2') format('woff2');
+    font-weight:400; font-style:normal; font-display:swap;
+  }
+  @font-face{
+    font-family:'GCentra';
+    src:url('file:///Users/monica.cruz/workspace/web/libs/workbench/typefaces-gcentra/files/gcentra-medium.woff2') format('woff2');
+    font-weight:600; font-style:normal; font-display:swap;
+  }
+  @font-face{
+    font-family:'Clearface';
+    src:url('file:///Users/monica.cruz/workspace/web/libs/workbench/typefaces-clearface/files/clearface-bold.woff2') format('woff2');
+    font-weight:700; font-style:normal; font-display:swap;
+  }
+  @font-face{
+    font-family:'Clearface';
+    src:url('file:///Library/Fonts/ITC%20-%20ClearfaceStd-BoldItalic.otf') format('opentype');
+    font-weight:700; font-style:italic; font-display:swap;
+  }
   :root{
-    /* approximate Gusto-warm palette — TO CONFIRM against real brand tokens */
-    --paper:#FBF6EC;
-    --paper-2:#F4EADA;
-    --ink:#241F1C;
-    --ink-soft:#5A524C;
-    --coral:#F0573C;     /* primary */
-    --berry:#B23A6B;     /* accent */
-    --teal:#1F7A6D;      /* secondary accent */
-    --gold:#F2B33D;      /* highlight */
-    --line:#E4D7C2;
-    --new:#1F7A6D;
+    /* Workbench tokens (libs/workbench/tokens) — the real Gusto palette */
+    --parsnip-100:#fbfafa;
+    --parsnip-200:#f8f5f2;
+    --paper:#f8f5f2;
+    --surface:#ffffff;
+    --ink:#1c1c1c;            /* COLOR_NEUTRAL_PRIMARY_TEXT */
+    --ink-soft:#535353;       /* COLOR_NEUTRAL_600-ish */
+    --line:#e3ded8;
+    --line-strong:#c8c8c8;
+    --brand:#0a8080;          /* COLOR_BRAND_800 — Gusto teal */
+    --brand-deep:#005c5c;     /* COLOR_BRAND_1000 */
+    --brand-tint:#e5f4f3;     /* COLOR_BRAND_200 */
+    --brand-tint-2:#f9fdfc;   /* COLOR_BRAND_100 */
+    --gold:#be7c77;           /* ST-300 rose — card 2 terracotta band */
+    --gold-deep:#a24942;      /* ST-400 brick — card 2 deep accent */
+    --coral:#be7c77;          /* ST-300 rose — card 3 */
+    --coral-deep:#a24942;     /* ST-400 brick (badge/text contrast) */
+    --coral-tint:#f7e1df;     /* ST-100 blush */
+    --intel:#6e56cf;          /* COLOR_INTELLIGENCE_900 — used for AI/LLM context */
+    --intel-tint:#f4eefd;     /* COLOR_INTELLIGENCE_200 */
+    --success:#007a4b;        /* COLOR_SUCCESS_900 */
   }
   *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
   html,body{margin:0;background:var(--paper);color:var(--ink);
-    font-family:"Inter",system-ui,sans-serif;line-height:1.6;
-    -webkit-font-smoothing:antialiased}
-  .wrap{max-width:760px;margin:0 auto;padding:0 24px 90px}
+    font-family:'GCentra',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.62;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:768px;margin:0 auto;padding:0 26px 96px}
+  code{font-family:'SF Mono',ui-monospace,Menlo,Consolas,monospace;font-size:.88em;
+    background:var(--brand-tint-2);border:1px solid var(--line);border-radius:5px;padding:.5px 5px;color:var(--brand-deep)}
 
   /* ---------- Masthead ---------- */
-  .masthead{padding:46px 0 22px;border-bottom:3px solid var(--ink);text-align:center}
-  .kicker{font-size:12px;letter-spacing:.34em;text-transform:uppercase;
-    color:var(--coral);font-weight:700}
-  .masthead h1{font-family:"Fraunces",serif;font-weight:900;font-size:62px;
-    line-height:.95;margin:10px 0 6px;letter-spacing:-.01em}
-  .masthead h1 em{font-style:italic;color:var(--berry)}
-  .issue-meta{display:flex;justify-content:center;gap:18px;flex-wrap:wrap;
-    margin-top:14px;font-size:12.5px;color:var(--ink-soft);
-    letter-spacing:.04em;text-transform:uppercase}
-  .issue-meta b{color:var(--ink)}
-  .dek{font-family:"Fraunces",serif;font-style:italic;font-size:18px;
-    color:var(--ink-soft);margin:18px auto 0;max-width:520px}
+  .masthead{padding:50px 0 24px;border-bottom:3px solid var(--ink);text-align:center}
+  .kicker{font-size:11.5px;letter-spacing:.36em;text-transform:uppercase;color:var(--brand);font-weight:600}
+  .masthead h1{font-family:'Clearface',Georgia,'Times New Roman',serif;font-weight:700;font-size:64px;line-height:.98;margin:12px 0 4px;letter-spacing:-.01em}
+  .masthead h1 em{font-style:italic;color:var(--brand)}
+  .issue-meta{display:flex;justify-content:center;gap:18px;flex-wrap:wrap;margin-top:16px;
+    font-size:12px;color:var(--ink-soft);letter-spacing:.05em;text-transform:uppercase}
+  .issue-meta b{color:var(--ink);font-weight:600}
+  .dek{font-style:italic;font-size:17.5px;color:var(--ink-soft);margin:20px auto 0;max-width:540px;line-height:1.52}
 
-  /* ---------- "In this issue" strip ---------- */
+  /* ---------- In this issue ---------- */
   .contents{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;
-    padding:16px 0;border-bottom:1px solid var(--line);margin-bottom:8px}
-  .pill{font-size:12px;font-weight:600;background:var(--paper-2);
-    border:1px solid var(--line);border-radius:999px;padding:5px 13px;color:var(--ink-soft)}
+    padding:18px 0;border-bottom:1px solid var(--line);margin-bottom:8px}
+  .pill{font-size:12px;font-weight:600;background:var(--surface);border:1px solid var(--line-strong);
+    border-radius:999px;padding:6px 14px;color:var(--ink-soft);text-decoration:none;cursor:pointer;
+    transition:background .12s,border-color .12s,color .12s}
+  .pill:hover{background:var(--brand-tint);border-color:var(--brand);color:var(--brand-deep)}
 
   /* ---------- section headers ---------- */
-  .sec-head{display:flex;align-items:baseline;gap:14px;margin:38px 0 16px}
-  .sec-head h2{font-family:"Fraunces",serif;font-weight:600;font-size:15px;
-    letter-spacing:.22em;text-transform:uppercase;margin:0;white-space:nowrap;color:var(--ink)}
+  .sec-head{display:flex;align-items:center;gap:14px;margin:42px 0 16px}
+  .sec-head h2{font-weight:600;font-size:13px;letter-spacing:.24em;text-transform:uppercase;
+    margin:0;white-space:nowrap;color:var(--ink)}
   .sec-head .rule{flex:1;height:2px;background:var(--ink);opacity:.85}
 
-  /* ---------- last sprint recap ---------- */
-  .recap{background:var(--paper-2);border:1px solid var(--line);border-radius:14px;
-    padding:18px 22px}
-  .recap ul{margin:0;padding:0;list-style:none}
-  .recap li{display:flex;gap:12px;align-items:flex-start;padding:8px 0;
-    border-bottom:1px dashed var(--line);font-size:14.5px}
-  .recap li:last-child{border-bottom:0}
-  .recap .dot{color:var(--coral);font-weight:900;line-height:1.4}
-  .recur{font-size:11px;font-weight:700;color:var(--teal);
-    border:1px solid var(--teal);border-radius:6px;padding:1px 7px;margin-left:auto;white-space:nowrap}
-
-  /* ---------- featured pattern card ---------- */
-  .card{border:1px solid var(--line);border-radius:18px;overflow:hidden;
-    margin:22px 0;background:#fff}
-  .card .band{height:8px;background:linear-gradient(90deg,var(--coral),var(--gold))}
-  .card .body{padding:26px 28px 30px}
-  .feat-kicker{display:flex;align-items:center;gap:12px;margin-bottom:8px}
-  .feat-kicker .num{font-family:"Fraunces",serif;font-weight:900;font-size:30px;
-    color:var(--paper-2);-webkit-text-stroke:1.4px var(--coral);line-height:1}
-  .feat-kicker .label{font-size:12px;letter-spacing:.2em;text-transform:uppercase;
-    color:var(--ink-soft);font-weight:700}
-  .badge-new{margin-left:auto;background:var(--new);color:#fff;font-size:11px;
-    font-weight:700;letter-spacing:.14em;border-radius:6px;padding:4px 10px;text-transform:uppercase}
-  .card h3{font-family:"Fraunces",serif;font-weight:600;font-size:30px;
-    line-height:1.1;margin:4px 0 6px;letter-spacing:-.01em}
+  /* ---------- pattern card ---------- */
+  .card{border:1px solid var(--line-strong);border-radius:18px;overflow:hidden;margin:22px 0;background:var(--surface);scroll-margin-top:24px}
+  .card .band{height:7px;background:linear-gradient(90deg,var(--brand),var(--brand-deep))}
+  .card.gold .band{background:linear-gradient(90deg,var(--gold),var(--gold-deep))}
+  .card.coral .band{background:linear-gradient(90deg,#dbafab,#be7c77)}
+  .card .body{padding:26px 30px 32px}
+  .feat-kicker{display:flex;align-items:center;gap:13px;margin-bottom:16px}
+  .feat-kicker .num{font-weight:600;font-size:30px;color:var(--brand-tint);
+    -webkit-text-stroke:1.4px var(--brand);line-height:1}
+  .card.gold .feat-kicker .num{color:#f7e1df;-webkit-text-stroke-color:var(--gold-deep)}
+  .card.coral .feat-kicker .num{color:var(--coral-tint);-webkit-text-stroke-color:var(--coral)}
+  .feat-kicker .label{font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-soft);font-weight:600}
+  .badge{margin-left:auto;background:#f7e1df;color:#a24942;border:1px solid #dbafab;font-size:10.5px;font-weight:600;
+    letter-spacing:.12em;border-radius:6px;padding:4px 10px;text-transform:uppercase}
+  .card h3{font-weight:600;font-size:30px;line-height:1.08;margin:6px 0 6px;letter-spacing:-.015em}
   .byline{font-size:12.5px;color:var(--ink-soft);margin-bottom:16px}
-  .byline b{color:var(--berry)}
+  .byline b{color:var(--brand-deep);font-weight:600}
   .card p{font-size:15.5px;margin:0 0 14px}
-  .lead::first-letter{font-family:"Fraunces",serif;font-weight:900;font-size:54px;
-    float:left;line-height:.8;padding:6px 10px 0 0;color:var(--coral)}
+  .lead::first-letter{font-weight:600;font-size:52px;float:left;line-height:.78;padding:7px 11px 0 0;color:var(--brand)}
+  .card.gold .lead::first-letter{color:var(--gold-deep)}
+  .card.coral .lead::first-letter{color:var(--coral)}
+  .margin-note{font-size:13px;font-style:italic;color:var(--brand-deep);background:var(--brand-tint-2);
+    border-left:3px solid var(--brand);padding:9px 14px;border-radius:0 8px 8px 0;margin:4px 0 16px}
 
-  .why{border-left:3px solid var(--gold);background:var(--paper);padding:12px 16px;
-    border-radius:0 10px 10px 0;margin:18px 0;font-family:"Fraunces",serif;
-    font-style:italic;font-size:16px;color:var(--ink)}
+  .why{border-left:3px solid var(--brand);background:var(--parsnip-200);padding:13px 17px;
+    border-radius:0 10px 10px 0;margin:18px 0;font-style:italic;font-size:16px;color:var(--ink)}
+  .why b{font-style:normal;font-weight:600;color:var(--brand-deep);letter-spacing:.02em}
+  .card.gold .why{border-left-color:var(--gold-deep)}
+  .card.gold .why b{color:var(--gold-deep)}
+  .card.coral .why{border-left-color:var(--coral)}
+  .card.coral .why b{color:var(--coral-deep)}
 
-  .chips{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 4px}
-  .chip{font-size:12.5px;font-weight:600;text-decoration:none;color:var(--teal);
-    border:1px solid var(--teal);border-radius:8px;padding:4px 10px;background:rgba(31,122,109,.06)}
-  .chip:hover{background:rgba(31,122,109,.14)}
-  .chip-label{font-size:11px;letter-spacing:.16em;text-transform:uppercase;
-    color:var(--ink-soft);font-weight:700;align-self:center;margin-right:2px}
+  .aside{font-size:13.5px;color:var(--ink-soft);background:var(--intel-tint);border:1px solid #e6dff9;
+    border-radius:10px;padding:12px 16px;margin:16px 0 4px}
+  .aside b{color:var(--intel);font-weight:600}
 
-  .diagram{margin:18px 0 4px;background:var(--paper);border:1px dashed var(--line);
-    border-radius:12px;padding:14px}
-  .diagram .cap{font-size:11px;letter-spacing:.16em;text-transform:uppercase;
-    color:var(--ink-soft);font-weight:700;margin-bottom:6px}
-  .mermaid{display:flex;justify-content:center}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0 2px;align-items:center}
+  .chip{font-size:12px;font-weight:600;text-decoration:none;color:var(--brand-deep);
+    border:1px solid var(--brand);border-radius:8px;padding:4px 11px;background:var(--brand-tint-2)}
+  .chip:hover{background:var(--brand-tint)}
+  .chip-label{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft);font-weight:600;margin-right:2px}
+
+  /* ---------- diagram ---------- */
+  .diagram{margin:20px 0 6px;background:var(--parsnip-100);border:1px solid var(--line);border-radius:12px;padding:18px 16px 12px}
+  .diagram .cap{font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-soft);font-weight:600;margin-bottom:10px;text-align:center}
+  .diagram svg{display:block;width:100%;height:auto}
+  .diagram text{font-family:'GCentra',sans-serif}
+
+  /* ---------- also shipped ---------- */
+  .also{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:8px 22px}
+  .also li{display:flex;gap:13px;align-items:flex-start;padding:13px 0;border-bottom:1px solid var(--line);font-size:14.5px}
+  .also li:last-child{border-bottom:0}
+  .also ul{margin:0;padding:0;list-style:none}
+  .also .dot{color:var(--brand);font-weight:600;line-height:1.5}
+  .also .meta{color:var(--ink-soft);font-size:12.5px}
+  .also a{color:var(--brand-deep);text-decoration:none;font-weight:600}
+  .also a:hover{text-decoration:underline}
 
   /* ---------- footer ---------- */
-  .colophon{margin-top:46px;border-top:3px solid var(--ink);padding-top:18px;
-    font-size:13px;color:var(--ink-soft)}
-  .colophon .fed{background:var(--paper-2);border:1px solid var(--line);border-radius:10px;
-    padding:12px 16px;margin-bottom:14px;color:var(--ink)}
-  .colophon .fed b{color:var(--teal)}
+  .colophon{margin-top:48px;border-top:3px solid var(--ink);padding-top:20px;font-size:13px;color:var(--ink-soft)}
+  .colophon .fed{background:var(--brand-tint);border:1px solid #cfe7e4;
+    border-radius:10px;padding:13px 17px;margin-bottom:14px;color:var(--ink);text-align:center}
+  .colophon .fed b{color:var(--brand-deep)}
+  .coldstart{background:var(--parsnip-200);border:1px dashed var(--line-strong);border-radius:10px;padding:12px 16px;margin-bottom:14px}
+  .stats{text-align:center;font-size:14px;color:var(--ink-soft);margin:18px 0 0;letter-spacing:.02em}
+  .stats b{color:var(--ink);font-weight:600}
+  .stats i{color:var(--brand);font-style:normal;font-weight:600;margin:0 8px}
   .src{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-  .src .tag{font-size:11.5px;background:#fff;border:1px solid var(--line);border-radius:6px;
-    padding:2px 8px}
-  .note{font-size:11px;color:var(--coral);text-align:center;margin:30px 0 0;
-    letter-spacing:.08em;text-transform:uppercase;font-weight:700}
+  .src .tag{font-size:11.5px;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:3px 9px}
+  .note{font-size:11px;color:var(--ink-soft);text-align:center;margin:28px 0 0;letter-spacing:.06em}
 </style>
 </head>
 <body>
@@ -123,108 +162,201 @@
     <div class="kicker">The USP Sprint Reader</div>
     <h1>Peer&nbsp;<em>Learning</em></h1>
     <div class="issue-meta">
-      <span>Issue <b>No. 12</b></span>
-      <span>Sprint <b>26.13</b></span>
-      <span><b>Jun 16 – Jun 27, 2026</b></span>
+      <span>Issue <b>No. 1</b></span>
+      <span><b>Jun 16 – Jun 29, 2026</b></span>
     </div>
-    <p class="dek">Lorem ipsum dolor sit amet — the two or three things your team shipped this sprint that are worth stealing.</p>
+    <p class="dek">Three things the team merged this sprint that are worth stealing — a key of its own, a fingerprint instead of a photograph, and a one-line fix for a path you don't control.</p>
   </header>
+
+  <div class="stats"><b>39</b> merged PRs <i>×</i> <b>8</b> source PRs <i>×</i> <b>3</b> featured</div>
 
   <!-- IN THIS ISSUE -->
   <nav class="contents">
-    <span class="pill">① Batch-loading in resolvers</span>
-    <span class="pill">② Fail-safe config guards</span>
-    <span class="pill">↺ 3 recurring from last sprint</span>
+    <a class="pill" href="#p1">① A Key of Its Own</a>
+    <a class="pill" href="#p2">② The Fingerprint, Not the Photograph</a>
+    <a class="pill" href="#p3">③ Basename Before You Build a Path</a>
   </nav>
 
-  <!-- LAST SPRINT RECAP -->
-  <div class="sec-head"><h2>Last Sprint, Briefly</h2><div class="rule"></div></div>
-  <div class="recap">
-    <ul>
-      <li><span class="dot">●</span><span>Lorem ipsum dolor sit amet, consectetur — the dataloader pattern for N+1-free resolvers.<span class="recur">↑ recurring · 3rd time</span></span></li>
-      <li><span class="dot">●</span><span>Sed do eiusmod tempor — narrow rescue + let <code>ReadOnlyError</code> propagate on read paths.<span class="recur">↑ recurring · 2nd time</span></span></li>
-      <li><span class="dot">●</span><span>Ut enim ad minim veniam — config-driven env behavior instead of <code>Rails.env</code> checks.</span></li>
-    </ul>
-  </div>
-
-  <!-- THIS WEEK'S PATTERNS -->
+  <!-- THIS SPRINT'S PATTERNS -->
   <div class="sec-head"><h2>This Sprint's Patterns</h2><div class="rule"></div></div>
 
   <!-- CARD 1 -->
-  <article class="card">
+  <article class="card gold" id="p1">
     <div class="band"></div>
     <div class="body">
       <div class="feat-kicker">
         <span class="num">01</span>
-        <span class="label">Pattern of the Sprint</span>
+        <span class="badge">Security · cross-service auth</span>
       </div>
-      <h3>The Preloader Two-Step</h3>
-      <div class="byline">Seen across <b>3 PRs</b> · <b>4 engineers</b> · category <b>performance / resolvers</b></div>
-      <p class="lead">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation — this is where the editorial blurb lives, in the blended voice: your phrasing, my structure, the right technical words.</p>
-      <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum. The pattern, in one breath: chunk the IDs, hand them to <code>Preloader</code>, let it cap at 1,000 for you.</p>
-      <div class="why">“Why it matters: ut aliquip ex ea commodo — this is the one-line takeaway you'd actually repeat to a teammate.”</div>
+      <h3>A Key of Its Own</h3>
+      <div class="byline"><b>Ian Gardiner</b> · USPDS-404 · <code>web</code> + <code>zenpayroll</code></div>
+
+      <p class="lead">When DSA chat moved onto Salesforce's embedded messaging (MIAW), Gusto had to prove to Salesforce that the person in the chat is who we say they are. The move worth stealing isn't "mint a JWT" — it's minting it with a dedicated signing key that lives completely apart from the org's JWKS.</p>
+
+      <p>The token is a short-lived RS256 JWT — <code>sub</code> is the UserRole UUID, signed with a MIAW-only key and served from its own public endpoint (<code>/directed_support/miaw_jwks</code>): unauthenticated, public keys only. The telling move: Ian <em>deliberately duplicated</em> ~15 lines of <code>JwkHelper</code> instead of parameterizing the shared signing infra — that helper powers auth, gRPC, and OAuth org-wide, so widening it for one feature is the wrong blast radius. Isolation is the feature, not a shortcut.</p>
+
+      <div class="margin-note">↳ This token lands as <code>dsaChatIdentityToken</code> on the same <code>SupportInfo</code> GraphQL type your USPDS-677 branch is extending right now — same file, same object.</div>
+
+      <div class="why"><b>Why it matters —</b> when a new audience needs to verify identity, give it its own key and its own endpoint; don't widen the security infrastructure half the org already leans on.</div>
+
       <div class="diagram">
-        <div class="cap">How it flows</div>
-        <div class="mermaid">
-flowchart LR
-  A[Request N ids] --> B{> 1000?}
-  B -- yes --> C[Preloader chunks]
-  B -- no --> D[Single load]
-  C --> E[Merge results]
-  D --> E
-  E --> F[Resolve field]
-        </div>
+        <div class="cap">How the identity handshake flows</div>
+        <svg viewBox="0 0 720 132" role="img" aria-label="MIAW identity token flow">
+          <defs>
+            <marker id="ar" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto">
+              <path d="M0,0 L8,4 L0,8 z" fill="#535353"/>
+            </marker>
+          </defs>
+          <!-- row 1 -->
+          <rect x="2" y="14" width="120" height="40" rx="9" fill="#f9fdfc" stroke="#0a8080"/>
+          <text x="62" y="33" text-anchor="middle" font-size="12" fill="#1c1c1c">supportInfo</text>
+          <text x="62" y="47" text-anchor="middle" font-size="12" fill="#1c1c1c">query</text>
+
+          <line x1="122" y1="34" x2="158" y2="34" stroke="#535353" stroke-width="1.5" marker-end="url(#ar)"/>
+
+          <polygon points="160,34 214,12 268,34 214,56" fill="#fff" stroke="#0a8080"/>
+          <text x="214" y="31" text-anchor="middle" font-size="11" fill="#1c1c1c">DSA-</text>
+          <text x="214" y="44" text-anchor="middle" font-size="11" fill="#1c1c1c">eligible?</text>
+
+          <line x1="268" y1="34" x2="304" y2="34" stroke="#535353" stroke-width="1.5" marker-end="url(#ar)"/>
+          <text x="286" y="27" text-anchor="middle" font-size="9.5" fill="#535353">yes</text>
+
+          <rect x="306" y="14" width="150" height="40" rx="9" fill="#e5f4f3" stroke="#0a8080"/>
+          <text x="381" y="31" text-anchor="middle" font-size="11.5" fill="#1c1c1c">mint short-lived JWT</text>
+          <text x="381" y="46" text-anchor="middle" font-size="11.5" fill="#005c5c">(MIAW key only)</text>
+
+          <line x1="456" y1="34" x2="492" y2="34" stroke="#535353" stroke-width="1.5" marker-end="url(#ar)"/>
+
+          <rect x="494" y="14" width="160" height="40" rx="9" fill="#fff" stroke="#0a8080"/>
+          <text x="574" y="31" text-anchor="middle" font-size="11.5" fill="#1c1c1c">browser hands token</text>
+          <text x="574" y="46" text-anchor="middle" font-size="11.5" fill="#1c1c1c">to Salesforce MIAW</text>
+
+          <!-- down to verify -->
+          <line x1="574" y1="54" x2="574" y2="78" stroke="#535353" stroke-width="1.5" marker-end="url(#ar)"/>
+          <rect x="430" y="80" width="288" height="40" rx="9" fill="#f9fdfc" stroke="#0a8080"/>
+          <text x="574" y="97" text-anchor="middle" font-size="11.5" fill="#1c1c1c">Salesforce fetches /miaw_jwks (public keys),</text>
+          <text x="574" y="112" text-anchor="middle" font-size="11.5" fill="#005c5c">verifies the signature → user is who we said</text>
+
+          <!-- not eligible -->
+          <line x1="214" y1="56" x2="214" y2="92" stroke="#535353" stroke-width="1.5" marker-end="url(#ar)"/>
+          <text x="232" y="74" text-anchor="middle" font-size="9.5" fill="#535353">no</text>
+          <rect x="150" y="92" width="128" height="30" rx="8" fill="#fff" stroke="#c8c8c8"/>
+          <text x="214" y="111" text-anchor="middle" font-size="11" fill="#535353">token is null</text>
+        </svg>
       </div>
+
       <div class="chips">
         <span class="chip-label">Shipped in</span>
-        <a class="chip" href="#">USPDS-612</a>
-        <a class="chip" href="#">USPDS-618</a>
-        <a class="chip" href="#">PR #351204</a>
+        <a class="chip" href="https://github.com/Gusto/zenpayroll/pull/347615">zenpayroll #347615</a>
+        <a class="chip" href="https://github.com/Gusto/zenpayroll/pull/351077">zenpayroll #351077</a>
+        <a class="chip" href="https://github.com/Gusto/web/pull/22508">web #22508</a>
       </div>
     </div>
   </article>
 
-  <!-- CARD 2 (NEW) -->
-  <article class="card">
+  <!-- CARD 2 -->
+  <article class="card gold" id="p2">
     <div class="band"></div>
     <div class="body">
       <div class="feat-kicker">
         <span class="num">02</span>
-        <span class="label">Worth Stealing</span>
-        <span class="badge-new">★ New pattern</span>
+        <span class="badge">Data architecture</span>
       </div>
-      <h3>Fail-Safe Config Guards</h3>
-      <div class="byline">Seen in <b>1 PR</b> · <b>1 engineer</b> · category <b>resilience</b></div>
-      <p class="lead">Lorem ipsum dolor sit amet — first time this shape has shown up in a sprint, so it gets the New badge. Consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore.</p>
-      <p>Excepteur sint occaecat cupidatat non proident — wrap the external call so a missing key degrades to a safe default instead of raising into the read path.</p>
-      <div class="why">“Why it matters: sunt in culpa qui officia — the failure mode this quietly closes.”</div>
+      <h3>The Fingerprint, Not the Photograph</h3>
+      <div class="byline"><b>Kilian O'Donnell</b> · USPDS-622 · <code>zenpayroll</code></div>
+
+      <p class="lead">The DSA dashboard hides a company once an advisor has acted on it — but only while the underlying data still matches what they saw. The old way stored the entire company snapshot and, on every read, deserialized it and re-hashed it to compare. This sprint that whole dance became a single indexed string compare.</p>
+
+      <p>The arc is a clean <b>expand → migrate → contract</b>, one PR per beat: add a nullable <code>company_data_hash</code> column; start stamping and persisting the hash on write while reads still go the old way; flip the hide filter to compare the stored hash directly — no JSON deserialize, no re-canonicalize; then drop the now-redundant hashes from the response payload. Store the fingerprint, not the photograph.</p>
+
+      <div class="why"><b>Why it matters —</b> when all you need to know is "did this change?", persist a hash and compare strings — don't re-derive the comparison from a fat snapshot on every read.</div>
+
+      <div class="aside" style="background:#f7e1df;border-color:#dbafab"><b style="color:var(--gold-deep)">Edge case worth keeping:</b> canonicalization had to coerce whole-number Floats to Integer — JS's <code>JSON.stringify</code> drops the trailing <code>.0</code>, so <code>500000.0</code> on the server and <code>500000</code> after a browser round-trip would otherwise never match, and every prior hide would silently stop matching.</div>
+
+      <div class="diagram">
+        <div class="cap">Expand → migrate → contract, one PR per step</div>
+        <svg viewBox="0 0 720 92" role="img" aria-label="Expand migrate contract column rollout">
+          <defs>
+            <marker id="ar2" markerWidth="9" markerHeight="9" refX="7" refY="4" orient="auto">
+              <path d="M0,0 L8,4 L0,8 z" fill="#535353"/>
+            </marker>
+          </defs>
+          <rect x="2" y="26" width="158" height="44" rx="9" fill="#f9fdfc" stroke="#0a8080"/>
+          <text x="81" y="44" text-anchor="middle" font-size="11.5" fill="#1c1c1c">add column</text>
+          <text x="81" y="59" text-anchor="middle" font-size="11" fill="#005c5c">(nullable) · #350279</text>
+
+          <line x1="160" y1="48" x2="186" y2="48" stroke="#535353" stroke-width="1.5" marker-end="url(#ar2)"/>
+
+          <rect x="188" y="26" width="170" height="44" rx="9" fill="#f9fdfc" stroke="#0a8080"/>
+          <text x="273" y="44" text-anchor="middle" font-size="11.5" fill="#1c1c1c">stamp + persist on write</text>
+          <text x="273" y="59" text-anchor="middle" font-size="11" fill="#005c5c">read still old · #350478</text>
+
+          <line x1="358" y1="48" x2="384" y2="48" stroke="#535353" stroke-width="1.5" marker-end="url(#ar2)"/>
+
+          <rect x="386" y="26" width="170" height="44" rx="9" fill="#e5f4f3" stroke="#0a8080"/>
+          <text x="471" y="44" text-anchor="middle" font-size="11.5" fill="#1c1c1c">flip read → hash compare</text>
+          <text x="471" y="59" text-anchor="middle" font-size="11" fill="#005c5c">string == string · #350513</text>
+
+          <line x1="556" y1="48" x2="582" y2="48" stroke="#535353" stroke-width="1.5" marker-end="url(#ar2)"/>
+
+          <rect x="584" y="26" width="134" height="44" rx="9" fill="#f9fdfc" stroke="#0a8080"/>
+          <text x="651" y="44" text-anchor="middle" font-size="11.5" fill="#1c1c1c">drop redundant</text>
+          <text x="651" y="59" text-anchor="middle" font-size="11" fill="#005c5c">payload · #350607</text>
+
+          <text x="81" y="16" text-anchor="middle" font-size="10" fill="#535353" font-style="italic">expand</text>
+          <text x="273" y="16" text-anchor="middle" font-size="10" fill="#535353" font-style="italic">migrate</text>
+          <text x="471" y="16" text-anchor="middle" font-size="10" fill="#535353" font-style="italic">migrate</text>
+          <text x="651" y="16" text-anchor="middle" font-size="10" fill="#535353" font-style="italic">contract</text>
+        </svg>
+      </div>
+
       <div class="chips">
         <span class="chip-label">Shipped in</span>
-        <a class="chip" href="#">USPDS-677</a>
-        <a class="chip" href="#">PR #352281</a>
+        <a class="chip" href="https://github.com/Gusto/zenpayroll/pull/350279">#350279</a>
+        <a class="chip" href="https://github.com/Gusto/zenpayroll/pull/350478">#350478</a>
+        <a class="chip" href="https://github.com/Gusto/zenpayroll/pull/350513">#350513</a>
+        <a class="chip" href="https://github.com/Gusto/zenpayroll/pull/350607">#350607</a>
+      </div>
+    </div>
+  </article>
+
+  <!-- CARD 3 -->
+  <article class="card gold" id="p3">
+    <div class="band"></div>
+    <div class="body">
+      <div class="feat-kicker">
+        <span class="num">03</span>
+        <span class="badge">Security · input handling</span>
+      </div>
+      <h3>Basename Before You Build a Path</h3>
+      <div class="byline"><b>Prudhvi Avula</b> · PSVULN-827 · <code>zenpayroll</code></div>
+
+      <p class="lead">An uploaded attachment's filename is attacker-controlled. Join it straight into a temp path and a name like <code>../escaped.txt</code> writes outside the directory you meant. One line closes it.</p>
+
+      <p>Run the original filename through <code>File.basename</code> before <code>File.join</code> — it strips every directory component, so the write lands inside <code>tmp_dir</code> no matter what the client called the file. Names that reduce to nothing useful (<code>.</code>, <code>..</code>, empty) fall back to a safe default. The spec earns its keep: it actually attempts the escape and asserts the file lands <em>inside</em> the sandbox, not above it.</p>
+
+      <div class="why"><b>Why it matters —</b> any time an untrusted string becomes part of a filesystem path, <code>File.basename</code> it first. The fix is one line; the test that proves it is three.</div>
+
+      <div class="chips">
+        <span class="chip-label">Shipped in</span>
+        <a class="chip" href="https://github.com/Gusto/zenpayroll/pull/348450">zenpayroll #348450</a>
       </div>
     </div>
   </article>
 
   <!-- COLOPHON -->
   <footer class="colophon">
-    <div class="fed">📎 These patterns were filed into your review substrate — <b>pr-review-coach</b> practice mode will quiz you on them next run.</div>
+    <div class="fed">📎 Filed to <b>team-patterns.md</b> → updates <b>pr-review-coach</b> practice-mode next run.</div>
+    <div class="coldstart"><b>Issue No. 1 — the pattern library starts here.</b> With no prior history to compare against, nothing carries a <em>New</em> or <em>Recurring</em> flag yet; those calibrate from the next issue once there's a baseline. Everything this sprint clustered around DSA (Dedicated Service Advisor) work.</div>
     <div class="src">
       <span>Sources this issue:</span>
-      <span class="tag">14 merged PRs</span>
-      <span class="tag">USP team</span>
-      <span class="tag">Sprint 26.13 board</span>
+      <span class="tag">USP team · 8 authors</span>
+      <span class="tag">GitHub merge window · since Jun 16</span>
+      <span class="tag">web · zenpayroll · sfdc</span>
     </div>
   </footer>
 
-  <p class="note">Lorem-ipsum mockup · palette + layout for reaction only</p>
+  <p class="note">The USP Sprint Reader</p>
 </div>
-
-<script>
-  mermaid.initialize({startOnLoad:true, theme:'base', themeVariables:{
-    primaryColor:'#F4EADA', primaryBorderColor:'#F0573C', primaryTextColor:'#241F1C',
-    lineColor:'#5A524C', fontFamily:'Inter, sans-serif', fontSize:'13px'
-  }});
-</script>
 </body>
 </html>
