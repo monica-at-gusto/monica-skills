@@ -23,16 +23,24 @@ Full design: `~/workspace/notes/peer-learning/2026-06-29-peer-learning-design.md
 
 Default target: the just-closed sprint. Manual, slash-only (routine-automation is v2).
 
-## Step 1 — Resolve window & roster
+## Step 1 — Resolve window, roster & issue identity
 
-Read `references/source-spine.md` for the team roster and repos (`web`, `sfdc`, `zenpayroll`).
-Resolve the just-closed sprint window (or `--since`).
+Read `references/source-spine.md` for the roster and repos (`web` + `zenpayroll`). Resolve the
+just-closed sprint window (or `--since`).
+
+**Issue identity = the sprint window, not the run.** One issue per window. The issue number and the
+digest filename are keyed to the window, so **re-running a window that already has a digest
+regenerates (overwrites) that same issue** — it does NOT mint a new number. Check
+`~/workspace/notes/peer-learning-digests/` first: if this window already has a digest, reuse its
+number and overwrite it. Increment only for a new, later window. Don't invent a "what was left on
+the table" follow-up issue — the curation cap deferring patterns is by design, not a second issue.
 
 ## Step 2 — Gather (board-anchored, GitHub-resolved)
 
 The board Lee keeps clean defines the window + "what counts as shipped." Parse shipped ticket IDs,
 then resolve each to its merged PR(s) via `gh` (ticket IDs live in PR titles/branches), scoped to
-roster + merge window across the three repos. **Read-only on all repos.** If the board/Jira is
+roster + merge window across both repos (`web` + `zenpayroll`), **one query per login then union**
+(see source-spine — multiple `--author` flags silently drop authors). **Read-only on all repos.** If the board/Jira is
 unavailable, fall back to a pure-GitHub merged window and note the fallback in the digest.
 
 ## Step 3 — Heuristic prefilter (deterministic, metadata only) → shortlist ~6–8
