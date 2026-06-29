@@ -17,6 +17,8 @@ The defining rule: **warm = identity, teal = anything interactive/structural.**
   every warm card has a cool counterweight (its diagram + code) so it never reads all-warm.
 - **Badges** are a muted soft pill — blush bg `#f7e1df`, dusty border `#dbafab`, brick text
   `#a24942` (NOT a deep solid block). Keeps the *title* the loudest thing on the card.
+- **Asides / callouts** are **teal** — a soft teal-tint box, never purple. (Workbench purple is the
+  AI/intelligence token; an aside isn't AI context, and a third hue breaks the teal+terracotta system.)
 - Palette source: Gusto **Kale** teal (primary brand) + **ST** terracotta tints (secondary —
   "used sparingly" per the brand deck). Paper = **Parsnip** cream `#f8f5f2`.
 
@@ -42,7 +44,12 @@ issue" pills → patterns.
   A detail *of* the pattern (an edge case) may stay as an aside.
 - **Byline:** full name · ticket · repo(s). No "Seen across N PRs" (redundant with SHIPPED IN).
 - Flow: drop-cap lead → body → why-it-matters → (optional) margin-note/aside → (optional) bespoke
-  **teal** diagram → SHIPPED IN teal chips.
+  teal diagram → SHIPPED IN teal chips.
+- **Diagrams render clean or get omitted** — a broken/overflowing chart is worse than none; ship a
+  chartless card before a mangled one. Keep them simple (labeled boxes + arrows, teal).
+- **Flags are terse** — a small `★ New` / `↺ Recurring` / `Encore` tag or one short margin-note line,
+  never an explanatory paragraph. (The Issue-1 cold-start note is the lone exception — it explains the
+  *absence* of flags before there's history.)
 - Word budget: see `voice.md` (lead 40–55, body 60–90, why 25–35, asides ≤25).
 
 ## Not in the digest
