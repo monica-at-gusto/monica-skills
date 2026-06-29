@@ -59,6 +59,5 @@ issue" pills → patterns.
 
 ## CSS class note (cleanup debt)
 
-`.card.gold` is the terracotta brick theme (legacy name from the original teal/gold/coral draft —
-all cards use it now). `.card.coral` rules are unused legacy. Rename `.gold` → `.terra` and drop the
-dead `.coral` rules when convenient.
+`.card.terra` is the terracotta brick theme — all cards use it. (Renamed from the original `.gold`;
+the dead `.coral` rules from the teal/gold/coral draft have been removed.)

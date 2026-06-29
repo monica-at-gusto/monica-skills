@@ -88,6 +88,30 @@ team, and blockers, **not** a technical sync. Output is a paste-ready Lattice ag
 - **Detail lives in `pe-prep/references/`**; SKILL.md stays lean. Evals: `pe-prep/evals/` —
   `cd pe-prep && uv run skill-evals`.
 
+### peer-learning
+
+Mines the USP team's recently-merged PRs each sprint into a highly-curated, editorial digest
+(1–3 patterns, styled like a creative Substack) and files those patterns into the shared substrate
+`pr-review-coach` practice mode reads. The digest is the product; the substrate write is the bonus.
+
+```
+/peer-learning [--sprint <id> | --since <date>]
+```
+
+- **Source:** board-anchored, GitHub-resolved — merged PRs by the team roster across `web` +
+  `zenpayroll`, filtered by **author login** (not a capped window), ticket IDs parsed from titles.
+- **Curation:** deterministic prefilter on PR *metadata* → editorial LLM judge picks the 1–3
+  learnings-rich patterns. Flags: **New** / **Recurring** (team frequency) + **Encore** (my own
+  prior exposure).
+- **Dual output:** a self-contained HTML digest (`templates/digest.html` — Clearface masthead,
+  terracotta-identity + teal-accent palette, bespoke per-pattern diagrams) saved to
+  `~/workspace/notes/peer-learning-digests/`, **plus** structured entries appended to
+  `~/workspace/notes/reviews_practice/team-patterns.md`.
+- **The loop:** `pr-review-coach` calibration reads `team-patterns.md` (blackboard coupling) + a
+  freshness check that offers to run `/peer-learning` when stale. v1 manual; routine-automation is v2.
+- **Detail lives in `peer-learning/references/`** (full design system in `digest-design.md`);
+  SKILL.md stays lean.
+
 ## Linking a skill into Claude Code
 
 From the repo root:

@@ -40,11 +40,8 @@
     --brand-deep:#005c5c;     /* COLOR_BRAND_1000 */
     --brand-tint:#e5f4f3;     /* COLOR_BRAND_200 */
     --brand-tint-2:#f9fdfc;   /* COLOR_BRAND_100 */
-    --gold:#be7c77;           /* ST-300 rose — card 2 terracotta band */
-    --gold-deep:#a24942;      /* ST-400 brick — card 2 deep accent */
-    --coral:#be7c77;          /* ST-300 rose — card 3 */
-    --coral-deep:#a24942;     /* ST-400 brick (badge/text contrast) */
-    --coral-tint:#f7e1df;     /* ST-100 blush */
+    --terra:#be7c77;          /* ST-300 rose */
+    --terra-deep:#a24942;     /* ST-400 brick */
     --intel:#6e56cf;          /* COLOR_INTELLIGENCE_900 — used for AI/LLM context */
     --intel-tint:#f4eefd;     /* COLOR_INTELLIGENCE_200 */
     --success:#007a4b;        /* COLOR_SUCCESS_900 */
@@ -85,14 +82,12 @@
   /* ---------- pattern card ---------- */
   .card{border:1px solid var(--line-strong);border-radius:18px;overflow:hidden;margin:22px 0;background:var(--surface);scroll-margin-top:24px}
   .card .band{height:7px;background:linear-gradient(90deg,var(--brand),var(--brand-deep))}
-  .card.gold .band{background:linear-gradient(90deg,var(--gold),var(--gold-deep))}
-  .card.coral .band{background:linear-gradient(90deg,#dbafab,#be7c77)}
+  .card.terra .band{background:linear-gradient(90deg,var(--terra),var(--terra-deep))}
   .card .body{padding:26px 30px 32px}
   .feat-kicker{display:flex;align-items:center;gap:13px;margin-bottom:16px}
   .feat-kicker .num{font-weight:600;font-size:30px;color:var(--brand-tint);
     -webkit-text-stroke:1.4px var(--brand);line-height:1}
-  .card.gold .feat-kicker .num{color:#f7e1df;-webkit-text-stroke-color:var(--gold-deep)}
-  .card.coral .feat-kicker .num{color:var(--coral-tint);-webkit-text-stroke-color:var(--coral)}
+  .card.terra .feat-kicker .num{color:#f7e1df;-webkit-text-stroke-color:var(--terra-deep)}
   .feat-kicker .label{font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-soft);font-weight:600}
   .badge{margin-left:auto;background:#f7e1df;color:#a24942;border:1px solid #dbafab;font-size:10.5px;font-weight:600;
     letter-spacing:.12em;border-radius:6px;padding:4px 10px;text-transform:uppercase}
@@ -101,18 +96,15 @@
   .byline b{color:var(--brand-deep);font-weight:600}
   .card p{font-size:15.5px;margin:0 0 14px}
   .lead::first-letter{font-weight:600;font-size:52px;float:left;line-height:.78;padding:7px 11px 0 0;color:var(--brand)}
-  .card.gold .lead::first-letter{color:var(--gold-deep)}
-  .card.coral .lead::first-letter{color:var(--coral)}
+  .card.terra .lead::first-letter{color:var(--terra-deep)}
   .margin-note{font-size:13px;font-style:italic;color:var(--brand-deep);background:var(--brand-tint-2);
     border-left:3px solid var(--brand);padding:9px 14px;border-radius:0 8px 8px 0;margin:4px 0 16px}
 
   .why{border-left:3px solid var(--brand);background:var(--parsnip-200);padding:13px 17px;
     border-radius:0 10px 10px 0;margin:18px 0;font-style:italic;font-size:16px;color:var(--ink)}
   .why b{font-style:normal;font-weight:600;color:var(--brand-deep);letter-spacing:.02em}
-  .card.gold .why{border-left-color:var(--gold-deep)}
-  .card.gold .why b{color:var(--gold-deep)}
-  .card.coral .why{border-left-color:var(--coral)}
-  .card.coral .why b{color:var(--coral-deep)}
+  .card.terra .why{border-left-color:var(--terra-deep)}
+  .card.terra .why b{color:var(--terra-deep)}
 
   .aside{font-size:13.5px;color:var(--ink-soft);background:var(--intel-tint);border:1px solid #e6dff9;
     border-radius:10px;padding:12px 16px;margin:16px 0 4px}
@@ -181,7 +173,7 @@
   <div class="sec-head"><h2>This Sprint's Patterns</h2><div class="rule"></div></div>
 
   <!-- CARD 1 -->
-  <article class="card gold" id="p1">
+  <article class="card terra" id="p1">
     <div class="band"></div>
     <div class="body">
       <div class="feat-kicker">
@@ -255,7 +247,7 @@
   </article>
 
   <!-- CARD 2 -->
-  <article class="card gold" id="p2">
+  <article class="card terra" id="p2">
     <div class="band"></div>
     <div class="body">
       <div class="feat-kicker">
@@ -271,7 +263,7 @@
 
       <div class="why"><b>Why it matters —</b> when all you need to know is "did this change?", persist a hash and compare strings — don't re-derive the comparison from a fat snapshot on every read.</div>
 
-      <div class="aside" style="background:#f7e1df;border-color:#dbafab"><b style="color:var(--gold-deep)">Edge case worth keeping:</b> canonicalization had to coerce whole-number Floats to Integer — JS's <code>JSON.stringify</code> drops the trailing <code>.0</code>, so <code>500000.0</code> on the server and <code>500000</code> after a browser round-trip would otherwise never match, and every prior hide would silently stop matching.</div>
+      <div class="aside" style="background:#f7e1df;border-color:#dbafab"><b style="color:var(--terra-deep)">Edge case worth keeping:</b> canonicalization had to coerce whole-number Floats to Integer — JS's <code>JSON.stringify</code> drops the trailing <code>.0</code>, so <code>500000.0</code> on the server and <code>500000</code> after a browser round-trip would otherwise never match, and every prior hide would silently stop matching.</div>
 
       <div class="diagram">
         <div class="cap">Expand → migrate → contract, one PR per step</div>
@@ -321,7 +313,7 @@
   </article>
 
   <!-- CARD 3 -->
-  <article class="card gold" id="p3">
+  <article class="card terra" id="p3">
     <div class="band"></div>
     <div class="body">
       <div class="feat-kicker">
