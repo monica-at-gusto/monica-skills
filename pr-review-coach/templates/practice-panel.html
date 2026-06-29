@@ -35,7 +35,7 @@
     font: 14px/1.5 var(--font); letter-spacing: .02em;
     -webkit-font-smoothing: antialiased; display: flex; justify-content: center; padding: 32px 16px;
   }
-  .panel { width: 340px; }
+  .panel { width: 420px; }
   .eyebrow { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
   h1 { font-size: 16px; font-weight: 500; margin: 5px 0 2px; letter-spacing: 0; }
   .sub { font-size: 12px; color: var(--muted); }
@@ -49,9 +49,10 @@
   ul.checks { margin: 0; padding-left: 16px; }
   ul.checks li { font-size: 12.5px; color: #313131; margin: 3px 0; }
   code { font: 11.5px ui-monospace, Menlo, monospace; background: #f3f3f3; padding: 0 4px; border-radius: 4px; white-space: nowrap; }
-  .watch-row { display: flex; align-items: baseline; gap: 8px; margin: 6px 0; }
-  .chip { font-size: 11.5px; font-weight: 500; color: var(--watch); background: #f4eefd; border: 1px solid #e6dff9; border-radius: 999px; padding: 1px 9px; white-space: nowrap; flex: none; }
-  .watch-row .why { font-size: 12px; color: var(--muted); }
+  .watch-row { margin: 11px 0; }
+  .chip { font-size: 11.5px; font-weight: 500; color: var(--watch); background: #f4eefd; border: 1px solid #e6dff9; border-radius: 999px; padding: 1px 9px; white-space: nowrap; }
+  .watch-row .chip { display: inline-block; margin-bottom: 5px; }
+  .watch-row .why { display: block; font-size: 12px; color: var(--muted); line-height: 1.5; }
   .watch-note { font-size: 11.5px; color: var(--muted); margin-top: 8px; font-style: italic; }
   footer { margin-top: 22px; font-size: 11px; color: var(--muted); text-align: center; }
 </style>
