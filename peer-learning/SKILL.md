@@ -52,9 +52,11 @@ not featured") — never a silent truncation.
 
 ## Step 5 — Render + file (dual output)
 
-Follow `references/substrate-contract.md`:
-1. **Digest** — render `templates/digest.html` with the data blob, write to
-   `~/workspace/notes/peer-learning-digests/<YYYY-MM>/<YYYY-MM-DD>-digest.html`, and `open` it.
+Follow `references/digest-design.md` (the full design system) and `references/substrate-contract.md`:
+1. **Digest** — `templates/digest.html` is the canonical worked reference (Issue No. 1). Copy its
+   structure + CSS and swap in this issue's masthead / patterns / stat-strip / sources; diagrams are
+   bespoke per pattern, so hand-build each. Write to
+   `~/workspace/notes/peer-learning-digests/<YYYY-MM>/<YYYY-MM-DD>-digest.html` and `open` it.
 2. **Substrate** — append structured entries to
    `~/workspace/notes/reviews_practice/team-patterns.md` (a NEW file, kept separate from the
    review-check conventions). This is what `pr-review-coach` calibration reads.

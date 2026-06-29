@@ -12,17 +12,18 @@ author chips, which are the GitHub logins (confirmed against real PRs).
 
 | Person | GitHub login |
 | --- | --- |
-| Henrique Batista | `henrque-batista` |
 | Ian Gardiner | `iang-gusto` |
 | Jyoti Phulwani | `jyoti-phulwani` |
 | Kilian O'Donnell | `k0don` |
 | Lee Pender | `lee-pender-gusto` |
 | Monica Cruz | `monica-at-gusto` |
 | Prudhvi Avula | `prudhvi-gusto` |
-| Sujan Kumar | `sujankumarv` |
 | Surendhar Palani | `surendharpalani` |
 
-All nine verified against `~/workspace/gusto-org-catalog/cache/github-profiles.json` (+ merged PRs).
+Temporarily excluded (re-add when widening scope): Sujan Kumar `sujankumarv`, Henrique Batista
+`henrque-batista`.
+
+All verified against `~/workspace/gusto-org-catalog/cache/github-profiles.json` (+ merged PRs).
 Watch two traps when maintaining this: `iang-gusto` is **Ian Gardiner** — a second Ian
 (`iangawronski`, Ian Gawronski) is **not** on the roster, don't conflate; and a wrong login fails
 *silently* (returns zero PRs, person vanishes from the digest), so confirm any new handle against
@@ -31,11 +32,12 @@ board-anchored path; on the GitHub path the login is the filter.)
 
 ## Repos
 
-The team ships across three repos — the digest and substrate must be repo-aware:
+Focus for now: two repos (the digest and substrate must be repo-aware):
 
 - `Gusto/web`
 - `Gusto/zenpayroll`
-- the SFDC repo (`sfdc` in the dashboard)
+
+(SFDC excluded for now — re-add the repo when widening scope.)
 
 ## Resolution recipe
 

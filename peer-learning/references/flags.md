@@ -31,4 +31,10 @@ keys as they're minted so the next run can match them.
 
 ### Known keys / aliases
 
-(Grows over time — seeded empty.)
+Minted keys, by issue. Match against these before computing flags / minting a new key.
+
+**Issue No. 1 (2026-06-29):**
+- `security:isolated-signing-key` — A Key of Its Own (dedicated JWT signing key + own JWKS for an external verifier)
+- `resilience:fail-fast-vs-degrade` — one config gate, raise on misconfig vs. degrade on absence
+- `architecture:denormalized-hash-compare` — The Fingerprint, Not the Photograph (persist a hash, compare strings)
+- `security:basename-untrusted-path` — Basename Before You Build a Path (defang path traversal)
