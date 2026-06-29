@@ -38,3 +38,9 @@ Minted keys, by issue. Match against these before computing flags / minting a ne
 - `resilience:fail-fast-vs-degrade` — one config gate, raise on misconfig vs. degrade on absence
 - `architecture:denormalized-hash-compare` — The Fingerprint, Not the Photograph (persist a hash, compare strings)
 - `security:basename-untrusted-path` — Basename Before You Build a Path (defang path traversal)
+
+**Issue No. 2 (2026-06-29, same Jun 16–29 window — patterns Issue 1 didn't feature):**
+- `frontend-state:state-ownership-handoff` — Delete the Shadow Copy (server owns filtered state; refetch on mutation success, delete client shadow copy)
+- `observability:strategy-paired-telemetry-split` — Don't Blame the LLM (success reported inside each strategy, failure tagged at the dispatcher)
+- `config-as-data:cyclic-modulo-trigger` — One Rule, Every Quarter, Forever (modulo operator + `mod_in_range` trigger for recurring windows)
+- _(seen-also)_ `resilience:fail-fast-vs-degrade` recurred within-sprint via USPDS-595 #350139 — added to that key's `seen-in`, no ↺ flag (same sprint).

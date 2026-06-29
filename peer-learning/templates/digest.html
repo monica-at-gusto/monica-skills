@@ -106,9 +106,9 @@
   .card.terra .why{border-left-color:var(--terra-deep)}
   .card.terra .why b{color:var(--terra-deep)}
 
-  .aside{font-size:13.5px;color:var(--ink-soft);background:var(--intel-tint);border:1px solid #e6dff9;
+  .aside{font-size:13.5px;color:var(--ink-soft);background:var(--brand-tint);border:1px solid #cfe7e4;
     border-radius:10px;padding:12px 16px;margin:16px 0 4px}
-  .aside b{color:var(--intel);font-weight:600}
+  .aside b{color:var(--brand-deep);font-weight:600}
 
   .chips{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0 2px;align-items:center}
   .chip{font-size:12px;font-weight:600;text-decoration:none;color:var(--brand-deep);
@@ -263,7 +263,7 @@
 
       <div class="why"><b>Why it matters —</b> when all you need to know is "did this change?", persist a hash and compare strings — don't re-derive the comparison from a fat snapshot on every read.</div>
 
-      <div class="aside" style="background:#f7e1df;border-color:#dbafab"><b style="color:var(--terra-deep)">Edge case worth keeping:</b> canonicalization had to coerce whole-number Floats to Integer — JS's <code>JSON.stringify</code> drops the trailing <code>.0</code>, so <code>500000.0</code> on the server and <code>500000</code> after a browser round-trip would otherwise never match, and every prior hide would silently stop matching.</div>
+      <div class="aside"><b>Edge case worth keeping:</b> canonicalization had to coerce whole-number Floats to Integer — JS's <code>JSON.stringify</code> drops the trailing <code>.0</code>, so <code>500000.0</code> on the server and <code>500000</code> after a browser round-trip would otherwise never match, and every prior hide would silently stop matching.</div>
 
       <div class="diagram">
         <div class="cap">Expand → migrate → contract, one PR per step</div>
