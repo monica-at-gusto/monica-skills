@@ -43,11 +43,14 @@ Focus for now: two repos (the digest and substrate must be repo-aware):
 
 1. Get the just-closed sprint's shipped tickets (board / Jira sprint).
 2. Parse ticket IDs (USPDS-###, RR-###, USPRTE-###, FMX-…, etc.) — they appear in PR titles/branches.
-3. Resolve to merged PRs **by author login, not by a capped window**. Query per roster login so
-   GitHub returns only the roster's PRs — the result-cap can never silently drop a roster PR:
-   `gh search prs --merged --merged-at <window> --author <login>` (repeat per login, across the
-   repos), or `gh pr list --author <login> --state merged --search "merged:<window>"`.
-   Cross-check ticket IDs from the titles to attribute each PR to its ticket.
+3. Resolve to merged PRs **by author login, not by a capped window** — and run **one query PER
+   login, then union the results**. A single `gh search` with multiple `--author` flags does NOT OR
+   them: gh silently returns only *one* author's PRs (seen on a real run — 7 `--author` flags
+   returned 6 PRs from the *last* author; per-login queries returned the true 31). So loop the
+   roster: `gh search prs --merged --merged-at <window> --author <login>` (or `gh pr list
+   --author <login> --state merged --search "merged:<window>"`) once per login, then dedupe + union.
+   This is the same "wrong handle fails silently" trap as a bad login — just triggered by
+   flag-combining. Cross-check ticket IDs from titles to attribute each PR to its ticket.
 4. Fetch **metadata only** for the candidate set — `gh search prs` already returns title, files,
    additions/deletions, and comment/review counts in one query. **Do NOT fetch per-PR diffs here.**
    Diff-fetching the whole set is the slow step on a busy monorepo; diffs are pulled later, only for
@@ -55,7 +58,7 @@ Focus for now: two repos (the digest and substrate must be repo-aware):
 
 **Why author-filter, not window-cap:** a recency-sorted window cap (e.g. 300 PRs over 2 weeks on
 zenpayroll + web — hit on the first run) can drop roster PRs that fall past the cap in a busy
-monorepo. Filtering by the ~9 logins server-side keeps the set complete and small.
+monorepo. Filtering by the roster's logins (one query each) server-side keeps the set complete and small.
 
 Fallback (board/Jira unavailable): same author-filtered query across the repos in a date window —
 just without the board's "what shipped" boundary; note the fallback in the digest.
