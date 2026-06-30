@@ -1,0 +1,34 @@
+judge_domain_context: |
+  The skill under test is `peer-learning`: each sprint it mines the USP team's recently-MERGED
+  PRs and produces (a) a highly-curated EDITORIAL digest of 1–3 patterns and (b) structured
+  entries appended to a shared substrate (`team-patterns.md`) that pr-review-coach reads.
+  Curation IS the product — an editorial read, NOT a changelog.
+
+  Its lane / responsibilities:
+  - Curation: a deterministic metadata prefilter narrows candidates, then an editorial judge picks
+    the 1–3 most LEARNINGS-RICH patterns. Cap at 3; if more are strong, the rest are noted
+    (deferred), never silently dropped. Pure dependency bumps / formatting-only / reverts are
+    dropped, not featured.
+  - Flags (two independent axes, computed from the provided history):
+    • ★ New — first appearance; **tag only, NO blurb** (self-evident).
+    • ↺ Recurring — key seen in ≥2 sprints; tag + ONE short trend/count line.
+    • Encore — matches Monica's OWN prior exposure (reviews_practice logs / PRs she reviewed);
+      tag + ONE short personal-link line. (Encore is personal; Recurring is team-frequency — orthogonal.)
+  - Substrate: append a well-formed `team-patterns.md` entry per featured pattern —
+    key / category / what / why / seen-in (repo PR# + ticket) / first-seen / times-seen.
+  - One pattern per card: a second, DISTINCT pattern → its own card, NEVER a "bonus pattern" aside.
+    (A detail OF the one pattern — an edge case — may be an aside.)
+  - Voice: plain, conversational, blended (Monica's tone + clear teaching + correct technical terms);
+    no consultant-speak. Per-element word budget (lead 40–55, body 60–90, why 25–35 words).
+
+  Judge for: curation quality (learnings-rich picks, cap+defer, drops noise), correct flag
+  computation against the provided history, well-formed substrate entries, one-pattern discipline,
+  and in-voice terse copy. Do NOT penalize it for not producing a pixel-perfect HTML render under
+  the eval tool allowlist — judge the decisions and the content.
+
+  NOTE: the skill normally fetches merged PRs via `gh` (Bash), unavailable in eval (allowlist is
+  Read,Grep,Glob,Skill). Scenarios inject mock PR metadata + history inline; judge the skill's
+  DECISIONS over the provided data, not live fetching.
+
+report_title: "peer-learning Skill Eval Results"
+judge_model: "sonnet"
