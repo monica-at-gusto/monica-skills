@@ -71,6 +71,25 @@ deep-fetch — enough to rank a focused 1–3 (or a 5–10 survey) with real acc
 sibling-of-shipped anchor and the toe-stepping check (find In Progress siblings under the same
 parent). Read each description for the real data source / acceptance criteria before tiering.
 
+### Intra-epic stack — add `issuelinks` when finalists cluster under one active epic
+
+When the finalists are all siblings under a **single epic Monica is already in** (e.g. she owns
+one ticket in it), add **`issuelinks`** to the deep-fetch fields and read the Blocks /
+is-blocked-by graph. It cleanly separates the stack into tiers that the summary alone can't:
+
+- **Start-now** — `issuelinks` shows no inbound "is blocked by" (or the description says
+  "Dependencies: None / decision closed"). Independent of her in-flight ticket → strong parallel
+  pickup (good when the 1:1 directive is "run 2–3 tickets in parallel").
+- **Next-in-her-own-stack** — blocked *only by her own in-flight ticket*. Not toe-stepping (she
+  controls both ends); rank Ready with a note that it's sequenced behind / stackable on her ticket.
+- **Sequenced / blocked** — blocked by an unstarted sibling → held with the blocker named.
+- **Design-first** — description defers a shape/architecture decision to the engineer → held until
+  the shape is aligned with the epic owner, even if unblocked.
+
+(2026-06-29: the USPDS-686 Indicator Cache epic was filed out as ~12 siblings to her in-flight
+687; the `issuelinks` graph split 688 [blocked by her 687], 690/692 [no deps, start now], and 689
+[design-first] without guessing.)
+
 ## Parse-integrity guardrails (never infer "Done" from "absent")
 
 The bulk index is parsed by an `Agent` (Explore) reading a multi-thousand-line dump — that parse
