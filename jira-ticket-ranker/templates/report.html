@@ -7,7 +7,8 @@
 <style>
   /* Muted colorway — Gusto Brand Guidelines 3.0 (Kale teal primary, ST terracotta accent used sparingly, Parsnip/Salt warm neutrals) */
   :root {
-    --type-family: "GCentra", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", Helvetica, Arial, sans-serif;
+    --type-family: "G Centra", "GCentra", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", Helvetica, Arial, sans-serif;
+    --display-family: "ITC Clearface Std", "Clearface", Georgia, "Times New Roman", serif;  /* decorative serif — headings only, used sparingly */
     --bg: #f8f5f2;        /* Parsnip — warm cream */
     --card: #ffffff;
     --ink: #1c1c1c;       /* Ink */
@@ -31,7 +32,7 @@
 
   header.top { margin-bottom: 8px; }
   .eyebrow { font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
-  h1 { font-size: 24px; font-weight: 500; margin: 6px 0 10px; letter-spacing: -.01em; }
+  h1 { font-family: var(--display-family); font-size: 26px; font-weight: 700; margin: 6px 0 10px; letter-spacing: 0; }
   .counts { display: flex; gap: 14px; flex-wrap: wrap; font-size: 14px; color: var(--muted); }
   .counts b { color: var(--ink); font-weight: 500; }
   .context { display: flex; flex-direction: column; gap: 6px; margin-top: 14px; padding-left: 14px; border-left: 2px solid var(--line); }
