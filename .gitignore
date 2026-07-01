@@ -3,3 +3,6 @@
 __pycache__/
 uv.lock
 pr-review-coach/evals/results/
+
+# Contains coworker names — keep local only
+jira-ticket-ranker/references/sync-targets.md
