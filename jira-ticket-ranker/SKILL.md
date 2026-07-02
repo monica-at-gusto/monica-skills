@@ -28,11 +28,19 @@ Follow `references/profile-sources.md`. Read the apprenticeship progress-tracker
 `Road to L1` hub, and the latest Prudhvi 1:1; extract strong packs, thin growth axes, in-flight
 load, and the "sibling of shipped work" anchor. Re-read each run — her level drifts.
 
+Also read the running state note `~/workspace/notes/jira-ticket-ranker/_state.md` — her current
+assigned/in-flight tickets, recently-shipped set, the active-epic dependency map + live ownership,
+and **known dispositions Jira lags on**: tickets to exclude that still show open (e.g. an open PR
+not yet reflected in status), standing exclusions (perf-gated new indicators), and product-blocked
+holds. Apply these in Step 3, and **refresh this note at the end of the run**.
+
 ## Step 2 — Fetch the backlog
 
-Follow `references/jira-fetch.md`: cloudId → **lean index** (no descriptions) → if it exceeds
-the token limit, delegate the parse to an `Agent` → pick ~5–8 finalists → **deep-fetch only the
-finalists** (with `parent`, for the epic). Never pull full descriptions for the whole backlog.
+Follow `references/jira-fetch.md`: run the **live `assignee = currentUser()`** query first, then
+cloudId → **lean index** (no descriptions) → **jq-trim the saved JSON and read it directly** (do
+NOT delegate to a subagent parse — it proved lossy) → **paginate to `isLast: true`** → pick
+finalists → **deep-fetch only the finalists** (with `parent` for the epic, and descriptions for
+their `Dependencies` sections). Never pull full descriptions for the whole backlog.
 
 ## Step 3 — Rank & tier
 
