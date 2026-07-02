@@ -112,6 +112,33 @@ Mines the USP team's recently-merged PRs each sprint into a highly-curated, edit
 - **Detail lives in `peer-learning/references/`** (full design system in `digest-design.md`);
   SKILL.md stays lean.
 
+### sync-ticket-notes
+
+Pulls context from a recent Granola meeting transcript and reflects it in both places my ticket
+notes live — the local markdown file and the companion Notion page — after a sync, 1:1, or huddle
+about a specific ticket.
+
+```
+/sync-ticket-notes   (or just: "update notes for USPDS-XXX after that sync")
+```
+
+- **Source:** the most recent matching Granola transcript (by person named or meeting type),
+  extracted for decisions / blockers / next steps — paraphrased, not dumped. *(Mid-July TODO in
+  the SKILL: Gusto is moving off Granola to Notion-based transcription; only this source step
+  changes when that lands.)*
+- **Ticket inference is ask-don't-guess:** infers the ticket from session context, who the meeting
+  was with, or a ticket ID in the transcript — but if it can't be confident, it **asks** rather
+  than risk a wrong-ticket update.
+- **Two write targets:** local markdown at `~/workspace/notes/<TICKET-ID>/YYYY-MM-DD-<slug>.md`
+  (dated file per sync — new file for a new sync, append if one for this sync already exists) + the
+  Notion **Jira Ticket Qs → Tickets DB** child page for that ticket.
+- **Never-delete discipline:** additive context is appended plainly; a decision that *reverses* an
+  earlier one is struck through with dates and the new call added beneath — so the history stays
+  visible in place. If the Notion child page is missing, it **flags** that rather than silently
+  creating one.
+- **Model-invocable** (no `disable-model-invocation`), so it auto-triggers on natural language.
+  Evals: `sync-ticket-notes/evals/` (see its README) — `cd sync-ticket-notes && uv run skill-evals`.
+
 ## Linking a skill into Claude Code
 
 From the repo root:

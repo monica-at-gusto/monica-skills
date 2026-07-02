@@ -1,0 +1,147 @@
+scenarios:
+  # All scenarios use fictional ticket IDs (USPDS-900xx) so the model's real-filesystem
+  # Read/Glob (in the eval allowlist) can't contradict the injected mock premise.
+
+  # The defining rule — a reversed decision is struck through, never silently overwritten.
+  - name: strikethrough_supersedes_decision
+    prompt: |
+      /sync-ticket-notes
+
+      We just synced with Kilian about USPDS-90042 — update our notes.
+
+      (Mock existing notes — ~/workspace/notes/USPDS-90042/2026-06-30-kickoff.md, Decisions section:)
+        ## Decisions
+        - 6/30: Decided to use approach A for the retry logic.
+
+      (Mock Granola transcript — sync with Kilian, today 7/2:)
+        "...yeah, approach A had that problem with the idempotency key under X, so let's
+        actually go with approach B instead. B sidesteps the whole retry-storm issue."
+    evaluations:
+      - type: behavior
+        expectations:
+          - "Strikes through the old 6/30 approach-A decision rather than deleting it, keeping it visible with its date"
+          - "Records the new approach-B decision, dated 7/2, with the reason (A's idempotency/retry-storm issue)"
+          - "Does not silently overwrite or drop the prior decision"
+        auto_fail:
+          - "Silently deletes or overwrites the old approach-A decision instead of striking it through"
+
+  # Additive context is appended plainly — no strikethrough when nothing is being reversed.
+  - name: additive_context_no_strikethrough
+    prompt: |
+      /sync-ticket-notes
+
+      Update notes for USPDS-90042 from our sync with Kilian.
+
+      (Mock existing notes — ~/workspace/notes/USPDS-90042/2026-06-30-kickoff.md, Context section:)
+        ## Context
+        - The indicator reads from the CompanyDetails GraphQL query.
+
+      (Mock Granola transcript, today:)
+        "One more thing for context — the data source is refreshed nightly, so there can be
+        up to a day of lag. Doesn't change the approach, just good to know."
+    evaluations:
+      - type: behavior
+        expectations:
+          - "Adds the nightly-refresh / up-to-a-day-lag detail as plain additive context"
+          - "Does NOT strike through or alter the existing CompanyDetails line"
+        auto_fail:
+          - "Applies strikethrough to unchanged context, or reframes it as a reversed decision"
+
+  # Ask-don't-guess: when the ticket can't be confidently inferred, ask.
+  - name: ambiguous_ticket_asks
+    prompt: |
+      /sync-ticket-notes
+
+      Peep our granola notes from the sync I just had and update our notes.
+
+      (Mock context: no ticket has been discussed in this session; the most recent Granola
+      meeting is a general team standup that touches several tickets — USPDS-90051, USPDS-90052,
+      USPDS-90053 — without a clear single subject.)
+    evaluations:
+      - type: behavior
+        expectations:
+          - "Recognizes the ticket cannot be confidently inferred"
+          - "Asks the user which ticket this applies to before writing anything"
+        auto_fail:
+          - "Silently picks one of the tickets and updates its notes without confirming"
+
+  # No notes yet for this ticket → create a new DATED file (not a monolithic <TICKET>.md).
+  - name: create_dated_file_for_new_sync
+    prompt: |
+      /sync-ticket-notes
+
+      Update notes for USPDS-90060 from our sync with Kilian just now.
+
+      (Mock filesystem: no notes exist yet for USPDS-90060 — this is the first time notes are
+      being taken for this ticket. Other tickets keep notes as dated files, e.g.
+      ~/workspace/notes/USPDS-90042/2026-06-30-kickoff.md.)
+      (Mock transcript: decided to scope the first cut to Company-level only; next step is a
+      draft PR this week.)
+    evaluations:
+      - type: behavior
+        expectations:
+          - "Creates a new dated file using the date + slug convention (e.g. ~/workspace/notes/USPDS-90060/2026-07-02-kilian-sync.md)"
+          - "Populates it with the extracted decision (Company-level first cut) and next step (draft PR)"
+        auto_fail:
+          - "Creates a monolithic single-file blob (USPDS-90060.md) instead of a dated file"
+          - "Refuses to create notes or asks whether to create them, when the ticket is unambiguous and no notes exist"
+
+  # A dated file for THIS sync already exists → append to it, don't spawn a duplicate.
+  - name: append_to_todays_sync_file
+    prompt: |
+      /sync-ticket-notes
+
+      Update notes for USPDS-90061 after our call with Kilian today.
+
+      Treat the following filesystem state as GROUND TRUTH — do not verify it against the real
+      disk; the file below already exists. A dated file for today's sync is already present at
+      ~/workspace/notes/USPDS-90061/2026-07-02-kilian-sync.md, holding notes you jotted during
+      the call:
+        ## Notes
+        - Walked through the read-path edge cases with Kilian.
+      Earlier dated files also exist in that dir, e.g. 2026-06-28-kickoff.md.
+
+      (Mock transcript: a next step was agreed — "I'll open the draft PR by Thursday.")
+    evaluations:
+      - type: behavior
+        expectations:
+          - "Appends the Thursday draft-PR next step to today's existing 2026-07-02-kilian-sync.md file"
+          - "Does not create a second file for the same sync"
+        auto_fail:
+          - "Creates a duplicate/parallel dated file for today's sync instead of appending to the existing one"
+
+  # Notion companion: missing child page → flag, don't create silently.
+  - name: notion_page_missing_flags
+    prompt: |
+      /sync-ticket-notes
+
+      Update our notes for USPDS-90070 from the Kilian sync.
+
+      (Mock Notion: the Jira Ticket Qs → Tickets DB database has child pages for USPDS-90051 and
+      USPDS-90052, but NO child page for USPDS-90070.)
+      (Mock transcript: a decision was made to ship behind a flag first.)
+    evaluations:
+      - type: behavior
+        expectations:
+          - "Updates the local dated notes file as usual"
+          - "Flags to the user that no matching Tickets DB child page exists for USPDS-90070"
+        auto_fail:
+          - "Silently creates a new Notion child page for USPDS-90070 without flagging it as a judgment call"
+
+  # Notion companion: child page exists → update it in place, never spawn a duplicate sibling.
+  - name: notion_updates_existing_not_duplicate
+    prompt: |
+      /sync-ticket-notes
+
+      Update our notes for USPDS-90071 from the Kilian sync.
+
+      (Mock Notion: the Jira Ticket Qs → Tickets DB database already has a child page for
+      USPDS-90071 with prior notes content and existing Jira / PR link fields.)
+      (Mock transcript: a next step was agreed — "I'll open the draft PR by Thursday.")
+    evaluations:
+      - type: behavior
+        expectations:
+          - "Updates the existing USPDS-90071 child page in place"
+          - "Leaves the existing Jira / PR link fields untouched (transcript introduced no new link)"
+        auto_fail:
+          - "Creates a second/duplicate Tickets DB child page for USPDS-90071 instead of updating the existing one"

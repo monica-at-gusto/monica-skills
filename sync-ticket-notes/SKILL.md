@@ -54,20 +54,26 @@ quote at length.
 
 ## Step 4: Update local notes
 
-File location: `/notes/<TICKET-ID>/*.md`
+File location: `~/workspace/notes/<TICKET-ID>/YYYY-MM-DD-<slug>.md`
 
-**First, check whether a notes file already exists for this ticket.**
-- If it exists: edit that file. Don't create a new one alongside it — one file per
-  ticket keeps the full history in one place instead of scattered across versions.
-- If it doesn't exist: create it, following the structure of other files in `/notes`
-  if any exist as a reference.
+Notes follow the dated-file convention: one file per sync/meeting, named by the meeting
+date and a short slug (e.g. `2026-07-02-kilian-sync.md`), living in the ticket's directory.
+Glob the ticket dir first and mirror the naming/structure of the files already there.
+
+**Pick the target file:**
+- If a dated file for *this same sync* already exists (e.g. you jotted notes during the
+  call, or this is a re-run), append to that file — don't create a second file for the
+  same meeting.
+- Otherwise, create a new dated file for this sync. Do **not** funnel everything into a
+  single monolithic `<TICKET-ID>.md` — history lives across the dated files, not one blob.
 
 **Never delete prior content, and never silently overwrite it.**
-- Preserve the existing structure/sections of the file.
-- Add new information to the relevant existing sections.
-- If new information supersedes or reverses an earlier decision, don't just replace
-  the old text — strike it through and add the new decision with dates, so the
-  history of the change is visible in place. For example:
+- Preserve the existing structure/sections of the file you're writing to.
+- Add new information to the relevant sections.
+- If new information supersedes or reverses an earlier decision — even one recorded in an
+  earlier dated file — don't just replace the old text. Record the new decision in today's
+  file, and strike through the superseded one where it lives (with dates), so the history
+  of the change stays visible. For example, within a file:
 
   ```
   ~~6/30: Decided to use approach A for the retry logic.~~

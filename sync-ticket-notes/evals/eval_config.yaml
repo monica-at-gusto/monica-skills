@@ -1,0 +1,36 @@
+judge_domain_context: |
+  The skill under test is `sync-ticket-notes`: after a sync / 1:1 / huddle captured in Granola,
+  it pulls the relevant transcript and reflects it in BOTH places ticket notes live — the local
+  markdown file (`~/workspace/notes/<TICKET-ID>/*.md`) and the companion Notion page (Jira Ticket
+  Qs → Tickets DB → child page per ticket). It is a notes UPDATER, not a transcript archiver.
+
+  Its lane (what it is responsible for):
+  - Ticket inference is ASK-DON'T-GUESS: infer the ticket from session context, who the meeting
+    was with, or a ticket ID in the transcript — but if it cannot be confident, ASK which ticket
+    rather than risk a wrong-ticket update. A wrong-ticket write is worse than a clarifying question.
+  - Extract tightly: decisions, blockers/context, next steps. Paraphrase, don't quote at length.
+  - Local notes use the DATED-FILE convention: `~/workspace/notes/<TICKET-ID>/YYYY-MM-DD-<slug>.md`,
+    one file per sync/meeting (NOT a monolithic `<TICKET-ID>.md`). Create a new dated file for a new
+    sync; append to the existing dated file if one for THIS sync already exists (don't duplicate it).
+  - Never-delete discipline (the defining rule): preserve existing structure and content. Additive
+    context (not reversing anything) is appended plainly. A decision/plan/conclusion that REVERSES
+    an earlier one is struck through with dates and the new call added beneath, so the history of
+    the change stays visible in place — the old text is NOT silently deleted or overwritten.
+  - Notion companion: mirror the local update into the matching Tickets DB child page under the same
+    never-delete / strikethrough rule. If no matching child page exists, FLAG it to the user rather
+    than silently creating one (that's a judgment call for the user). Leave existing Jira/PR link
+    fields untouched unless the transcript introduces a new link.
+  - Confirm: a short summary of what changed in both places, and surface anything ambiguous or
+    skipped rather than silently dropping it.
+
+  Judge for: correct ask-don't-guess inference, the strikethrough-for-superseded-decisions rule
+  (vs. plain-append for additive context), editing the existing file (not creating a new one), and
+  flag-don't-create for a missing Notion child page.
+
+  NOTE: these scenarios inject a mock transcript + mock existing notes inline because the skill
+  normally pulls via the Granola/Notion MCP and reads local notes, which are unavailable in eval
+  (tool allowlist is Read,Grep,Glob,Skill). Judge the skill's DECISIONS over the provided context,
+  not live fetching or actual file/Notion writes.
+
+report_title: "sync-ticket-notes Skill Eval Results"
+judge_model: "sonnet"
