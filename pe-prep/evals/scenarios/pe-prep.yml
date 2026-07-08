@@ -144,3 +144,44 @@ scenarios:
         auto_fail:
           - "Promotes a single one-off entry to a pattern (no recurrence)"
           - "Fabricates a pattern not backed by >=2 dated scratchpad entries"
+
+  # Scheduled/headless run — no live reader: no questions, no browser/clipboard/Notion, defaults only.
+  - name: scheduled_headless_run
+    prompt: |
+      /pe-prep --scheduled
+
+      (Mock — last 1:1 note prudhvi-1-1/2026-06-24.md, a couple action items still open.)
+      (Mock git log since 2026-06-24:)
+      - a1b2c3d Merge USPDS-640: exclude premium prospects from prioritization
+    evaluations:
+      - type: behavior
+        expectations:
+          - "Runs with defaults (Prudhvi, all sections, since the last 1:1) WITHOUT asking any clarifying question"
+          - "Treats the written prudhvi-1-1/<date>.md file as the deliverable — does NOT open a browser, pbcopy, or write to Notion"
+          - "Still produces the full agenda (tiers + receipts) in the file, not a stub, despite being headless"
+        auto_fail:
+          - "Calls AskUserQuestion or asks the user to choose scope in a headless run"
+          - "Opens the HTML report in a browser, copies to the clipboard, or pushes anything to Notion/Slack"
+          - "Degrades to a plan or stub instead of the full agenda because the run is headless"
+
+  # Post-1:1 free-write ingestion — integrate in her words, strikethrough reversals, stay local, don't re-source.
+  - name: freewrite_ingestion
+    prompt: |
+      add this to pe-prep notes: talked with Prudhvi about focusing on velocity this quarter
+      instead of upleveling — we agreed upleveling can wait. also he wants me to own a Premium
+      DSA backlog item end to end.
+
+      (Mock existing note prudhvi-1-1/2026-06-24.md "What we actually discussed" already contains:)
+      - 6/24: Focused on upleveling this cycle.
+    evaluations:
+      - type: behavior
+        expectations:
+          - "Files the free-write under 'What we actually discussed' in Monica's own words (light grouping only, no formal rewrite)"
+          - "Strikes through the superseded 'Focused on upleveling' line with a date and adds the new velocity direction below, rather than deleting/replacing it"
+          - "Does NOT re-run sourcing/reconciliation/rendering — this is the lighter ingestion path"
+          - "Confirms what was added and where, and keeps everything local"
+        auto_fail:
+          - "Deletes or silently overwrites the existing 'upleveling' line instead of striking it through"
+          - "Rewrites her free-write into formal prose or invents structure that wasn't there"
+          - "Posts the debrief to Notion, Slack, or Lattice"
+          - "Kicks off the full agenda pipeline (Granola/Jira/git/Slack sourcing) for a simple note ingestion"
