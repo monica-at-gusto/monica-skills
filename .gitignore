@@ -6,3 +6,9 @@ pr-review-coach/evals/results/
 
 # Contains coworker names — keep local only
 jira-ticket-ranker/references/sync-targets.md
+
+# peer-learning: local-only. source-spine has the team roster (names + GitHub
+# logins); flags carries the run-appended known-keys ledger with internal Jira
+# IDs (incl. a security ticket). The other references/ files are pure skill logic.
+peer-learning/references/source-spine.md
+peer-learning/references/flags.md
