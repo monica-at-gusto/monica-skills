@@ -40,6 +40,21 @@ Rank each candidate on these (the defaults agreed in the first run; the user can
 - **Considered — held** = surfaced but not recommended; always say *why* (wrong stack, pure
   spike, toe-stepping risk, blocked parent).
 
+## Late-stage epic: availability dominates familiarity
+
+In an **epic-scoped run** (or any cluster where every candidate sits in the same pack), the three
+dimensions stop discriminating — familiarity is uniformly HIGH across the whole epic because it's
+all her work. When that happens, the ranking **collapses to a claimed-vs-free check**: the real
+question is not "which is the best fit" but "which is still *available*." Rank on **assignee +
+status** first (unassigned/Backlog = the candidate pool; In Progress/assigned = held-because-taken),
+and let familiarity/growth/priority only break ties among the free ones.
+
+Say this plainly in the output when it happens: a late-stage epic that's being actively divided up
+may have **exactly one** free ticket (or none) — and "everything else is a reassignment
+conversation, not a free grab" is the honest, ranking-relevant finding, not coaching. (2026-07-08:
+USPDS-686 had 10 open children, 9 already claimed by three teammates; USPDS-699 was the sole free
+pickup, so the run's value was the availability map, not a familiarity sort.)
+
 ## The toe-stepping rule (most important, least obvious)
 
 Pickup risk lives in **active neighbor work, not the assignee field.** A ticket can be
@@ -52,6 +67,20 @@ on its epic. Before tiering a candidate **Ready**, check:
 If yes → drop it out of Ready into **Considered — held / "sync first"**, even if familiarity is
 perfect. (First run: USPDS-596 was her exact file but entangled with Jyoti's active recipe
 work + possibly mooted by USPDS-587 → held with a "sync Jyoti first" note.)
+
+### Active collision vs. design coupling (a softer signal)
+
+Distinguish two flavors of neighbor entanglement — they tier differently:
+
+- **Active collision** — a sibling is **In Progress** on the same files, or an in-flight ticket
+  could moot this one. This is the classic toe-stepping → **held / sync first**.
+- **Design coupling** — a sibling shares a *shape* (a Redis key convention, a helper, a schema,
+  an interface) but nobody is mid-flight on it (it's Backlog). No file will collide *yet*, but the
+  two must agree on the shared shape or they diverge. This is **Ready-with-a-mandatory-sync**, not
+  held — holding would be over-cautious when nothing's in flight. Name the coupling explicitly in
+  the sync target. (2026-07-08: USPDS-699 batch staler is the batch sibling of Jyoti's 693
+  per-event staler — same `ZADD GT` + `dsa:stale:<indicator>` keys — but 693 was Backlog, so 699
+  ranked Ready with "sync Jyoti on the shared staleness-set design," not held.)
 
 ### The downstream-of-her-own-ticket cluster
 

@@ -25,6 +25,23 @@ her assignments: it's a point-in-time snapshot and reassignments made minutes ea
 (2026-06-17: USPDS-635 had just been reassigned to her and USPDS-592 freshly assigned — both
 reported by Jyoti — and the stale bulk snapshot missed/misattributed both.)
 
+## Step 1c — Epic-scoped runs (when the arg is an epic key)
+
+If the invocation arg is an **epic key** (e.g. `USPDS-686`) rather than a project, **skip the
+whole-project lean index entirely** — query the epic's children directly:
+
+- **jql:** `parent = <EPIC> ORDER BY key ASC`
+- **fields:** same lean set as Step 2 (`summary, status, issuetype, priority, assignee, updated,
+  labels, parent`) — still omit `description`.
+- **responseContentFormat:** `markdown`. **Paginate to `isLast: true`** — an epic can span >100
+  children, and the tail (highest-numbered siblings) is often exactly the still-open work
+  (2026-07-08: USPDS-686 spanned 2 pages; page 2 held 697–741, the unassigned 699 among them).
+
+This is both cheaper and more precise than the project index — no jq trim needed, since one epic's
+children fit in context. It also returns a small enough set that you can deep-fetch **every**
+still-open child with `issuelinks` in Step 4 rather than picking finalists. Then jump straight to
+the intra-epic stack analysis below (`issuelinks` blocked-by graph) — it *is* the whole run.
+
 ## Step 2 — Lean index (NO descriptions)
 
 `mcp__jiraconfluencegusto__searchJiraIssuesUsingJql`:

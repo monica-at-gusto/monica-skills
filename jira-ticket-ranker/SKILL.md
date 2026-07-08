@@ -22,6 +22,12 @@ Defaults: project `USPDS` · **focused** (1–3 candidates) · **balanced** stre
 categorized survey. Only ask scope questions (`AskUserQuestion`) if the request is genuinely
 ambiguous — otherwise use the defaults and say which you used.
 
+**Epic-scoped runs.** The first arg can be an **epic key** (e.g. `USPDS-686`) instead of a
+project. When it is, the question is "what's my next pickup *inside this epic*" — scope the whole
+run to the epic's children (`parent = <epic>`, see `jira-fetch.md`) and skip the whole-project
+index. Familiarity is usually uniform across one epic, so ranking leans on the *availability* +
+*late-stage-epic* rules in `ranking-criteria.md`.
+
 ## Step 1 — Build the skill-level profile
 
 Follow `references/profile-sources.md`. Read the apprenticeship progress-tracker, the Notion
@@ -59,7 +65,7 @@ why for every candidate, including held ones. A candidate without a sync target 
 1. **Page:** read `templates/report.html`; replace the block between the
    `__RANK_DATA_START__` / `__RANK_DATA_END__` markers with `const RANK = <json>;`. The JSON
    carries `meta` (`title`, `generated` [today's date], `jiraBase`, `counts`, `backlog`
-   [string — total open tickets scanned, e.g. `"127"`; renders as "N tickets scanned"], `config`,
+   [string — total open tickets scanned, e.g. `"127"`; renders as "N scanned"], `config`,
    `context[]`, `banner`) and `tickets[]` (`key`, `tier` [`ready`|`stretch`|`held`], `badge`,
    `summary`, `loc`, `headline`, `rationale[]` [`{lbl, val}` — one per ranking dimension],
    `sync` [`{who, why}`], optional `note`, `pills[]`). Write to
