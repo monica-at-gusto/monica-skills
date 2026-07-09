@@ -70,7 +70,11 @@ and Goals); attach a receipt to every bullet; build the echo-only footer from th
 With a quoted `"<topic>"`, focus the whole agenda on that topic.
 
 ### Step 5 — Render & present (THIS IS THE DELIVERABLE)
-Determine `<target-date>` (next 1:1 occurrence; default today if unknown). Compute the
+Determine `<target-date>` — the next Monica/Prudhvi 1:1, resolved in order: (a) if a Google
+Calendar tool is available, look up the next "Monica / Prudhvi" (or PE 1:1) event; (b) else infer
+the next occurrence from the recurring Granola 1:1 series cadence; (c) else default to today. Never
+block on the calendar — if it's unavailable or unapproved (e.g. a headless run), degrade quietly
+through (b) → (c). Compute the
 **source-coverage line** (bullets per source, by primary receipt — see synthesis-rules) and the
 **staleness flag**. Fill `templates/agenda.md` (full, with receipts), `templates/lattice-block.md`
 (trimmed), and the `templates/report.html` data block (its `__AGENDA_DATA__` contract).
