@@ -11,7 +11,7 @@ signal, ELEVATE it into 1:1 language or DROP it:
 - Pure code minutiae (merge-conflict internals, enum nullability, refactor mechanics) → DROP.
   That belongs in standups and Kilian syncs.
 
-This applies hardest to **Slack channels** and Granola standups — they are noisy and technical.
+This applies hardest to **Slack channels** and meeting-note standups — they are noisy and technical.
 Elevate the signal, never paste the chatter. If a signal can't be raised to
 career/goals/team/blocker altitude, it does not belong on the agenda.
 
@@ -20,7 +20,7 @@ career/goals/team/blocker altitude, it does not belong on the agenda.
 - **1:1 note** → Since last time (carry-over, parked questions) + Worth remembering footer.
 - **Prudhvi Slack DMs** → Career & growth / Goals & expectations (asks he made, feedback, flagged
   items). High signal — manager's own words.
-- **USP Slack channels + Granola** → Team / Blockers (elevated).
+- **USP Slack channels + Notion meeting notes** → Team / Blockers (elevated).
 - **Road-to-L1 + Actionables** → Career & growth, Goals & expectations.
 - **git/PRs** → carry-over reconciliation + wins.
 - **Behavior scratchpads** (Notion L1-ish + L2-ish; + any PRN source Monica names) → the
@@ -56,14 +56,14 @@ Build the agenda in this order; omit a section with no real content rather than 
 3. **Patterns I've shown this cycle** — behavior pattern detection (below). The bridge between
    recent work and forward-looking discussion. Omit if nothing clusters to ≥2 entries.
 4. **Goals & expectations** — Actionables + last 1:1 + DM asks: throughput, volume, align-ons.
-5. **Team** — elevated Granola + USP channels: collaboration, pairing, cross-team.
-6. **Blockers** — elevated Granola + USP channels: manager-resolvable (priority, scope, people).
+5. **Team** — elevated Notion meeting notes + USP channels: collaboration, pairing, cross-team.
+6. **Blockers** — elevated Notion meeting notes + USP channels: manager-resolvable (priority, scope, people).
 7. **Worth remembering** (footer, optional) — echo-only (below).
 
-Every bullet carries a **receipt**: the file / PR / Granola meeting / Notion page / Slack
-permalink it came from. **Link the receipt** when a target exists — note → `file://` the note,
-git → the GitHub commit URL, Notion → the page URL, Slack → the message permalink. Granola stays
-plain text unless a shareable link exists. Never fabricate a talking point — no source, no bullet.
+Every bullet carries a **receipt**: the file / PR / Notion page / Slack permalink it came from.
+**Link the receipt** when a target exists — note → `file://` the note, git → the GitHub commit
+URL, Notion (page or meeting note) → the page URL, Slack → the message permalink. Never fabricate
+a talking point — no source, no bullet.
 
 ## Source-coverage line (replaces the earlier chart idea)
 
@@ -71,7 +71,7 @@ Aggregate the agenda's bullets by **primary** source (one source per bullet — 
 receipt, so the counts sum to the bullet total). Render a single line in the report + note:
 
 ```
-Sources (N bullets): Notes a · Jira b · Slack c · Granola d · git e · Notion f
+Sources (N bullets): Notes a · Jira b · Slack c · git d · Notion e
 ```
 
 Then a **conditional staleness flag** — show it ONLY when one of these is true (else omit):
@@ -145,5 +145,5 @@ is a later item — see the design doc.)
 ## Graceful degradation
 
 If the last 1:1 note is missing or clearly stale, SAY SO (top of the agenda + the staleness flag)
-and build from Jira + Granola + Slack + Actionables + git instead. Do not invent 1:1 context you
+and build from Jira + Notion meeting notes + Slack + Actionables + git instead. Do not invent 1:1 context you
 can't see.

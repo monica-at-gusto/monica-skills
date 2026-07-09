@@ -5,7 +5,7 @@ scenarios:
       /pe-prep
 
       (Mock — last 1:1 note prudhvi-1-1/2026-06-01.md, action items all open.)
-      (Mock Granola since 2026-06-01:)
+      (Mock Notion meeting notes since 2026-06-01:)
       - USPDS-Standup: Monica spent two days on a gnarly rebase of PR 593 with merge conflicts in
         deterministic_strategy.rb; also waiting 4 days on Jyoti's review to land it.
       - DSA Working Session: team debated whether the supportTier enum should be nullable.
@@ -184,4 +184,4 @@ scenarios:
           - "Deletes or silently overwrites the existing 'upleveling' line instead of striking it through"
           - "Rewrites her free-write into formal prose or invents structure that wasn't there"
           - "Posts the debrief to Notion, Slack, or Lattice"
-          - "Kicks off the full agenda pipeline (Granola/Jira/git/Slack sourcing) for a simple note ingestion"
+          - "Kicks off the full agenda pipeline (Notion meeting notes/Jira/git/Slack sourcing) for a simple note ingestion"

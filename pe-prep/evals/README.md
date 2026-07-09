@@ -25,7 +25,7 @@ uv run skill-evals-viz      # HTML report -> evals/results/report.html
 
 ## Note on mock context
 
-Scenarios inject mock notes / Granola / Actionables inline. The skill normally pulls via MCP and
+Scenarios inject mock notes / Notion meeting notes / Actionables inline. The skill normally pulls via MCP and
 reads `~/workspace/notes/...`, unavailable under the eval allowlist (`Read,Grep,Glob,Skill`). So
 these evals test SYNTHESIS decisions — altitude, tiering, suggested carry-over, parked questions,
 echo-only footer, degradation — not live fetching.

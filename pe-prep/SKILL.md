@@ -1,8 +1,8 @@
 ---
 name: pe-prep
-description: Compose forward-looking talking points for my 1:1 with my PE (default Prudhvi) — career, goals, team, blockers; NOT a technical sync. Pulls from my prudhvi-1-1 notes, Granola, Jira, git, Slack (Prudhvi DMs + USP channels) and Notion; renders a Workbench HTML report (linked receipts, source-coverage line, Copy-for-Lattice) plus a paste-ready agenda in prudhvi-1-1/<date>.md. Use before a 1:1 / PE sync, to prep career or growth talking points, or invoke /pe-prep. Candidates, not a script — I pick and edit. Also files my post-1:1 free-write into that meeting's note under "What we actually discussed" — say "add this to pe-prep notes" or "just wrapped with Prudhvi" then the text — seeding the next run. Runs headless on a weekly schedule via --scheduled (writes the local agenda file only).
+description: Compose forward-looking talking points for my 1:1 with my PE (default Prudhvi) — career, goals, team, blockers; NOT a technical sync. Pulls from my prudhvi-1-1 notes, Jira, git, Slack (Prudhvi DMs + USP channels) and Notion (meeting notes + scratchpads); renders a Workbench HTML report (linked receipts, source-coverage line, Copy-for-Lattice) plus a paste-ready agenda in prudhvi-1-1/<date>.md. Use before a 1:1 / PE sync, to prep career or growth talking points, or invoke /pe-prep. Candidates, not a script — I pick and edit. Also files my post-1:1 free-write into that meeting's note under "What we actually discussed" — say "add this to pe-prep notes" or "just wrapped with Prudhvi" then the text — seeding the next run. Runs headless on a weekly schedule via --scheduled (writes the local agenda file only).
 argument-hint: "[person (default Prudhvi)] [--growth] [--scheduled] [\"<topic>\"]"
-allowed-tools: [Read, Write, Edit, Grep, Glob, Agent, AskUserQuestion, "Bash(open *)", "Bash(pbcopy)", "Bash(git log *)", "Bash(git -C * log *)", "Bash(gh pr list *)", "Bash(gh search prs *)", mcp__granolagusto__list_meetings, mcp__granolagusto__query_granola_meetings, mcp__granolagusto__get_meetings, mcp__notiongusto__notion-search, mcp__notiongusto__notion-fetch, mcp__gdocsgusto__fetch, mcp__slackgustoofficialmcp__slack_search_users, mcp__slackgustoofficialmcp__slack_search_channels, mcp__slackgustoofficialmcp__slack_search_public_and_private, mcp__slackgustoofficialmcp__slack_read_channel, mcp__slackgustoofficialmcp__slack_read_thread, mcp__slackgustoofficialmcp__slack_read_user_profile, mcp__jiraconfluencegusto__getAccessibleAtlassianResources, mcp__jiraconfluencegusto__searchJiraIssuesUsingJql, mcp__jiraconfluencegusto__getJiraIssue]
+allowed-tools: [Read, Write, Edit, Grep, Glob, Agent, AskUserQuestion, "Bash(open *)", "Bash(pbcopy)", "Bash(git log *)", "Bash(git -C * log *)", "Bash(gh pr list *)", "Bash(gh search prs *)", mcp__notiongusto__notion-search, mcp__notiongusto__notion-fetch, mcp__notiongusto__notion-query-meeting-notes, mcp__gdocsgusto__fetch, mcp__slackgustoofficialmcp__slack_search_users, mcp__slackgustoofficialmcp__slack_search_channels, mcp__slackgustoofficialmcp__slack_search_public_and_private, mcp__slackgustoofficialmcp__slack_read_channel, mcp__slackgustoofficialmcp__slack_read_thread, mcp__slackgustoofficialmcp__slack_read_user_profile, mcp__jiraconfluencegusto__getAccessibleAtlassianResources, mcp__jiraconfluencegusto__searchJiraIssuesUsingJql, mcp__jiraconfluencegusto__getJiraIssue]
 ---
 
 # pe-prep
@@ -39,9 +39,10 @@ Two modes; the pipeline below is the same, these are the behavioral deltas.
 ## Pipeline
 
 ### Step 1 — Build the source picture
-Follow `references/profile-sources.md`. Determine the anchor date (most recent recorded
-"Monica / Prudhvi" Granola meeting, else the latest `prudhvi-1-1/` note date). Read the last 1:1
-note, bounded Granola since the anchor, git/PRs since the anchor, **Jira (your assigned tickets
+Follow `references/profile-sources.md`. Determine the anchor date (latest `prudhvi-1-1/` note date;
+else the most recent "Monica / Prudhvi" meeting note in Notion). Read the last 1:1
+note, bounded Notion meeting notes since the anchor (via `notion-query-meeting-notes`), git/PRs
+since the anchor, **Jira (your assigned tickets
 since the anchor + tickets named in notes/Slack)**, Road-to-L1 + Actionables, **Slack (Prudhvi
 DMs + auto-detected USP channels, since the anchor)**, **behavior scratchpads (Notion L1-ish +
 L2-ish, entries since the anchor)**, and (optional) progress-tracker + Impact Log. Also pull any
@@ -72,7 +73,7 @@ With a quoted `"<topic>"`, focus the whole agenda on that topic.
 ### Step 5 — Render & present (THIS IS THE DELIVERABLE)
 Determine `<target-date>` — the next Monica/Prudhvi 1:1, resolved in order: (a) if a Google
 Calendar tool is available, look up the next "Monica / Prudhvi" (or PE 1:1) event; (b) else infer
-the next occurrence from the recurring Granola 1:1 series cadence; (c) else default to today. Never
+the next occurrence from the spacing of recent `prudhvi-1-1/` notes; (c) else default to today. Never
 block on the calendar — if it's unavailable or unapproved (e.g. a headless run), degrade quietly
 through (b) → (c). Compute the
 **source-coverage line** (bullets per source, by primary receipt — see synthesis-rules) and the
@@ -157,7 +158,7 @@ after "just wrapped with Prudhvi"). It does **not** re-run sourcing, reconciliat
   staleness flag); lean on the other sources; don't invent 1:1 context.
 - **Read-only on sources.** Writes only the agenda file, the HTML report, and clipboard. Never
   posts to Lattice/Slack or messages anyone.
-- **Bounded Granola + Slack** — only meetings/messages since the last 1:1; altitude-filter Slack
+- **Bounded Notion meeting notes + Slack** — only meetings/messages since the last 1:1; altitude-filter Slack
   hard (channels are noisy — elevate, never dump).
 - **Slack stays private + local.** Prudhvi DMs inform career/goals; DM content lives only in the
   local agenda/report, never posted anywhere.

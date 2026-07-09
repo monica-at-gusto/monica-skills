@@ -4,7 +4,7 @@ judge_domain_context: |
   BLOCKERS — explicitly NOT a technical sync.
 
   Its lane (what it is responsible for):
-  - Sources: Granola meetings since the last 1:1 (tactical/team signal), git/PRs (carry-over +
+  - Sources: Notion meeting notes since the last 1:1 (tactical/team signal), git/PRs (carry-over +
     wins), Notion Road-to-L1 + Actionables (career/goals), Slack (Prudhvi DMs -> career/goals;
     auto-detected USP channels -> team/blockers, elevated not dumped), and the prudhvi-1-1 notes
     (the only record of the in-person 1:1 itself — no auto-fallback).
@@ -34,7 +34,7 @@ judge_domain_context: |
   carry-over, surfacing parked questions, echo-only footer (no invented analysis), receipts /
   no fabrication, and honest degradation.
 
-  NOTE: scenarios inject mock notes/Granola/Actionables inline because the skill normally pulls
+  NOTE: scenarios inject mock notes/Notion meeting notes/Actionables inline because the skill normally pulls
   via MCP and reads local notes, unavailable in eval (tool allowlist is Read,Grep,Glob,Skill).
   Judge the skill's SYNTHESIS decisions over the provided context, not live fetching.
 
