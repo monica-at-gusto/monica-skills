@@ -73,33 +73,15 @@ mode to avoid: pre-written talking points invite reading notes verbatim instead 
 which is exactly when "why are we building this?" exposes the gap. So this section is the one place
 the skill leaves blanks **on purpose**.
 
-Select the tickets Monica is **currently working on** (Jira In Progress / In Review), any
+Selection: the tickets Monica is **currently working on** (Jira In Progress / In Review), any
 **discussed in the last 1:1** note, and any that **seem likely to come up** — **cap at ~5 most
-relevant**; if you drop any, say so. For each entry:
+relevant**; if you drop any, say so. Flag any ticket with no clear business rationale as a pushback
+opportunity — surfacing those is exactly what Prudhvi asked for.
 
-- List **only the ticket ID and title** — no description.
-- Emit these **exact three prompts, verbatim** — never invent your own, never add a fourth, never
-  rephrase them into ticket-specific technical questions:
-  1. What does this ticket do, in one sentence?
-  2. Why does it exist — whose ask, what product/business problem, what happens if it isn't built?
-  3. Do you agree it's worth building? If not, what's your counterargument?
-- **Leave the answer line under each prompt literally blank** (a single `-`). Write NOTHING there —
-  not the answer, not a hint, not a "starter." **This overrides your instinct to be helpful and
-  complete what you know:** a ticket with obvious answers sitting right in front of you is *exactly*
-  when you must still leave it blank. If you find yourself typing an answer under a prompt, stop —
-  that belongs in the answer key, not the prompt.
-- The prompts and the answer key are **product/business altitude**, never code internals. If the
-  answer key is describing Redis, workers, schemas, or method mechanics, you've gone to the wrong
-  altitude (that's the *technical sync* this skill exists to avoid) — pull it back to *what it does
-  for users/the business, whose ask it was, and what breaks without it*.
-- Put the answers in a **separated, collapsed "Answer key"** (its own `<details>` block) below the
-  three prompts, from the ticket description / notes / linked docs — for self-check *after* recall,
-  so her eye can't catch it mid-attempt.
-- If a ticket's source material has **no clear business rationale**, flag it at the top of its entry
-  as **"Possible pushback opportunity"** — surfacing these is exactly what Prudhvi asked for.
-- **Render this by copying `templates/agenda.md`'s drill block** — the only things you fill are the
-  ticket id/title, the pushback flag, and the collapsed answer key. The three prompts and their
-  blank `-` lines are copied as-is.
+**The executable scaffold is in `SKILL.md` → Step 4b (mandatory).** It is deliberately inline in
+the pipeline, not here, because a real run doesn't reliably open this reference: the three prompts
+are fixed and copied verbatim, the answer lines stay blank, and the answer key is product-altitude
+in a collapsed block. Do not re-derive it from this section — follow Step 4b.
 
 ## Source-coverage line (replaces the earlier chart idea)
 

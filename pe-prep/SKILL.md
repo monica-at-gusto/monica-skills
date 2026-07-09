@@ -67,9 +67,33 @@ nothing clusters to ≥2, omit the Patterns section.
 Follow `references/synthesis-rules.md` (Altitude + Tiers + Footer). Apply the altitude filter to
 every signal; build the seven sections (incl. **Patterns I've shown this cycle**, between Career
 and Goals); attach a receipt to every bullet; build the echo-only footer from the note's own
-`Pattern to watch` lines. Also build the **Ticket Comprehension Drill** (see synthesis-rules) — its
-recall prompts stay BLANK; fill only the separated answer key. With `--growth`, weight Career/Goals
+`Pattern to watch` lines. With `--growth`, weight Career/Goals
 and go lighter on Team/Blockers. With a quoted `"<topic>"`, focus the whole agenda on that topic.
+
+### Step 4b — Ticket Comprehension Drill (MANDATORY — never skip when ≥1 ticket is in play)
+Pick the **1–5 most relevant** tickets (working on now / discussed in the last 1:1 / likely to come
+up). For EACH, emit this block **exactly** — copy the three questions and their blank `-` lines
+verbatim; the ONLY things you generate are the ticket id/title, the pushback flag, and the answer key:
+
+~~~
+### <TICKET-ID> — <title>   ⚑ Possible pushback opportunity   (⚑ only when there's no clear business rationale)
+1. What does this ticket do, in one sentence?
+   -
+2. Why does it exist — whose ask, what product/business problem, what happens if it isn't built?
+   -
+3. Do you agree it's worth building? If not, what's your counterargument?
+   -
+
+<details><summary>Answer key — open only after you've tried from memory</summary>
+(product-level answers: whose ask, what breaks without it, the agree/disagree case — NOT code internals)
+</details>
+~~~
+
+Rules that don't bend: the three questions are **fixed** (never invent your own or technical ones,
+never add a fourth); the `-` answer lines stay **blank** (a detail-rich ticket in front of you is
+exactly when to hold the line — answers go ONLY in the collapsed key); the answer key is
+**product/business altitude**, never Redis/worker/schema mechanics. Omit the whole section ONLY if
+there are genuinely zero tickets in play.
 
 ### Step 5 — Render & present (THIS IS THE DELIVERABLE)
 Determine `<target-date>` — the next Monica/Prudhvi 1:1, resolved in order: (a) if a Google
@@ -142,12 +166,9 @@ after "just wrapped with Prudhvi"). It does **not** re-run sourcing, reconciliat
   rendering, hedge, or fall back to "a plan" because sources look unread or budget looks low.
   Reading without rendering is the failure mode. Produce the full agenda even when write/clipboard
   tools are unavailable — the rendered agenda is the output, not a plan to be approved.
-- **The Ticket Comprehension Drill's prompts stay blank — the one carve-out to the rule above.**
-  Use the three FIXED prompts verbatim (never invent ticket-specific or technical questions); leave
-  each answer line literally blank (`-`); put answers only in the separated collapsed answer key, at
-  product/business altitude (not code internals). Having the answers in hand is exactly when the
-  helpful-completion instinct kicks in — hold the line and leave the prompts blank anyway. See
-  synthesis-rules → Ticket Comprehension Drill.
+- **The Ticket Comprehension Drill is the one carve-out to the rule above** — its prompts stay
+  blank on purpose. It's a MANDATORY section with a fixed, copy-verbatim scaffold; follow Step 4b
+  exactly (fixed questions, blank `-` lines, product-altitude answer key in the collapsed block).
 - **Candidates, not a script.** Monica picks and edits; never decide what she'll say.
 - **Altitude: non-technical.** Elevate signals to career/goals/team/blocker framing; drop code
   minutiae. The 1:1 is not a standup.

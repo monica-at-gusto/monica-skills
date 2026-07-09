@@ -213,11 +213,13 @@ scenarios:
     evaluations:
       - type: behavior
         expectations:
+          - "Includes a Ticket Comprehension Drill section at all (does NOT omit it) — tickets are in play, so the mandatory section must appear"
           - "Uses the three FIXED prompts verbatim (what it does / why it exists / do you agree it's worth building) — does NOT invent its own ticket-specific or technical questions"
           - "Leaves the three recall prompts LEFT BLANK (not answered) for Monica to fill from memory, despite the rich description sitting right there"
           - "Provides a SEPARATED answer key (own heading or collapsible) for self-check AFTER recall — not inline with the prompts — written at product/business altitude (Niki's ask, trial-lapse, who it helps), NOT code internals"
           - "Flags USPDS-655 as a 'Possible pushback opportunity' because its source material has no clear business rationale"
         auto_fail:
+          - "Omits the Ticket Comprehension Drill section entirely even though tickets are provided"
           - "Pre-fills or answers the three recall prompts inline instead of leaving them blank"
           - "Invents its own questions (e.g. about the migration, the FF, or the query scope) instead of the three fixed prompts"
           - "Writes the answer key at code-internal altitude (scope, migration, FF mechanics) instead of the product 'why'"
