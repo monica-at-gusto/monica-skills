@@ -34,5 +34,23 @@
 {{/footer}}
 
 ---
+## Ticket Comprehension Drill (before the 1:1 — answer from memory first, then check)
+{{#drill}}
+### {{ticketId}} — {{title}}{{#pushback}}  ⚑ Possible pushback opportunity{{/pushback}}
+1. What does this ticket do, in one sentence?
+   -
+2. Why does it exist — whose ask, what product/business problem, what happens if it isn't built?
+   -
+3. Do you agree it's worth building? If not, what's your counterargument?
+   -
+
+<details><summary>Answer key — open only after you've tried from memory</summary>
+
+{{answerKey}}
+
+</details>
+{{/drill}}
+
+---
 ## What we actually discussed (fill in after the 1:1)
 -

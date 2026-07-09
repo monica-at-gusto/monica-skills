@@ -65,6 +65,31 @@ Every bullet carries a **receipt**: the file / PR / Notion page / Slack permalin
 URL, Notion (page or meeting note) → the page URL, Slack → the message permalink. Never fabricate
 a talking point — no source, no bullet.
 
+## Ticket Comprehension Drill
+
+Prudhvi wants the 1:1 to build critical-thinking muscle on tickets — both articulating the
+product/business reason a ticket exists AND pushing back when one doesn't hold up. The failure
+mode to avoid: pre-written talking points invite reading notes verbatim instead of real recall,
+which is exactly when "why are we building this?" exposes the gap. So this section is the one place
+the skill leaves blanks **on purpose**.
+
+Select the tickets Monica is **currently working on** (Jira In Progress / In Review), any
+**discussed in the last 1:1** note, and any that **seem likely to come up** — **cap at ~5 most
+relevant**; if you drop any, say so. For each entry:
+
+- List **only the ticket ID and title** — no description.
+- Three **blank** recall prompts for her to answer from memory, before checking notes:
+  1. What does this ticket do, in one sentence?
+  2. Why does it exist — whose ask, what product/business problem, what happens if it isn't built?
+  3. Do you agree it's worth building? If not, what's your counterargument?
+- **Do NOT pre-fill these** — they are retrieval prompts, not summaries. A filled-in prompt defeats
+  the drill.
+- After the blanks, a **separated "Answer key"** (from the ticket description, notes, and linked
+  docs) for self-check *after* attempting recall — never before. Keep it visually separate (its own
+  heading / collapsible) so her eye doesn't catch it mid-recall.
+- If a ticket's source material has **no clear business rationale**, flag it at the top of its entry
+  as **"Possible pushback opportunity"** — surfacing these is exactly what Prudhvi asked for.
+
 ## Source-coverage line (replaces the earlier chart idea)
 
 Aggregate the agenda's bullets by **primary** source (one source per bullet — the bullet's main

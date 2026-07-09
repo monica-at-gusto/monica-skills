@@ -1,6 +1,6 @@
 ---
 name: pe-prep
-description: Compose forward-looking talking points for my 1:1 with my PE (default Prudhvi) — career, goals, team, blockers; NOT a technical sync. Pulls from my prudhvi-1-1 notes, Jira, git, Slack (Prudhvi DMs + USP channels) and Notion (meeting notes + scratchpads); renders a Workbench HTML report (linked receipts, source-coverage line, Copy-for-Lattice) plus a paste-ready agenda in prudhvi-1-1/<date>.md. Use before a 1:1 / PE sync, to prep career or growth talking points, or invoke /pe-prep. Candidates, not a script — I pick and edit. Also files my post-1:1 free-write into that meeting's note under "What we actually discussed" — say "add this to pe-prep notes" or "just wrapped with Prudhvi" then the text — seeding the next run. Runs headless on a weekly schedule via --scheduled (writes the local agenda file only).
+description: Compose forward-looking talking points for my 1:1 with my PE (default Prudhvi) — career, goals, team, blockers; NOT a technical sync. Pulls from my prudhvi-1-1 notes, Jira, git, Slack (Prudhvi DMs + USP channels) and Notion (meeting notes + scratchpads); renders a Workbench HTML report (linked receipts, source-coverage line, Copy-for-Lattice) plus a paste-ready agenda in prudhvi-1-1/<date>.md. Use before a 1:1 / PE sync, to prep career or growth talking points, or invoke /pe-prep. Candidates, not a script — I pick and edit. Includes a blind Ticket Comprehension Drill (recall prompts + self-check answer key) to rehearse each ticket's product "why." Also files my post-1:1 free-write into that meeting's note under "What we actually discussed" — say "add this to pe-prep notes" or "just wrapped with Prudhvi" then the text — seeding the next run. Runs headless on a weekly schedule via --scheduled (writes the local agenda file only).
 argument-hint: "[person (default Prudhvi)] [--growth] [--scheduled] [\"<topic>\"]"
 allowed-tools: [Read, Write, Edit, Grep, Glob, Agent, AskUserQuestion, "Bash(open *)", "Bash(pbcopy)", "Bash(git log *)", "Bash(git -C * log *)", "Bash(gh pr list *)", "Bash(gh search prs *)", mcp__notiongusto__notion-search, mcp__notiongusto__notion-fetch, mcp__notiongusto__notion-query-meeting-notes, mcp__gdocsgusto__fetch, mcp__slackgustoofficialmcp__slack_search_users, mcp__slackgustoofficialmcp__slack_search_channels, mcp__slackgustoofficialmcp__slack_search_public_and_private, mcp__slackgustoofficialmcp__slack_read_channel, mcp__slackgustoofficialmcp__slack_read_thread, mcp__slackgustoofficialmcp__slack_read_user_profile, mcp__jiraconfluencegusto__getAccessibleAtlassianResources, mcp__jiraconfluencegusto__searchJiraIssuesUsingJql, mcp__jiraconfluencegusto__getJiraIssue]
 ---
@@ -67,8 +67,9 @@ nothing clusters to ≥2, omit the Patterns section.
 Follow `references/synthesis-rules.md` (Altitude + Tiers + Footer). Apply the altitude filter to
 every signal; build the seven sections (incl. **Patterns I've shown this cycle**, between Career
 and Goals); attach a receipt to every bullet; build the echo-only footer from the note's own
-`Pattern to watch` lines. With `--growth`, weight Career/Goals and go lighter on Team/Blockers.
-With a quoted `"<topic>"`, focus the whole agenda on that topic.
+`Pattern to watch` lines. Also build the **Ticket Comprehension Drill** (see synthesis-rules) — its
+recall prompts stay BLANK; fill only the separated answer key. With `--growth`, weight Career/Goals
+and go lighter on Team/Blockers. With a quoted `"<topic>"`, focus the whole agenda on that topic.
 
 ### Step 5 — Render & present (THIS IS THE DELIVERABLE)
 Determine `<target-date>` — the next Monica/Prudhvi 1:1, resolved in order: (a) if a Google
@@ -139,6 +140,10 @@ after "just wrapped with Prudhvi"). It does **not** re-run sourcing, reconciliat
   rendering, hedge, or fall back to "a plan" because sources look unread or budget looks low.
   Reading without rendering is the failure mode. Produce the full agenda even when write/clipboard
   tools are unavailable — the rendered agenda is the output, not a plan to be approved.
+- **The Ticket Comprehension Drill's prompts stay blank — the one carve-out to the rule above.**
+  Its three recall prompts are intentionally left BLANK for Monica to answer from memory; fill ONLY
+  the separated answer key. Never pre-fill the prompts, even in scheduled mode — a filled prompt
+  defeats the drill.
 - **Candidates, not a script.** Monica picks and edits; never decide what she'll say.
 - **Altitude: non-technical.** Elevate signals to career/goals/team/blocker framing; drop code
   minutiae. The 1:1 is not a standup.

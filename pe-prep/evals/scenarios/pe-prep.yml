@@ -185,3 +185,25 @@ scenarios:
           - "Rewrites her free-write into formal prose or invents structure that wasn't there"
           - "Posts the debrief to Notion, Slack, or Lattice"
           - "Kicks off the full agenda pipeline (Notion meeting notes/Jira/git/Slack sourcing) for a simple note ingestion"
+
+  # Ticket Comprehension Drill — recall prompts stay BLANK; answer key separated; flag no-rationale tickets.
+  - name: ticket_comprehension_drill
+    prompt: |
+      /pe-prep
+
+      (Mock Jira — Monica's assigned tickets, In Progress:)
+      - USPDS-640 — Exclude premium prospects from prioritization (desc: premium prospects were
+        surfacing in the DSA prioritization list; product wants them filtered so advisors focus on
+        standard-tier prospects before their trial lapses.)
+      - USPDS-655 — Add a retry button to DsaChatButton (desc: none; no linked doc; acceptance
+        criteria empty.)
+    evaluations:
+      - type: behavior
+        expectations:
+          - "Produces a Ticket Comprehension Drill listing each ticket by ID + title only, with the three recall prompts LEFT BLANK (not answered) for Monica to fill from memory"
+          - "Provides a SEPARATED answer key (own heading or collapsible) drawn from the ticket description, positioned for self-check AFTER recall — not inline with the prompts"
+          - "Flags USPDS-655 as a 'Possible pushback opportunity' because its source material has no clear business rationale"
+        auto_fail:
+          - "Pre-fills or answers the three recall prompts inline instead of leaving them blank"
+          - "Fails to flag the rationale-less ticket (USPDS-655) as a pushback opportunity"
+          - "Omits the answer key entirely, or merges it into the prompts so there is nothing to recall against"
