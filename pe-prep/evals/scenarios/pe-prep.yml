@@ -1,6 +1,7 @@
 scenarios:
   # The defining rule — the 1:1 is not a technical sync. Altitude filtering is why the skill exists.
   - name: altitude_not_technical
+    disallowed_tools: ["Read(//Users/monica.cruz/workspace/notes/**)", "Glob(//Users/monica.cruz/workspace/notes/**)"]
     prompt: |
       /pe-prep
 
@@ -21,6 +22,7 @@ scenarios:
 
   # Carry-over reconciliation must be SUGGESTED, never asserted (fuzzy match).
   - name: carryover_suggested_not_asserted
+    disallowed_tools: ["Read(//Users/monica.cruz/workspace/notes/**)", "Glob(//Users/monica.cruz/workspace/notes/**)"]
     prompt: |
       /pe-prep
 
@@ -41,6 +43,7 @@ scenarios:
 
   # Parked/deferred questions are prime talking points and must surface.
   - name: parked_question_surfaces
+    disallowed_tools: ["Read(//Users/monica.cruz/workspace/notes/**)", "Glob(//Users/monica.cruz/workspace/notes/**)"]
     prompt: |
       /pe-prep
 
@@ -56,6 +59,7 @@ scenarios:
 
   # The behavioral footer is ECHO-ONLY in v1 — quote her own lines, no new analysis.
   - name: footer_echo_only
+    disallowed_tools: ["Read(//Users/monica.cruz/workspace/notes/**)", "Glob(//Users/monica.cruz/workspace/notes/**)"]
     prompt: |
       /pe-prep
 
@@ -72,6 +76,7 @@ scenarios:
 
   # No recent 1:1 note — degrade honestly, don't fabricate 1:1 context.
   - name: degrades_without_note
+    disallowed_tools: ["Read(//Users/monica.cruz/workspace/notes/**)", "Glob(//Users/monica.cruz/workspace/notes/**)"]
     prompt: |
       /pe-prep
 
@@ -88,6 +93,7 @@ scenarios:
 
   # Slack: a Prudhvi DM is high-signal career/goals input; a noisy channel must be ELEVATED, not dumped.
   - name: slack_dm_and_channel_altitude
+    disallowed_tools: ["Read(//Users/monica.cruz/workspace/notes/**)", "Glob(//Users/monica.cruz/workspace/notes/**)"]
     prompt: |
       /pe-prep
 
@@ -107,6 +113,7 @@ scenarios:
 
   # Jira lags reality on this team — cross-check against git, don't trust Jira status blindly.
   - name: jira_lags_flag_mismatch
+    disallowed_tools: ["Read(//Users/monica.cruz/workspace/notes/**)", "Glob(//Users/monica.cruz/workspace/notes/**)"]
     prompt: |
       /pe-prep
 
@@ -129,6 +136,7 @@ scenarios:
 
   # Behavior patterns require recurrence (>=2 entries); one-offs stay scratchpad entries.
   - name: patterns_require_recurrence
+    disallowed_tools: ["Read(//Users/monica.cruz/workspace/notes/**)", "Glob(//Users/monica.cruz/workspace/notes/**)"]
     prompt: |
       /pe-prep
 
@@ -147,6 +155,7 @@ scenarios:
 
   # Scheduled/headless run — no live reader: no questions, no browser/clipboard/Notion, defaults only.
   - name: scheduled_headless_run
+    disallowed_tools: ["Read(//Users/monica.cruz/workspace/notes/**)", "Glob(//Users/monica.cruz/workspace/notes/**)"]
     prompt: |
       /pe-prep --scheduled
 
@@ -157,15 +166,16 @@ scenarios:
       - type: behavior
         expectations:
           - "Runs with defaults (Prudhvi, all sections, since the last 1:1) WITHOUT asking any clarifying question"
-          - "Treats the written prudhvi-1-1/<date>.md file as the deliverable — does NOT open a browser, pbcopy, or write to Notion"
-          - "Still produces the full agenda (tiers + receipts) in the file, not a stub, despite being headless"
+          - "Produces the COMPLETE agenda content (all tiers + receipts) — never a stub — even though the run is headless AND even if the actual file write is blocked (the content is the deliverable; the write is only how it's saved)"
+          - "Uses no interactive side effects — does NOT open a browser, pbcopy, or write to Notion/Slack"
         auto_fail:
           - "Calls AskUserQuestion or asks the user to choose scope in a headless run"
           - "Opens the HTML report in a browser, copies to the clipboard, or pushes anything to Notion/Slack"
-          - "Degrades to a plan or stub instead of the full agenda because the run is headless"
+          - "Emits a stub or partial agenda (omitting tiers), or gives up, because the run is headless or because it cannot write the file"
 
   # Post-1:1 free-write ingestion — integrate in her words, strikethrough reversals, stay local, don't re-source.
   - name: freewrite_ingestion
+    disallowed_tools: ["Read(//Users/monica.cruz/workspace/notes/**)", "Glob(//Users/monica.cruz/workspace/notes/**)"]
     prompt: |
       add this to pe-prep notes: talked with Prudhvi about focusing on velocity this quarter
       instead of upleveling — we agreed upleveling can wait. also he wants me to own a Premium
@@ -188,22 +198,28 @@ scenarios:
 
   # Ticket Comprehension Drill — recall prompts stay BLANK; answer key separated; flag no-rationale tickets.
   - name: ticket_comprehension_drill
+    disallowed_tools: ["Read(//Users/monica.cruz/workspace/notes/**)", "Glob(//Users/monica.cruz/workspace/notes/**)"]
     prompt: |
       /pe-prep
 
-      (Mock Jira — Monica's assigned tickets, In Progress:)
-      - USPDS-640 — Exclude premium prospects from prioritization (desc: premium prospects were
-        surfacing in the DSA prioritization list; product wants them filtered so advisors focus on
-        standard-tier prospects before their trial lapses.)
+      (Mock Jira — Monica's assigned tickets, In Progress, with rich technical detail:)
+      - USPDS-640 — Exclude premium prospects from prioritization (desc: DsaPrioritizationQuery was
+        ranking premium-tier prospects alongside standard ones. PR #356207 adds a
+        `where.not(tier: :premium)` scope + a backfill migration on dsa_prioritized_companies,
+        behind the dsa_exclude_premium FF. Product (Niki) asked for it so advisors focus on
+        standard-tier prospects before their trial lapses. 12 specs, packwerk/srb clean.)
       - USPDS-655 — Add a retry button to DsaChatButton (desc: none; no linked doc; acceptance
         criteria empty.)
     evaluations:
       - type: behavior
         expectations:
-          - "Produces a Ticket Comprehension Drill listing each ticket by ID + title only, with the three recall prompts LEFT BLANK (not answered) for Monica to fill from memory"
-          - "Provides a SEPARATED answer key (own heading or collapsible) drawn from the ticket description, positioned for self-check AFTER recall — not inline with the prompts"
+          - "Uses the three FIXED prompts verbatim (what it does / why it exists / do you agree it's worth building) — does NOT invent its own ticket-specific or technical questions"
+          - "Leaves the three recall prompts LEFT BLANK (not answered) for Monica to fill from memory, despite the rich description sitting right there"
+          - "Provides a SEPARATED answer key (own heading or collapsible) for self-check AFTER recall — not inline with the prompts — written at product/business altitude (Niki's ask, trial-lapse, who it helps), NOT code internals"
           - "Flags USPDS-655 as a 'Possible pushback opportunity' because its source material has no clear business rationale"
         auto_fail:
           - "Pre-fills or answers the three recall prompts inline instead of leaving them blank"
+          - "Invents its own questions (e.g. about the migration, the FF, or the query scope) instead of the three fixed prompts"
+          - "Writes the answer key at code-internal altitude (scope, migration, FF mechanics) instead of the product 'why'"
           - "Fails to flag the rationale-less ticket (USPDS-655) as a pushback opportunity"
           - "Omits the answer key entirely, or merges it into the prompts so there is nothing to recall against"

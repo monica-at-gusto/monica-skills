@@ -91,7 +91,9 @@ even when no write/clipboard tools are available. If you catch yourself writing 
 
 **Scheduled mode:** there's no live reader, so the reply-FIRST contract is relaxed — render the
 full agenda internally and let it land in the file (Step 6). Still render it completely; never
-degrade to a stub because the run is headless.
+degrade to a stub because the run is headless. Even if the file write itself is blocked (e.g. the
+session is in plan mode), still produce the **complete** agenda content — the content is the
+deliverable; the write is only how it's saved. A blocked write is never a reason to emit a stub.
 
 ### Step 6 — Persist (side effects, not the deliverable)
 After presenting the agenda, persist it three ways: (1) write the full version to
@@ -141,9 +143,11 @@ after "just wrapped with Prudhvi"). It does **not** re-run sourcing, reconciliat
   Reading without rendering is the failure mode. Produce the full agenda even when write/clipboard
   tools are unavailable — the rendered agenda is the output, not a plan to be approved.
 - **The Ticket Comprehension Drill's prompts stay blank — the one carve-out to the rule above.**
-  Its three recall prompts are intentionally left BLANK for Monica to answer from memory; fill ONLY
-  the separated answer key. Never pre-fill the prompts, even in scheduled mode — a filled prompt
-  defeats the drill.
+  Use the three FIXED prompts verbatim (never invent ticket-specific or technical questions); leave
+  each answer line literally blank (`-`); put answers only in the separated collapsed answer key, at
+  product/business altitude (not code internals). Having the answers in hand is exactly when the
+  helpful-completion instinct kicks in — hold the line and leave the prompts blank anyway. See
+  synthesis-rules → Ticket Comprehension Drill.
 - **Candidates, not a script.** Monica picks and edits; never decide what she'll say.
 - **Altitude: non-technical.** Elevate signals to career/goals/team/blocker framing; drop code
   minutiae. The 1:1 is not a standup.

@@ -78,17 +78,28 @@ Select the tickets Monica is **currently working on** (Jira In Progress / In Rev
 relevant**; if you drop any, say so. For each entry:
 
 - List **only the ticket ID and title** — no description.
-- Three **blank** recall prompts for her to answer from memory, before checking notes:
+- Emit these **exact three prompts, verbatim** — never invent your own, never add a fourth, never
+  rephrase them into ticket-specific technical questions:
   1. What does this ticket do, in one sentence?
   2. Why does it exist — whose ask, what product/business problem, what happens if it isn't built?
   3. Do you agree it's worth building? If not, what's your counterargument?
-- **Do NOT pre-fill these** — they are retrieval prompts, not summaries. A filled-in prompt defeats
-  the drill.
-- After the blanks, a **separated "Answer key"** (from the ticket description, notes, and linked
-  docs) for self-check *after* attempting recall — never before. Keep it visually separate (its own
-  heading / collapsible) so her eye doesn't catch it mid-recall.
+- **Leave the answer line under each prompt literally blank** (a single `-`). Write NOTHING there —
+  not the answer, not a hint, not a "starter." **This overrides your instinct to be helpful and
+  complete what you know:** a ticket with obvious answers sitting right in front of you is *exactly*
+  when you must still leave it blank. If you find yourself typing an answer under a prompt, stop —
+  that belongs in the answer key, not the prompt.
+- The prompts and the answer key are **product/business altitude**, never code internals. If the
+  answer key is describing Redis, workers, schemas, or method mechanics, you've gone to the wrong
+  altitude (that's the *technical sync* this skill exists to avoid) — pull it back to *what it does
+  for users/the business, whose ask it was, and what breaks without it*.
+- Put the answers in a **separated, collapsed "Answer key"** (its own `<details>` block) below the
+  three prompts, from the ticket description / notes / linked docs — for self-check *after* recall,
+  so her eye can't catch it mid-attempt.
 - If a ticket's source material has **no clear business rationale**, flag it at the top of its entry
   as **"Possible pushback opportunity"** — surfacing these is exactly what Prudhvi asked for.
+- **Render this by copying `templates/agenda.md`'s drill block** — the only things you fill are the
+  ticket id/title, the pushback flag, and the collapsed answer key. The three prompts and their
+  blank `-` lines are copied as-is.
 
 ## Source-coverage line (replaces the earlier chart idea)
 
