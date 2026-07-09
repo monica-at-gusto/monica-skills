@@ -1,0 +1,18 @@
+{
+  "name": "monica-skills",
+  "description": "Monica Cruz's personal Claude Code skills.",
+  "owner": {
+    "name": "Monica Cruz"
+  },
+  "plugins": [
+    {
+      "name": "monica-cruz",
+      "description": "Monica's personal skills. Starts with pe-prep (forward-looking PE 1:1 prep, incl. the Ticket Comprehension Drill).",
+      "version": "0.1.0",
+      "source": "./",
+      "author": {
+        "name": "Monica Cruz"
+      }
+    }
+  ]
+}
