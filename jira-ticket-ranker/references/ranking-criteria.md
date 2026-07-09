@@ -55,6 +55,29 @@ conversation, not a free grab" is the honest, ranking-relevant finding, not coac
 USPDS-686 had 10 open children, 9 already claimed by three teammates; USPDS-699 was the sole free
 pickup, so the run's value was the availability map, not a familiarity sort.)
 
+### Availability ≠ startability (the mid-build trap)
+
+"Available" (unassigned) and "startable" (unblocked) are **different claims**, and only the
+`issuelinks` graph tells them apart — the assignee field alone will lie to you. This bites hardest
+in a **mid-build** epic (foundation done, workers still landing): the owner files the whole
+downstream wave at once, so a big pool of unassigned tickets appears overnight — but each one
+depends on infrastructure (workers, shared primitives, a compute signature) that isn't merged yet.
+A ticket you could *be assigned* is not a ticket you could *build*: you'd be writing against an
+interface still in review, calling a worker that doesn't exist, with nothing to run end-to-end.
+
+So the real free pool = **unassigned AND unblocked**, verified through `issuelinks` (blockers all
+Done), never the unassigned count alone. When the count spikes but startability is ~zero, say so:
+the honest finding is "the wave is filed but gated on the worker stack — nothing here is cleanly
+startable yet," and the lever is the *blocking* ticket (often still unstarted with another owner),
+not a blocked leaf. (2026-07-09: USPDS-686's unassigned pool jumped 1 → 22 as the owner filed 21
+"Wire X" migration tickets, but all were gated on the compute-signature/worker stack — 0 startable;
+the one on-deck pickup was the engineer's own single-dep fast-follow, not any of the 21.)
+
+Distinguish the block type in the output, because it changes the advice:
+- **Ownership block** — someone already owns the ticket → not free; reassignment conversation.
+- **Sequencing block** — ticket is free but its deps aren't merged → free to claim, not to finish;
+  name the blocker and who owns it, and the "start" date is when the blocker lands.
+
 ## The toe-stepping rule (most important, least obvious)
 
 Pickup risk lives in **active neighbor work, not the assignee field.** A ticket can be
