@@ -55,13 +55,12 @@ the intra-epic stack analysis below (`issuelinks` blocked-by graph) — it *is* 
 Even without descriptions this exceeds the token limit and gets saved to a file — **as raw JSON,
 even when `responseContentFormat: markdown` was requested.** Do **not** delegate the parse to an
 `Agent` (Explore): that proved lossy (2026-06-18 — an Explore parse returned ~53 of 100 rows and
-under-counted unassigned as 10 vs the true 34). Instead **trim the saved JSON with `jq` and read
-the lean output directly** — deterministic, complete, ~28× smaller, no subagent:
+under-counted unassigned as 10 vs the true 34). Instead **trim the saved JSON with
+`scripts/trim-jira-index.sh` and read the lean output directly** — deterministic, complete,
+~28× smaller, no subagent:
 
 ```bash
-jq -r '.issues[] | [.key, .fields.issuetype.name, .fields.priority.name, .fields.status.name,
-  (.fields.assignee.displayName // "UNASSIGNED"), (.fields.parent.key // "-"),
-  (.fields.parent.fields.summary // "-"), .fields.summary] | @tsv' <saved-file> > /tmp/jira-lean-<date>.tsv
+bash scripts/trim-jira-index.sh <saved-file> >> /tmp/jira-lean-<date>.tsv
 ```
 
 ~430KB of envelope (avatar URLs, `self` links, expanded parent/schema) → ~15KB of TSV, small
