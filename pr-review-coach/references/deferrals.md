@@ -40,18 +40,18 @@ finding), upsert an entry into the ledger for this target: compute `key`, store
 
 ## Read + reconcile — on each run (Step 4)
 
-After merge/tier, load the ledger for this target (skip silently if the file doesn't exist).
-For each current finding, compute its `key`; if it matches a ledger entry:
-- set `status: "acknowledged-deferred"` and attach `deferral` (rationale, follow_up, decided_at)
-- remove it from the open/postable set and from the open counts — it renders as a decided note
-  (`status: acknowledged-deferred`), not an open finding.
+`scripts/merge_findings.py --deferrals <ledger-path>` owns this: it computes each current
+finding's `key`, exact-matches against the ledger, and for matches sets `status:
+"acknowledged-deferred"` with `deferral` attached, removing it from the returned open set/counts.
+If the ledger file doesn't exist, pass no `--deferrals` flag and it skips reconcile entirely.
 
-Fuzzy titles: if a current finding clearly describes a deferred issue but the slug doesn't match
-exactly (reworded title), ask Monica whether it's the same one before reconciling — don't guess.
+**Fuzzy titles are NOT auto-reconciled.** A current finding whose slug doesn't match exactly but
+is textually similar (reworded title, same file) comes back in the script's `fuzzy_candidates[]`
+— ask Monica whether it's the same one before treating it as deferred. Never guess.
 
 ## Resolution
 
-If a deferred finding no longer appears in this run (the code was changed so the lens stops
-flagging it), it's effectively resolved: don't render it, and note it in `meta.context`
-("resolved since deferral: <title>"). Leave the ledger entry in place unless Monica says to
-clear it — cheap, and harmless if the issue reappears.
+Ledger entries with no matching current finding at all (exact or fuzzy) come back in the script's
+`resolved_deferrals[]` — the code changed enough that the lens stopped flagging it. Don't render
+these, and note each in `meta.context` ("resolved since deferral: <title>"). Leave the ledger
+entry in place unless Monica says to clear it — cheap, and harmless if the issue reappears.

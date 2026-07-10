@@ -6,16 +6,10 @@ only injects data and opens it.
 
 ## Generate + open
 
-1. Read `templates/report.html`.
-2. Replace the whole block between `/* __PRC_DATA_START__ */` and `/* __PRC_DATA_END__ */`
-   (inclusive) with:
-   ```
-   /* __PRC_DATA_START__ */
-   const PRC = <JSON literal>;
-   /* __PRC_DATA_END__ */
-   ```
-3. Write the result to `/tmp/pr-review-coach-<target>.html`.
-4. `open /tmp/pr-review-coach-<target>.html`.
+Save the `const PRC` payload (shape below) to a JSON file, then run
+`python3 scripts/render_report.py <json-file> /tmp/pr-review-coach-<target>.html` — it substitutes
+the block between `/* __PRC_DATA_START__ */` and `/* __PRC_DATA_END__ */` in `templates/report.html`,
+writes the result, and opens it.
 
 `<target>` = the PR number, or a slug of the branch name for local runs.
 

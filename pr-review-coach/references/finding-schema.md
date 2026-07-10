@@ -60,6 +60,10 @@ tiers), `check`→`check`, `lens: "fresh-eyes"`, `side: "RIGHT"`, `confidence: "
 
 ## Merge / tier / cap (orchestrator)
 
+`scripts/merge_findings.py` owns steps 1, 3, and 4 below deterministically, plus deferral
+reconciliation (`deferrals.md`). Step 2's "already raised by a human reviewer" filter stays a
+judgment call applied before the script runs — see SKILL.md Step 4.
+
 1. **Dedupe:** group findings by `(file, line)` within a 3-line window. On collision keep the
    higher severity, union `incident_refs`, and note both lenses hit it.
 2. **Filter:** drop `confidence: low`. For remote posting also drop `introduced_by_pr: false`.

@@ -3,7 +3,7 @@ name: pr-review-coach
 description: Coach me through reviewing a PR — surface what to scrutinize, draft comments in my voice, but I decide what to post. Use when reviewing a teammate's PR, self-reviewing my own branch before pushing, practicing review judgment, or invoking /pr-review-coach.
 argument-hint: "[<PR_NUMBER>|<url>|<branch>|\"my changes\"|\"staged\"] [--practice] [--post]"
 disable-model-invocation: true
-allowed-tools: [Read, Write, Edit, Grep, Glob, Agent, AskUserQuestion, WebFetch, Skill, "Bash(open *)", "Bash(gh pr view *)", "Bash(gh pr diff *)", "Bash(gh pr checks *)", "Bash(gh api repos/*/pulls/*/comments *)", "Bash(gh api \"repos/*/pulls/*/comments\" *)", "Bash(gh api repos/*/pulls/*/reviews *)", "Bash(gh api \"repos/*/pulls/*/reviews\" *)", "Bash(gh api graphql *)", "Bash(git diff *)", "Bash(git log *)", "Bash(git status)"]
+allowed-tools: [Read, Write, Edit, Grep, Glob, Agent, AskUserQuestion, WebFetch, Skill, "Bash(open *)", "Bash(python3 *merge_findings.py*)", "Bash(python3 *render_report.py*)", "Bash(gh pr view *)", "Bash(gh pr diff *)", "Bash(gh pr checks *)", "Bash(gh api repos/*/pulls/*/comments *)", "Bash(gh api \"repos/*/pulls/*/comments\" *)", "Bash(gh api repos/*/pulls/*/reviews *)", "Bash(gh api \"repos/*/pulls/*/reviews\" *)", "Bash(gh api graphql *)", "Bash(git diff *)", "Bash(git log *)", "Bash(git status)"]
 ---
 
 # PR Review Coach
@@ -63,14 +63,23 @@ Collect findings from both lenses in the schema defined in `references/finding-s
 
 ## Step 4 — Merge, tier, cap
 
-Apply the merge rules in `references/finding-schema.md`: dedupe by `(file, line)` within a
-3-line window, drop `confidence: low`, for remote posting drop `introduced_by_pr: false`,
-cap issue findings at ~5 (strengths exempt). Tier into Critical / Important / Suggestion /
-Strengths.
+First drop anything already raised in the PR's existing review comments (fetched in Step 2) —
+that's a semantic judgment call (does this finding restate what a human reviewer already said?),
+not something the script below can do.
 
-Then **reconcile deferrals** (`references/deferrals.md`): load this target's ledger and mark any
-matched findings `acknowledged-deferred` — pulled out of the open set/counts, rendered as a
-decided note carrying their rationale + follow-up. Don't re-surface what Monica already deferred.
+Then save the remaining findings as a JSON array and run
+`python3 scripts/merge_findings.py <findings.json> --deferrals <ledger-path> [--remote] --cap 5`
+(ledger path per `references/deferrals.md`; add `--remote` only for remote posting runs). It owns
+the rest of `references/finding-schema.md`'s merge rules deterministically: dedupe by `(file,
+line)` within a 3-line window, drop `confidence: low`, drop `introduced_by_pr: false` in `--remote`
+mode, tier into Critical / Important / Suggestion / Strengths, cap issue findings (default ~5,
+strengths exempt, reports how many were trimmed — say so, never silently drop), and reconcile
+against the deferral ledger by exact match key.
+
+The script's `fuzzy_candidates[]` are near-miss ledger matches (same file, reworded title) — per
+`references/deferrals.md`, **ask Monica before reconciling these, never auto-apply.** Its
+`resolved_deferrals[]` are ledger entries that no longer appear at all — surface each as "resolved
+since deferral: `<title>`" in `meta.context`.
 
 ## Step 5 — Conventions layer
 
@@ -104,14 +113,13 @@ acknowledged & deferred on the next run instead of re-surfacing as an open ask.
 
 ## Step 7 — Render the report (both modes)
 
-Follow `references/html-report.md`:
-1. Read `templates/report.html`; replace the block between the `__PRC_DATA_START__` /
-   `__PRC_DATA_END__` markers with `const PRC = <json>;`. The JSON carries `meta`
-   (`target`, `ticket`, `title`, `mode`, `counts`, `context`) and `findings[]` (the schema fields plus
-   `draft_body`, `default_action`, and — practice only — `your_read` + `verdict`).
-2. Write it to `/tmp/pr-review-coach-<target>.html` and `open` it.
-3. Tell Monica: triage in the page, then **Copy decisions for Claude** and paste the blob
-   back here (remote posting), or **Copy for PR** to paste markdown into the PR herself.
+Follow `references/html-report.md` for the JSON shape: `meta` (`target`, `ticket`, `title`, `mode`,
+`counts`, `context`) and `findings[]` (the schema fields plus `draft_body`, `default_action`, and —
+practice only — `your_read` + `verdict`). Save it to a temp file, then run
+`python3 scripts/render_report.py <json-file> /tmp/pr-review-coach-<target>.html` — it substitutes
+the data block into `templates/report.html`, writes the file, and opens it. Tell Monica: triage in
+the page, then **Copy decisions for Claude** and paste the blob back here (remote posting), or
+**Copy for PR** to paste markdown into the PR herself.
 
 ## Step 8 — Post (remote only)
 
