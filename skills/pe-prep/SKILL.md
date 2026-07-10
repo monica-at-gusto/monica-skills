@@ -2,7 +2,7 @@
 name: pe-prep
 description: Compose forward-looking talking points for my 1:1 with my PE (default Prudhvi) — career, goals, team, blockers; NOT a technical sync. Pulls from my prudhvi-1-1 notes, Jira, git, Slack (Prudhvi DMs + USP channels) and Notion (meeting notes + scratchpads); renders a Workbench HTML report (linked receipts, source-coverage line, Copy-for-Lattice) plus a paste-ready agenda in prudhvi-1-1/<date>.md. Use before a 1:1 / PE sync, to prep career or growth talking points, or invoke /pe-prep. Candidates, not a script — I pick and edit. Includes a blind Ticket Comprehension Drill (recall prompts + self-check answer key) to rehearse each ticket's product "why." Also files my post-1:1 free-write into that meeting's note under "What we actually discussed" — say "add this to pe-prep notes" or "just wrapped with Prudhvi" then the text — seeding the next run. Runs headless on a weekly schedule via --scheduled (writes the local agenda file only).
 argument-hint: "[person (default Prudhvi)] [--growth] [--scheduled] [\"<topic>\"]"
-allowed-tools: [Read, Write, Edit, Grep, Glob, Agent, AskUserQuestion, "Bash(open *)", "Bash(pbcopy)", "Bash(git log *)", "Bash(git -C * log *)", "Bash(gh pr list *)", "Bash(gh search prs *)", mcp__notiongusto__notion-search, mcp__notiongusto__notion-fetch, mcp__notiongusto__notion-query-meeting-notes, mcp__gdocsgusto__fetch, mcp__slackgustoofficialmcp__slack_search_users, mcp__slackgustoofficialmcp__slack_search_channels, mcp__slackgustoofficialmcp__slack_search_public_and_private, mcp__slackgustoofficialmcp__slack_read_channel, mcp__slackgustoofficialmcp__slack_read_thread, mcp__slackgustoofficialmcp__slack_read_user_profile, mcp__jiraconfluencegusto__getAccessibleAtlassianResources, mcp__jiraconfluencegusto__searchJiraIssuesUsingJql, mcp__jiraconfluencegusto__getJiraIssue]
+allowed-tools: [Read, Write, Edit, Grep, Glob, Agent, AskUserQuestion, "Bash(open *)", "Bash(pbcopy)", "Bash(git log *)", "Bash(git -C * log *)", "Bash(gh pr list *)", "Bash(gh search prs *)", "Bash(python3 *render_report.py*)", "Bash(python3 *render_drill.py*)", mcp__notiongusto__notion-search, mcp__notiongusto__notion-fetch, mcp__notiongusto__notion-query-meeting-notes, mcp__gdocsgusto__fetch, mcp__slackgustoofficialmcp__slack_search_users, mcp__slackgustoofficialmcp__slack_search_channels, mcp__slackgustoofficialmcp__slack_search_public_and_private, mcp__slackgustoofficialmcp__slack_read_channel, mcp__slackgustoofficialmcp__slack_read_thread, mcp__slackgustoofficialmcp__slack_read_user_profile, mcp__jiraconfluencegusto__getAccessibleAtlassianResources, mcp__jiraconfluencegusto__searchJiraIssuesUsingJql, mcp__jiraconfluencegusto__getJiraIssue]
 ---
 
 # pe-prep
@@ -72,27 +72,13 @@ and go lighter on Team/Blockers. With a quoted `"<topic>"`, focus the whole agen
 
 ### Step 4b — Ticket Comprehension Drill (MANDATORY — never skip when ≥1 ticket is in play)
 Pick the **1–5 most relevant** tickets (working on now / discussed in the last 1:1 / likely to come
-up). For EACH, emit this block **exactly** — copy the three questions and their blank `-` lines
-verbatim; the ONLY things you generate are the ticket id/title, the pushback flag, and the answer key:
-
-~~~
-### <TICKET-ID> — <title>   ⚑ Possible pushback opportunity   (⚑ only when there's no clear business rationale)
-1. What does this ticket do, in one sentence?
-   -
-2. Why does it exist — whose ask, what product/business problem, what happens if it isn't built?
-   -
-3. Do you agree it's worth building? If not, what's your counterargument?
-   -
-
-<details><summary>Answer key — open only after you've tried from memory</summary>
-(product-level answers: whose ask, what breaks without it, the agree/disagree case — NOT code internals)
-</details>
-~~~
-
-Rules that don't bend: the three questions are **fixed** (never invent your own or technical ones,
-never add a fourth); the `-` answer lines stay **blank** (a detail-rich ticket in front of you is
-exactly when to hold the line — answers go ONLY in the collapsed key); the answer key is
-**product/business altitude**, never Redis/worker/schema mechanics. Omit the whole section ONLY if
+up). For each, decide the **pushback flag** (true only when there's no clear business rationale)
+and write the **answer key** (product/business altitude — whose ask, what breaks without it, the
+agree/disagree case — never Redis/worker/schema mechanics). Save `[{id, title, pushback,
+answer_key}, ...]` to a temp JSON file and run
+`python3 scripts/render_drill.py <tickets.json>` — it renders the fixed three-question scaffold
+with blank `-` lines verbatim; you only ever generate the id/title/pushback/answer_key inputs, not
+the scaffold text itself. Include its output in the agenda as-is. Omit the whole section ONLY if
 there are genuinely zero tickets in play.
 
 ### Step 5 — Render & present (THIS IS THE DELIVERABLE)
@@ -122,12 +108,12 @@ deliverable; the write is only how it's saved. A blocked write is never a reason
 ### Step 6 — Persist (side effects, not the deliverable)
 After presenting the agenda, persist it three ways: (1) write the full version to
 `~/workspace/notes/prudhvi-1-1/<target-date>.md` (if a file exists for that date, show a diff and
-ask before overwriting); (2) build the HTML report — fill `templates/report.html`'s
-`__AGENDA_DATA__` block, write to `/tmp/pe-prep-<target-date>.html`, and `open` it (it carries the
-source-coverage line, linked receipts, and a **Copy-for-Lattice** button); (3) copy the Lattice
-block to the clipboard (`pbcopy`; temp file first if large). If any tool is unavailable, still
-deliver the rendered agenda from Step 5 — persistence is a convenience, never a substitute for
-presenting the agenda.
+ask before overwriting); (2) save the AGENDA JSON to a temp file and run
+`python3 scripts/render_report.py <json-file> /tmp/pe-prep-<target-date>.html` — it substitutes
+the data into `templates/report.html` and opens it (it carries the source-coverage line, linked
+receipts, and a **Copy-for-Lattice** button); (3) copy the Lattice block to the clipboard
+(`pbcopy`; temp file first if large). If any tool is unavailable, still deliver the rendered
+agenda from Step 5 — persistence is a convenience, never a substitute for presenting the agenda.
 
 **Scheduled mode:** do only (1) — write the file — and skip the HTML `open` and `pbcopy` entirely.
 Since you can't prompt, don't run the overwrite diff-and-ask; if a file already exists for
