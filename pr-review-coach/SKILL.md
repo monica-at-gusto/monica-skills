@@ -54,7 +54,10 @@ Then a quick triage pass (cheap, pre-lens) — carry results as report context
 
 ## Step 3 — Gather lenses concurrently
 
-Collect findings from both lenses in the schema defined in `references/finding-schema.md`:
+Collect findings from both lenses in the schema defined in `references/finding-schema.md`.
+**Fire both in the same message** (two tool calls in one turn — an `Agent`/`Skill` invocation for
+each) so they actually run concurrently; issuing them as sequential turns defeats the point of
+this step:
 
 - **pr-risk** — follow `references/pr-risk.md` (invoke `gusto-dev:pr-risk` in full mode).
 - **fresh-eyes** — follow `references/fresh-eyes.md`: on remote PRs *ingest* the bot's
