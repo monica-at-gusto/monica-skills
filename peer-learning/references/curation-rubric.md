@@ -5,9 +5,10 @@ judgment-heavy LLM pass runs only on the survivors.
 
 ## Stage A — heuristic prefilter (deterministic, **metadata only**) → shortlist ~6–8
 
-Score each merged PR **from `gh search` metadata — never fetch diffs here** (that's the slow step;
-diffs come in Stage B for the shortlist only). Keep the score trail so "why didn't PR X make it?"
-is inspectable.
+Score each merged PR in `scripts/resolve_shipped_prs.py`'s `candidates[]` output **— never fetch
+diffs here** (that's the slow step; diffs come in Stage B for the shortlist only). The script
+already dropped dependency bumps, formatting-only, and revert PRs (its `dropped[]` list). Note your
+reasoning per cut so "why didn't PR X make it?" is inspectable end to end.
 
 | Signal (all from metadata) | Why it predicts learning value |
 |---|---|

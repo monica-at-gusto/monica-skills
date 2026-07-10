@@ -3,7 +3,7 @@ name: peer-learning
 description: Mine the USP team's recently-merged PRs into a highly-curated, editorial digest (1–3 patterns, Substack-styled) and file those patterns into the shared substrate pr-review-coach reads. Use at sprint close, when I want to learn from what the team shipped, or invoke /peer-learning. Curation IS the product — it's an editorial read, not a changelog.
 argument-hint: "[--sprint <id> | --since <date>]"
 disable-model-invocation: true
-allowed-tools: [Read, Write, Edit, Grep, Glob, Agent, AskUserQuestion, "Bash(open *)", "Bash(gh pr list *)", "Bash(gh pr view *)", "Bash(gh pr diff *)", "Bash(gh search prs *)", "Bash(gh api *)"]
+allowed-tools: [Read, Write, Edit, Grep, Glob, Agent, AskUserQuestion, "Bash(open *)", "Bash(python3 *resolve_shipped_prs.py*)", "Bash(gh pr view *)", "Bash(gh pr diff *)", "Bash(gh api *)"]
 ---
 
 # Peer Learning
@@ -37,17 +37,25 @@ the table" follow-up issue — the curation cap deferring patterns is by design,
 
 ## Step 2 — Gather (board-anchored, GitHub-resolved)
 
-The board Lee keeps clean defines the window + "what counts as shipped." Parse shipped ticket IDs,
-then resolve each to its merged PR(s) via `gh` (ticket IDs live in PR titles/branches), scoped to
-roster + merge window across both repos (`web` + `zenpayroll`), **one query per login then union**
-(see source-spine — multiple `--author` flags silently drop authors). **Read-only on all repos.** If the board/Jira is
-unavailable, fall back to a pure-GitHub merged window and note the fallback in the digest.
+The board Lee keeps clean defines the window + "what counts as shipped" — read it for context on
+what should show up. Then run
+`python3 scripts/resolve_shipped_prs.py --repo Gusto/web --repo Gusto/zenpayroll --login <l1> --login <l2> ... --since <date> --before <date>`
+(logins from `references/source-spine.md`) — it owns the per-login × per-repo `gh pr list` loop,
+dedup, ticket-ID extraction from title/branch, and dropping obvious noise (dependency bumps,
+formatting-only, reverts), and prints `{candidates: [...], dropped: [...]}`. Cross-check
+`candidates[].ticket` against the board's shipped IDs to confirm the "what shipped" boundary; note
+any mismatch. **Read-only on all repos.** If the board/Jira is unavailable, skip the cross-check and
+note the fallback in the digest — the script's output doesn't depend on the board.
 
-## Step 3 — Heuristic prefilter (deterministic, metadata only) → shortlist ~6–8
+## Step 3 — Heuristic prefilter (metadata only) → shortlist ~6–8
 
-Score each candidate by the **metadata** signals in `references/curation-rubric.md` (new files,
-packs/repos touched, review-discussion depth, spec changes, size, novelty) — **no diff fetching
-here**; that's the slow step on a busy monorepo. Keep an inspectable "why didn't PR X make it?" trail.
+The script already dropped dependency bumps, formatting-only, and revert PRs (see its `dropped[]`
+list — that's the first layer of the "why didn't PR X make it?" trail). Score what's left in
+`candidates[]` against the six signals in `references/curation-rubric.md` (new files, packs/repos
+touched, review-discussion depth, spec changes, size, novelty) — this is a judgment call, not a
+formula; weigh the signals holistically rather than a fixed point count. **No diff fetching here**;
+that's the slow step on a busy monorepo. Note your own reasoning for cuts below the ~6–8 line so
+the trail stays inspectable end to end.
 
 ## Step 4 — Editorial curation (LLM judge) → 1–3 patterns
 
