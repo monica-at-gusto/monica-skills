@@ -114,7 +114,7 @@ Mines the USP team's recently-merged PRs each sprint into a highly-curated, edit
 
 ### sync-ticket-notes
 
-Pulls context from a recent Granola meeting transcript and reflects it in both places my ticket
+Pulls context from a recent Notion meeting note and reflects it in both places my ticket
 notes live — the local markdown file and the companion Notion page — after a sync, 1:1, or huddle
 about a specific ticket.
 
@@ -122,10 +122,8 @@ about a specific ticket.
 /sync-ticket-notes   (or just: "update notes for USPDS-XXX after that sync")
 ```
 
-- **Source:** the most recent matching Granola transcript (by person named or meeting type),
-  extracted for decisions / blockers / next steps — paraphrased, not dumped. *(Mid-July TODO in
-  the SKILL: Gusto is moving off Granola to Notion-based transcription; only this source step
-  changes when that lands.)*
+- **Source:** the most recent matching Notion meeting note (by attendee, or by meeting-title
+  fallback), extracted for decisions / blockers / next steps — paraphrased, not dumped.
 - **Ticket inference is ask-don't-guess:** infers the ticket from session context, who the meeting
   was with, or a ticket ID in the transcript — but if it can't be confident, it **asks** rather
   than risk a wrong-ticket update.

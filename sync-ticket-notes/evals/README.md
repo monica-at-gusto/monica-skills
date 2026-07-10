@@ -31,8 +31,8 @@ meaningful — does "update our notes after that sync with Kilian" fire it?
 
 ## Note on mock context
 
-Scenarios inject a **mock Granola transcript + mock existing notes** inline in the prompt. The
-skill normally pulls via the Granola / Notion MCP and reads local notes (`~/workspace/notes/...`),
+Scenarios inject a **mock meeting-note transcript + mock existing notes** inline in the prompt.
+The skill normally pulls via the Notion MCP and reads local notes (`~/workspace/notes/...`),
 none of which are available under the eval tool allowlist (`Read,Grep,Glob,Skill`). So these evals
 test the skill's **decisions** — ask-don't-guess ticket inference, the strikethrough-for-superseded
 -decisions rule (vs. plain-append for additive context), the dated-file convention

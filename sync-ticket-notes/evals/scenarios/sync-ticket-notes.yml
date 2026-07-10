@@ -13,7 +13,7 @@ scenarios:
         ## Decisions
         - 6/30: Decided to use approach A for the retry logic.
 
-      (Mock Granola transcript — sync with Kilian, today 7/2:)
+      (Mock Notion meeting-note transcript — sync with Kilian, today 7/2:)
         "...yeah, approach A had that problem with the idempotency key under X, so let's
         actually go with approach B instead. B sidesteps the whole retry-storm issue."
     evaluations:
@@ -36,7 +36,7 @@ scenarios:
         ## Context
         - The indicator reads from the CompanyDetails GraphQL query.
 
-      (Mock Granola transcript, today:)
+      (Mock Notion meeting-note transcript, today:)
         "One more thing for context — the data source is refreshed nightly, so there can be
         up to a day of lag. Doesn't change the approach, just good to know."
     evaluations:
@@ -54,9 +54,10 @@ scenarios:
 
       Peep our granola notes from the sync I just had and update our notes.
 
-      (Mock context: no ticket has been discussed in this session; the most recent Granola
-      meeting is a general team standup that touches several tickets — USPDS-90051, USPDS-90052,
-      USPDS-90053 — without a clear single subject.)
+      (Deliberately uses the old "granola notes" phrasing to confirm the trigger still fires post
+      Granola-to-Notion migration. Mock context: no ticket has been discussed in this session; the
+      most recent Notion meeting note is a general team standup that touches several tickets —
+      USPDS-90051, USPDS-90052, USPDS-90053 — without a clear single subject.)
     evaluations:
       - type: behavior
         expectations:

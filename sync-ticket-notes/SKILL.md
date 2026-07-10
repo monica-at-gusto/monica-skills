@@ -1,18 +1,19 @@
 ---
 name: sync-ticket-notes
-description: Use this skill when the user wants to sync notes for a Jira ticket after a meeting, sync, or 1:1 discussed in Granola. Triggers include phrases like "update notes for USPDS-XXX", "peep our granola notes for our sync with [person] and update notes", "sync notes from my call with [person]", "update our notes prn after that meeting", or any request to pull a recent Granola transcript and reflect it in ticket notes. Also applies when the user references "our notes" or "the notes" in the context of a ticket-related conversation with a specific collaborator.
+description: Use this skill when the user wants to sync notes for a Jira ticket after a meeting, sync, or 1:1 recorded as a Notion meeting note. Triggers include phrases like "update notes for USPDS-XXX", "sync notes from my call with [person]", "peep our meeting notes for our sync with [person] and update notes", "update our notes prn after that meeting", or any request to pull a recent meeting note and reflect it in ticket notes. Also applies when the user references "our notes" or "the notes" in the context of a ticket-related conversation with a specific collaborator.
+allowed-tools: [Read, Write, Edit, Grep, Glob, AskUserQuestion, mcp__notiongusto__notion-search, mcp__notiongusto__notion-query-meeting-notes, mcp__notiongusto__notion-fetch, mcp__notiongusto__notion-update-page]
 ---
 
 # Sync Ticket Notes
 
-Pulls context from a recent Granola meeting transcript and updates both the local
-markdown notes and the companion Notion page for the relevant Jira ticket.
+Pulls context from a recent Notion meeting note and updates both the local markdown
+notes and the companion Notion page for the relevant Jira ticket.
 
 ## When to use this
 
 The user just had a sync, 1:1, or discussion (in person, on a call, or via Slack huddle
-captured by Granola) about a specific ticket, and wants that conversation reflected in
-their ongoing ticket notes.
+recorded as a Notion meeting note) about a specific ticket, and wants that conversation
+reflected in their ongoing ticket notes.
 
 ## Step 1: Identify the ticket
 
@@ -27,17 +28,21 @@ Infer the ticket ID from context:
 before proceeding.** Don't guess silently — a wrong-ticket update is worse than a
 clarifying question.
 
-## Step 2: Find the right Granola transcript
+## Step 2: Find the right Notion meeting note
 
-> **TODO (mid-July):** Gusto is transitioning off Granola to Notion-based meeting
-> transcription. Once that's live, update this step to pull from the new source
-> instead. Everything else in this skill (ticket inference, notes structure, the
-> never-delete/strikethrough rules, and the Tickets DB sync in Step 5) should stay
-> the same — only the transcript source changes.
+Gusto has transitioned off Granola to Notion-based meeting transcription — meeting notes now
+live in Notion, not Granola.
 
-Pull the most recent Granola meeting that matches:
-- The person named (or the meeting type, e.g. "1:1", "sync")
-- Recency — default to the most recent matching meeting unless the user specifies a date
+- If a person is named, resolve their Notion user ID with `notion-search` first (attendee
+  filtering needs a person reference, not just a name), then run
+  `notion-query-meeting-notes` with an attendee filter (`person_contains`) for that person.
+  Add a `created_time` recency filter (relative date range) unless the user named a specific
+  date — default to the most recent match.
+- If no person is named but a meeting type is (e.g. "1:1", "sync", "standup"), fall back to a
+  title filter (`string_contains`) instead — per the tool's own guidance, title filtering is
+  the fallback, not the default; attendee filtering is more reliable.
+- The query tool returns metadata (title, attendees, timestamps), not the note body — once
+  you have the matching row, `notion-fetch` that page to read the actual content.
 
 If multiple recent meetings match, briefly confirm which one before proceeding.
 
