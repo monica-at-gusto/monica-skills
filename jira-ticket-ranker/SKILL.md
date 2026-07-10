@@ -2,7 +2,7 @@
 name: jira-ticket-ranker
 description: Shortlist the next Jira tickets I can pick up, ranked against my current skill level / pack familiarity, each with a sync target. Use when I ask what to work on next, which ticket to pick up, to rank or triage the USPDS backlog, when I'm unsure what's safe to grab, or invoke /jira-ticket-ranker. A shortlist, NOT a claim — it never claims tickets, changes status, or messages anyone.
 argument-hint: "[project (default USPDS)] [--survey] [--stretch comfort|balanced|stretch]"
-allowed-tools: [Read, Write, Edit, Grep, Glob, Agent, AskUserQuestion, "Bash(open *)", mcp__jiraconfluencegusto__getAccessibleAtlassianResources, mcp__jiraconfluencegusto__searchJiraIssuesUsingJql, mcp__jiraconfluencegusto__getJiraIssue, mcp__notiongusto__notion-search, mcp__notiongusto__notion-fetch]
+allowed-tools: [Read, Write, Edit, Grep, Glob, Agent, AskUserQuestion, mcp__jiraconfluencegusto__getAccessibleAtlassianResources, mcp__jiraconfluencegusto__searchJiraIssuesUsingJql, mcp__jiraconfluencegusto__getJiraIssue, mcp__notiongusto__notion-search, mcp__notiongusto__notion-fetch]
 ---
 
 # Jira Ticket Ranker
@@ -60,36 +60,18 @@ survey). Always keep the held set *with reasons*.
 Follow `references/sync-targets.md`. Derive a **Primary → Secondary** sync target with a one-line
 why for every candidate, including held ones. A candidate without a sync target is incomplete.
 
-## Step 5 — Render
+## Step 5 — Present & save notes
 
-1. **Page:** build the JSON payload — `meta` (`title`, `generated` [today's date], `jiraBase`,
-   `counts`, `backlog` [string — total open tickets scanned, e.g. `"127"`; renders as "N scanned"],
-   `config`, `context[]`, `banner`) and `tickets[]` (`key`, `tier` [`ready`|`stretch`|`held`],
-   `badge`, `summary`, `loc`, `headline`, `rationale[]` [`{lbl, val}` — one per ranking dimension],
-   `sync` [`{who, why}`], optional `note`, `pills[]`). The `context[]` intro **must lead with an
-   "Assigned to you" block** built from the Step 1b live query (each as a status-check line —
+1. **Present in chat first.** The ranked shortlist — rationale and sync target per candidate — is
+   the deliverable. Render it directly in your reply as you work through it; don't summarize it as
+   something you're about to write to a file. The `context[]` intro **must lead with an "Assigned
+   to you" block** built from the Step 1b live query (each as a status-check line —
    `• KEY: summary — status (note)` — not a ranked pickup), followed by the run's ranking context.
-   Save the JSON to a temp file, then run
-   `python3 scripts/render_report.py <json-file> /tmp/jira-ticket-ranker-<project>-<date>.html` —
-   it substitutes the data block into `templates/report.html`, writes the file, and opens it.
 2. **Notes:** write the same shortlist as markdown to
    `~/workspace/notes/jira-ticket-ranker/<date>-picklist.md` (run config, profile sources, each
    candidate with rationale + sync target, the held set, and a "criteria notes" section
-   capturing what mattered this run).
-3. **Shareable (opt-in only, must be PDF):** do **not** generate a colleague-safe version by default —
-   make one only when Monica explicitly asks. The handoff artifact **must be a PDF** (it previews inline
-   in Slack/Gmail/Drive with no download step; a raw `.html` renders as source text until downloaded).
-   Process, all under the `shareables/` subdirectory (not the notes root):
-   - Build a sanitized HTML at
-     `~/workspace/notes/jira-ticket-ranker/shareables/jira-ticket-ranker-<project>-<date>-shareable.html`
-     — strip personal-profile material (calibration/velocity notes, in-flight "assigned to you" status
-     lines, growth-axis self-assessments like "your lighter stack" / "thin frontend axis") while keeping
-     the rankings, rationale dimensions, and sync targets intact; retitle so it doesn't read as a
-     personal to-do list.
-   - Render it to `…-shareable.pdf` (same subdirectory) with a **headless Chromium browser**
-     (`--headless=new --print-to-pdf`). The page builds its content via JS, so a non-JS converter
-     (`cupsfilter`/`wkhtmltopdf`) produces a blank page — a real browser engine is required.
-   - The **PDF is the artifact to hand off**; keep the sanitized HTML only as its render source.
+   capturing what mattered this run). This is the persistent, searchable record — no HTML/PDF
+   render step exists anymore; chat covers the live read, this file covers everything later.
 
 ## Step 6 — Pattern capture
 
