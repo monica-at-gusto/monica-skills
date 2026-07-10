@@ -62,16 +62,16 @@ why for every candidate, including held ones. A candidate without a sync target 
 
 ## Step 5 — Render
 
-1. **Page:** read `templates/report.html`; replace the block between the
-   `__RANK_DATA_START__` / `__RANK_DATA_END__` markers with `const RANK = <json>;`. The JSON
-   carries `meta` (`title`, `generated` [today's date], `jiraBase`, `counts`, `backlog`
-   [string — total open tickets scanned, e.g. `"127"`; renders as "N scanned"], `config`,
-   `context[]`, `banner`) and `tickets[]` (`key`, `tier` [`ready`|`stretch`|`held`], `badge`,
-   `summary`, `loc`, `headline`, `rationale[]` [`{lbl, val}` — one per ranking dimension],
-   `sync` [`{who, why}`], optional `note`, `pills[]`). Write to
-   `/tmp/jira-ticket-ranker-<project>-<date>.html` and `open` it. The `context[]` intro **must lead
-   with an "Assigned to you" block** built from the Step 1b live query (each as a status-check line —
+1. **Page:** build the JSON payload — `meta` (`title`, `generated` [today's date], `jiraBase`,
+   `counts`, `backlog` [string — total open tickets scanned, e.g. `"127"`; renders as "N scanned"],
+   `config`, `context[]`, `banner`) and `tickets[]` (`key`, `tier` [`ready`|`stretch`|`held`],
+   `badge`, `summary`, `loc`, `headline`, `rationale[]` [`{lbl, val}` — one per ranking dimension],
+   `sync` [`{who, why}`], optional `note`, `pills[]`). The `context[]` intro **must lead with an
+   "Assigned to you" block** built from the Step 1b live query (each as a status-check line —
    `• KEY: summary — status (note)` — not a ranked pickup), followed by the run's ranking context.
+   Save the JSON to a temp file, then run
+   `python3 scripts/render_report.py <json-file> /tmp/jira-ticket-ranker-<project>-<date>.html` —
+   it substitutes the data block into `templates/report.html`, writes the file, and opens it.
 2. **Notes:** write the same shortlist as markdown to
    `~/workspace/notes/jira-ticket-ranker/<date>-picklist.md` (run config, profile sources, each
    candidate with rationale + sync target, the held set, and a "criteria notes" section
