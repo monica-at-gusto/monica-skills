@@ -45,11 +45,15 @@ and lower confidence.
 Any of these may be unauthorized. When one is, name it under *Not yet read* — do not silently omit
 it, and do not treat its absence as evidence that nothing exists there.
 
-**Enterprise search (Glean) is deliberately not in `allowed-tools`.** It is high-value for this skill
-— it is often the only way to find a planning doc or a claim's origin outside the repo — but in this
-install it is exposed only under a per-install UUID alias rather than a stable name, so committing it
-would break on reinstall. To wire it up locally, add the local Glean alias to `allowed-tools` in
-`SKILL.md`. Until then, treat enterprise search as a manual step and note it under *Not yet read*.
+**Jira is the strongest signal in this tier.** Board state across projects answers "did this already
+ship, or is it in review" more definitively than any planning document does. When the document names
+another team, query their project directly rather than inferring status from prose.
+
+**Search versus fetch.** Notion, Slack, and Jira are searchable — a document can be found by concept.
+Google Docs is **fetch-only**: it retrieves a document you already have a pointer to. So a Google Doc
+spec or deck that nobody linked is fetchable but not discoverable. When a claim appears to rest on a
+document you suspect exists but cannot locate, say exactly that under *Not yet read* — never conclude
+it does not exist.
 
 ## Degrade loudly
 
