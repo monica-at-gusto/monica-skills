@@ -93,14 +93,18 @@ plan.
 2. **Resolve the ticket, ask don't guess.** Infer the ticket or epic from session context, the
    document, or a key in the document. If confidence is low, **ask** rather than file under the
    wrong ticket. No confident ticket → `eval-prd/`.
-3. **Save the markdown.** `~/workspace/notes/<TICKET>/<doc-slug>-eval.md` when a ticket or epic is in
-   play; otherwise `~/workspace/notes/eval-prd/<date>-<doc-slug>.md`.
+3. **Save the markdown**, then **emit the mandatory `Saved to:` line** naming the exact path.
+   `~/workspace/notes/<TICKET>/<doc-slug>-eval.md` when a ticket or epic is in play; otherwise
+   `~/workspace/notes/eval-prd/<date>-<doc-slug>.md`. Naming the path is required output, not an
+   aside — "the save is what I'm proposing" does not satisfy it.
 4. **Promotion on re-evaluation.** If the prior evaluation sits in `eval-prd/` and a ticket now
    exists, write the re-evaluation to the ticket dir and leave a one-line pointer in the original.
    Never move or delete the earlier file.
-5. **Ask, in these words, before ending the turn:** "Also file this on the Notion Jira Ticket Qs page
-   for <TICKET>?" Name Notion explicitly — a vague "let me know what you'd like" does not count as
-   the offer. Never write it unasked; the offer itself is mandatory, the write is not.
+5. **Emit the Notion question as closing text**, verbatim: "Also file this on the Notion Jira Ticket Qs
+   page for this ticket?" This is a **required output block**, not an action you may describe —
+   explaining that Notion is offered-not-written does *not* satisfy it, and neither does a vague "let
+   me know what you'd like." Ask the reader the question. Never write it unasked; the offer is
+   mandatory, the write is not.
 
 ## Step 7 — Pattern capture
 

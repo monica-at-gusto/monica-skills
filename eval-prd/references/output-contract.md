@@ -38,8 +38,13 @@ At most **five** grouped workstreams · **three** alternatives · **three** diff
 8. **Hardest parts** — up to three.
 9. **Open questions** — up to five.
 10. **Freshness** — one line: what would supersede this evaluation.
+11. **Saved to** — one line naming the exact path written, e.g.
+    `Saved to: ~/workspace/notes/eval-prd/2026-01-15-scheduled-report-delivery.md`. If the ticket was
+    ambiguous and the ticket-less location was used, say that on this line.
+12. **Notion** — the closing question, asked verbatim: "Also file this on the Notion Jira Ticket Qs
+    page for this ticket?"
 
-Under `--doc-only`, emit 1, 2, 6, 9, 10.
+Under `--doc-only`, emit 1, 2, 6, 9, 10, 11, 12.
 
 ## Mandatory blocks
 
@@ -48,9 +53,16 @@ These are never omitted, even when empty or unfavorable:
 - `Sources read` / `Not yet read`
 - The confidence line, with `n` and the named comparables
 - The freshness line
+- The `Saved to:` line, naming the exact path written
+- The Notion question, asked verbatim
 
 An evaluation missing any of these is incomplete. "Nothing comparable found, confidence low" is a
 valid confidence line; silence is not.
+
+**Describing a block is not emitting it.** "Notion is offered, never written unasked" is a statement
+*about* the skill; "Also file this on the Notion Jira Ticket Qs page for this ticket?" is the offer.
+Only the second one satisfies the contract. The same holds for the save: "the save is what I'm
+proposing" is not a `Saved to:` line. Emit the literal text, addressed to the reader.
 
 ## Audience
 
