@@ -137,6 +137,41 @@ about a specific ticket.
 - **Model-invocable** (no `disable-model-invocation`), so it auto-triggers on natural language.
   Evals: `sync-ticket-notes/evals/` (see its README) — `cd sync-ticket-notes && uv run skill-evals`.
 
+### eval-prd
+
+Evaluates a PRD, tech spec, or product proposal against what the codebase **already does** and how
+fast comparable work actually landed. The inventory of what already exists is the deliverable — the
+effort number is downstream of it. Builds the product-sense muscle: establish what's shipped, out
+loud, and let the effort estimate re-derive itself instead of arguing scope.
+
+```
+/eval-prd [<doc url|path|"the spec we're discussing">] [--detailed] [--doc-only] [--audience eng|product]
+```
+
+- **Document-type router:** PM PRD, engineering tech spec, or underspecified epic — each fails
+  differently, so each gets different section weighting. A PRD tends to under-specify acceptance
+  criteria and permissions; a tech spec tends to assert stale effort and existence claims as fact
+  (the highest-value things to verify).
+- **Inventory-first:** every requirement classified **shipped / in flight / extension / greenfield**
+  before anything counts as new. The document's own technical and effort claims are hypotheses, not
+  inputs.
+- **Effort without false precision:** AI leverage as **high/medium/none** bands per workstream —
+  never a multiplier or a percentage — plus a **mandatory confidence line** stating `n` and the named
+  comparables. No comparables means relative sizing only; it never invents a benchmark. Concurrency
+  and review latency are first-class cost inputs, because no AI band reduces them.
+- **Specialties, not staffing:** emits which packs and specialties the work touches and what
+  cross-team dependencies it implies. Never headcount, role allocation, or timelines on another
+  team's behalf.
+- **Degrades loudly:** works with zero prior context and with no notes directory at all. Every
+  unreachable source is named under *Not yet read* and reflected in confidence — the failure mode it
+  exists to prevent is an evaluation that reads as complete while missing the one source that
+  mattered.
+- **Output:** chat first, then markdown to `~/workspace/notes/<TICKET>/<doc-slug>-eval.md` when a
+  ticket is in play, else `~/workspace/notes/eval-prd/`. Re-runs search **both** places and open with
+  a *Corrections to my earlier reading* section. Notion is **offered, never written unasked**.
+- **Detail lives in `eval-prd/references/`**; SKILL.md stays lean. Evals: `eval-prd/evals/` —
+  `cd eval-prd && uv run skill-evals`.
+
 ## Linking a skill into Claude Code
 
 From the repo root:
