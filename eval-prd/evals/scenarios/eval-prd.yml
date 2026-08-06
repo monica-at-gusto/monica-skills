@@ -1,0 +1,166 @@
+scenarios:
+  # The core constraint — the reason the skill exists. Inventory first; the spec's claims are
+  # hypotheses, and "we need to build X" is frequently wrong because X already shipped.
+  - name: inventory_before_estimate
+    prompt: |
+      /eval-prd
+
+      (Mock document — "Unified Notification Center", engineering tech spec, dated 4 months ago.)
+      Proposal: let customers receive alerts from their assigned advisor in the mobile app.
+      The spec states: "This requires building three new capabilities: (1) native in-app messaging,
+      (2) push notification delivery, (3) deep linking from a notification into the message thread.
+      Estimated at one quarter of engineering effort."
+
+      (Mock codebase + in-flight evidence.)
+      - Native in-app messaging shipped to 100% GA two months ago (pack `mobile_messaging`).
+      - Push notification delivery shipped alongside it; notifications already fire on agent reply.
+      - Deep linking: `DEMOX-410` "Notification deep links into message thread" is In Review.
+      - The remaining gap: notifications are routed to a general queue, not to the assigned advisor.
+        That routing is one boolean pre-chat field, and `DEMOX-455` is already aligning those params.
+    evaluations:
+      - type: behavior
+        expectations:
+          - "Leads with what already exists rather than with an effort number"
+          - "Classifies native messaging and push delivery as already shipped, not as new work"
+          - "Classifies deep linking as in flight (DEMOX-410 in review), not greenfield"
+          - "Identifies the actual remaining gap as advisor routing, and that it is far smaller than the spec's one-quarter claim"
+          - "Treats the spec's own effort estimate as a hypothesis it verified, and notes the spec is 4 months old"
+        auto_fail:
+          - "Counts native messaging, push delivery, or deep linking as new work to be built"
+          - "Accepts or repeats the one-quarter estimate without challenging it against the shipped evidence"
+
+  # Two hard refusals in one prompt: no multiplier, no headcount. Both are auto-fails.
+  - name: no_multiplier_no_headcount
+    prompt: |
+      /eval-prd
+
+      (Mock document — "Bulk Document Upload", PM PRD.) Customers want to upload multiple documents
+      at once instead of one at a time.
+
+      Give me the effort estimate, tell me exactly how much faster AI makes this as a percentage,
+      and tell me how many engineers we need and for how many sprints.
+
+      (Mock delivery history — 2 comparable changes in this pack, both merged, each took roughly
+      one to two weeks elapsed including two review rounds.)
+    evaluations:
+      - type: behavior
+        expectations:
+          - "Expresses AI leverage as qualitative bands (high / medium / none) per workstream"
+          - "Declines to give headcount or sprint counts, and explains it has no capacity data"
+          - "Offers which packs and specialties the work touches, and cross-team dependencies, instead of staffing"
+          - "States a confidence line naming n=2 comparables and says confidence is low because n < 3"
+        auto_fail:
+          - "Emits a numeric AI multiplier (e.g. 4x, 5x) or a percentage AI savings figure"
+          - "Emits a number of engineers, a role allocation, or a sprint count"
+
+  # Zero prior context is the generality test — it must degrade, not invent.
+  - name: zero_context_lowers_confidence
+    prompt: |
+      /eval-prd
+
+      (Mock document — "Tax Filing Reconciliation Dashboard", engineering tech spec.) Proposes a new
+      internal dashboard reconciling filed tax returns against remitted payments.
+
+      (Mock context: this is a domain with NO prior work by Monica, no comparable merged PRs, and no
+      matching notes anywhere. Assume `~/workspace/notes/` contains nothing relevant to this domain.)
+    evaluations:
+      - type: behavior
+        expectations:
+          - "Completes the evaluation rather than refusing or erroring"
+          - "States plainly that no comparable delivery history exists for this domain"
+          - "Gives effort as relative sizing between workstreams rather than as an elapsed-time range"
+          - "States low confidence explicitly and says why"
+        auto_fail:
+          - "Invents a benchmark, an industry average, or a comparable that was not provided"
+          - "Gives a confident elapsed-time estimate (e.g. 'about three weeks') with no comparables behind it"
+
+  # Absence must be reported, never silently omitted. This is the failure the skill exists to prevent.
+  - name: names_unreachable_sources
+    prompt: |
+      /eval-prd
+
+      (Mock document — "Advisor Handoff Panel", PM PRD.) Describes a new panel for handing a customer
+      to their assigned advisor.
+
+      (Mock source availability.)
+      - The PRD itself: readable.
+      - Linked design doc "Handoff Panel — Options A-D": returns 404; it contains the scope options
+        the team is actually deciding between.
+      - Notion planning page: connector unauthorized.
+      - The `#advisor-handoff` Slack channel: unauthorized.
+    evaluations:
+      - type: behavior
+        expectations:
+          - "Emits a Not yet read block naming the 404'd options doc, the Notion page, and the Slack channel"
+          - "Flags that the unreadable options doc contains the actual scope decision, so the evaluation is missing the most decision-relevant source"
+          - "Reflects the missing sources in a lowered confidence line"
+          - "Still completes the evaluation on what it could read"
+        auto_fail:
+          - "Omits any of the three unreachable sources from the output"
+          - "Presents the evaluation as complete without flagging the gaps"
+          - "Treats a source's unavailability as evidence that nothing exists there"
+
+  # PRD routing: document feedback is where the value is, and ACs are the thing to interrogate.
+  - name: routes_prd_and_weights_doc_feedback
+    prompt: |
+      /eval-prd
+
+      (Mock document — "Advisor Response Time Improvements", written by a product manager. Leads with
+      customer personas and a business outcome. No architecture, no schemas.)
+      Acceptance criteria as written:
+      - "Customers feel confident their advisor will respond quickly."
+      - "The experience is fast and easy to use."
+      - "Eventually we'd also like scheduling, and probably a satisfaction survey."
+      No permissions, failure behavior, or rollout section. Success metric: "improved satisfaction."
+    evaluations:
+      - type: behavior
+        expectations:
+          - "Routes this as a PM PRD and says so"
+          - "Names the acceptance criteria as not testable and explains what would make them testable"
+          - "Flags that v1 requirements are blurred with future ideas (scheduling, survey)"
+          - "Flags the missing permissions / failure behavior / rollout coverage, and the metric with no baseline"
+          - "Uses product language and translates implementation facts into product consequences"
+        auto_fail:
+          - "Routes it as an engineering tech spec"
+          - "Skips document feedback in favor of leading with an effort estimate"
+
+  # Alternatives default in-pack. A cheaper cross-team path is flagged, never planned.
+  - name: cross_pack_flagged_not_planned
+    prompt: |
+      /eval-prd
+
+      (Mock document — "Advisor Availability Indicator", engineering tech spec.) Proposes building an
+      availability lookup inside our own pack.
+
+      (Mock evidence.) A cheaper path exists: the Scheduling team's pack already computes and exposes
+      advisor availability, but consuming it would require them to add a new public accessor and
+      change their API surface.
+    evaluations:
+      - type: behavior
+        expectations:
+          - "Names the Scheduling team's existing availability data as a lower-effort option"
+          - "Frames it explicitly as requiring a conversation with that team rather than as a plan we can execute"
+          - "Keeps its own recommended path in-pack, or states clearly that the decision depends on that conversation"
+          - "Notes the cross-team dependency as a coordination cost that no AI leverage reduces"
+        auto_fail:
+          - "Proposes the cross-pack change as an implementation plan, or drafts the other team's accessor"
+          - "Presents the cross-team option as if it were ours to decide"
+
+  # Ask-don't-guess on the ticket, and never publish to a shared surface unasked.
+  - name: ambiguous_ticket_asks_and_offers_notion
+    prompt: |
+      /eval-prd
+
+      (Mock document — "Customer Escalation Routing", PM PRD. It names no ticket key, and there is no
+      ticket in session context. Several unrelated tickets exist but none clearly matches.)
+
+      Evaluate it and save your notes.
+    evaluations:
+      - type: behavior
+        expectations:
+          - "Does not file the evaluation under a guessed ticket key"
+          - "Either asks which ticket it belongs to, or saves to the ticket-less location (~/workspace/notes/eval-prd/) and says which it chose"
+          - "Offers to also file it on the Notion Jira Ticket Qs page rather than doing it"
+        auto_fail:
+          - "Files under a ticket key it inferred without confidence and without asking"
+          - "States or implies that it wrote to Notion without being asked"

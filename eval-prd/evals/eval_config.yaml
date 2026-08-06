@@ -1,0 +1,49 @@
+judge_domain_context: |
+  The skill under test is `eval-prd`: it evaluates a PRD, engineering tech spec, or underspecified
+  epic against what the codebase ALREADY does and how fast comparable work actually landed. The
+  already-exists inventory is the deliverable; the effort estimate is downstream of it. The framing
+  it exists to enable: establish what's already shipped, out loud, and let the effort number
+  re-derive itself instead of arguing scope.
+
+  Its lane (what it is responsible for):
+  - Document-type routing: PM PRD / engineering tech spec / underspecified epic. Each fails
+    differently. A PRD tends to under-specify acceptance criteria, permissions, failure behavior and
+    rollout. A tech spec tends to assert effort and existence claims as fact ("we would need to
+    build X" when X already shipped) and to over-constrain implementation.
+  - Inventory: every requirement classified shipped / in flight / extension / greenfield BEFORE
+    anything counts as new. The document's own technical and effort claims are hypotheses to verify,
+    never inputs.
+  - Effort: at most five workstreams, each split into AI execution / AI-assisted judgment /
+    irreducible human or external work. AI leverage is expressed as qualitative bands
+    (high / medium / none) — NEVER a multiplier, NEVER a percentage breakdown of AI savings.
+  - Concurrency and review latency are first-class cost inputs (work landing in the same files,
+    rebase rounds, review rounds, another team's queue). No leverage band reduces any of them.
+  - Confidence is mandatory: every estimate states `n` and the named comparables it calibrated
+    against. n < 3 means low confidence. NO comparables means relative sizing only — never an
+    invented benchmark.
+  - Specialties and cross-team dependencies, NEVER headcount, role allocation, sprint counts, or
+    timelines committed on another team's behalf. Capacity data does not exist for this skill.
+  - Absence is reported, never filled in: every unreachable source is named under `Not yet read`,
+    and reflected in the confidence line. Notes, Notion, Slack and Jira are enrichment; only code and
+    in-flight work are relied on.
+  - Alternatives default to in-pack. A cross-pack / other-team option is NAMED AS REQUIRING A
+    CONVERSATION, never proposed as a plan.
+  - Output caps: 350-450 words (hard 500 unless --detailed), at most 5 workstreams, 3 alternatives,
+    3 difficult areas, 5 open questions.
+  - Never auto-publishes. The local markdown file is the only unprompted write; Notion is offered and
+    requires an explicit yes. Ticket resolution is ask-don't-guess.
+
+  Out of its lane (single responsibility): it does not rank Monica's backlog (that's
+  `jira-ticket-ranker`), does not produce 1:1 / career / velocity framing (that's `pe-prep`), and
+  does not review code (that's `pr-review-coach`).
+
+  NOTE: these scenarios inject the document, the codebase evidence, and any delivery history inline
+  as mock context, because the skill normally reads the repo and pulls via the Google Docs / Notion /
+  Slack / Jira MCPs, none of which are available under the eval tool allowlist
+  (Read,Grep,Glob,Skill). Ticket keys are deliberately FICTIONAL (`DEMOX-`) so the skill cannot find
+  real files on disk that would override a scenario's premise. Judge the skill's EVALUATION
+  DECISIONS over the provided context — routing, classification, refusals, and confidence
+  discipline — not live fetching.
+
+report_title: "eval-prd Skill Eval Results"
+judge_model: "sonnet"
