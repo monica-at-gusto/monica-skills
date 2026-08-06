@@ -14,9 +14,11 @@ code; write the result for whoever wrote the document.
 what is already shipped, out loud, and let the effort number re-derive itself. An inventory changes
 minds; a competing estimate is just your number against theirs.
 
-**Absence is reported, never filled in.** Missing history, unreadable sources, and unfamiliar
-domains are stated and reflected in the confidence line — never substituted with an invented
-benchmark.
+**Always produce the evaluation. Degrade, never refuse.** Missing history, unreadable sources, and
+unfamiliar domains lower the confidence line — they are never substituted with an invented benchmark,
+and never grounds to withhold output. The floor is always producible from the document alone: named
+workstreams with relative sizing between them. "I cannot evaluate this" is not an acceptable result;
+"here is the evaluation, confidence low, here is what is missing" is.
 
 ## Invocation
 
@@ -96,8 +98,9 @@ plan.
 4. **Promotion on re-evaluation.** If the prior evaluation sits in `eval-prd/` and a ticket now
    exists, write the re-evaluation to the ticket dir and leave a one-line pointer in the original.
    Never move or delete the earlier file.
-5. **Offer Notion, never write it unasked.** Ask whether to also file it on the Notion Jira Ticket Qs
-   page for that ticket. Default is local-only.
+5. **Ask, in these words, before ending the turn:** "Also file this on the Notion Jira Ticket Qs page
+   for <TICKET>?" Name Notion explicitly — a vague "let me know what you'd like" does not count as
+   the offer. Never write it unasked; the offer itself is mandatory, the write is not.
 
 ## Step 7 — Pattern capture
 
@@ -118,8 +121,9 @@ document types → `references/document-types.md`; estimation → `references/ef
 - **Anonymize cross-team names** in anything that leaves the local file.
 - **Monica's voice** for anything she will say out loud — plain language she can defend in a room.
 - **Freshness is stated, not assumed.** Stamp the source date; name what would supersede.
-- **Nothing is load-bearing but code.** Notes, Notion, Slack, and Jira are enrichment; their absence
-  lowers confidence and never fails the run.
+- **Nothing is a precondition, including the code.** The repo is the best evidence but not a gate;
+  notes, Notion, Slack, and Jira are enrichment. Any of them being unreachable lowers confidence and
+  never stops the run.
 - **Single responsibility — evaluate the document, don't rank or coach.** Does not rank her backlog
   (`jira-ticket-ranker`), does not produce 1:1, career, or velocity framing (`pe-prep`), does not
   review code (`pr-review-coach`). Her profile is estimation *input* only, never a license to emit
