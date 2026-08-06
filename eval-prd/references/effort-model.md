@@ -41,9 +41,9 @@ workstream, check:
 
 Separate active engineering time from external waiting when timestamps allow it.
 
-*(This check earns its place from practice: USPDS-760 recorded two rebase rounds and two automated
-review passes on a small change, driven entirely by concurrent tickets touching the same shared
-files. The check is the rule; the ticket is only the illustration.)*
+*(This check earns its place from practice: a small change once took two rebase rounds and two
+automated review passes, driven entirely by concurrent work landing in the same shared files. Elapsed
+time was dominated by contention, not by the size of the change.)*
 
 ## Calibration and confidence
 

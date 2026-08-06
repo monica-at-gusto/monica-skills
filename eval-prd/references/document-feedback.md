@@ -26,7 +26,7 @@ Do not enumerate every flaw — pick the ones that change what someone would bui
 someone's feedback, a meeting decision, or a reviewer comment, verify it against their verbatim words
 before evaluating against it. A paraphrase can silently widen scope — "decide and implement a fix" is
 a materially bigger ask than "worth a ticket." If the source is unreachable, say the AC is
-unverified rather than treating it as settled. (Pattern observed in USPDS-895; the rule is general.)
+unverified rather than treating it as settled.
 
 **Name the product "why," or say plainly that it is not stated.** Pull it from the description,
 acceptance criteria, linked tickets, or discussion. If it is not stated anywhere, say so explicitly

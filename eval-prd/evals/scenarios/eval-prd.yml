@@ -5,28 +5,29 @@ scenarios:
     prompt: |
       /eval-prd
 
-      (Mock document — "Unified Notification Center", engineering tech spec, dated 4 months ago.)
-      Proposal: let customers receive alerts from their assigned advisor in the mobile app.
-      The spec states: "This requires building three new capabilities: (1) native in-app messaging,
-      (2) push notification delivery, (3) deep linking from a notification into the message thread.
+      (Mock document — "Scheduled Report Delivery", engineering tech spec, dated 4 months ago.)
+      Proposal: let customers receive generated reports on a recurring schedule by email.
+      The spec states: "This requires building three new capabilities: (1) a report generation
+      pipeline, (2) recurring job orchestration, (3) templated email delivery with attachments.
       Estimated at one quarter of engineering effort."
 
       (Mock codebase + in-flight evidence.)
-      - Native in-app messaging shipped to 100% GA two months ago (pack `mobile_messaging`).
-      - Push notification delivery shipped alongside it; notifications already fire on agent reply.
-      - Deep linking: `DEMOX-410` "Notification deep links into message thread" is In Review.
-      - The remaining gap: notifications are routed to a general queue, not to the assigned advisor.
-        That routing is one boolean pre-chat field, and `DEMOX-455` is already aligning those params.
+      - The report generation pipeline shipped to GA two months ago (pack `reporting_exports`).
+      - Recurring job orchestration shipped alongside it; scheduled jobs already run in production.
+      - Templated email delivery: `DEMOX-410` "Attach generated reports to templated email" is In Review.
+      - The remaining gap: reports are delivered only to the user who requested them, not to a
+        configured recipient list. That is one recipient-resolution field, and `DEMOX-455` is already
+        aligning those delivery params.
     evaluations:
       - type: behavior
         expectations:
           - "Leads with what already exists rather than with an effort number"
-          - "Classifies native messaging and push delivery as already shipped, not as new work"
-          - "Classifies deep linking as in flight (DEMOX-410 in review), not greenfield"
-          - "Identifies the actual remaining gap as advisor routing, and that it is far smaller than the spec's one-quarter claim"
+          - "Classifies the report generation pipeline and recurring job orchestration as already shipped, not as new work"
+          - "Classifies templated email delivery as in flight (DEMOX-410 in review), not greenfield"
+          - "Identifies the actual remaining gap as recipient resolution, and that it is far smaller than the spec's one-quarter claim"
           - "Treats the spec's own effort estimate as a hypothesis it verified, and notes the spec is 4 months old"
         auto_fail:
-          - "Counts native messaging, push delivery, or deep linking as new work to be built"
+          - "Counts the report pipeline, job orchestration, or templated email delivery as new work to be built"
           - "Accepts or repeats the one-quarter estimate without challenging it against the shipped evidence"
 
   # Two hard refusals in one prompt: no multiplier, no headcount. Both are auto-fails.
@@ -79,15 +80,15 @@ scenarios:
     prompt: |
       /eval-prd
 
-      (Mock document — "Advisor Handoff Panel", PM PRD.) Describes a new panel for handing a customer
-      to their assigned advisor.
+      (Mock document — "Workspace Transfer Panel", PM PRD.) Describes a new panel for transferring a
+      workspace between owners.
 
       (Mock source availability.)
       - The PRD itself: readable.
-      - Linked design doc "Handoff Panel — Options A-D": returns 404; it contains the scope options
+      - Linked design doc "Transfer Panel — Options A-D": returns 404; it contains the scope options
         the team is actually deciding between.
       - Notion planning page: connector unauthorized.
-      - The `#advisor-handoff` Slack channel: unauthorized.
+      - The `#workspace-transfer` Slack channel: unauthorized.
     evaluations:
       - type: behavior
         expectations:
@@ -105,10 +106,10 @@ scenarios:
     prompt: |
       /eval-prd
 
-      (Mock document — "Advisor Response Time Improvements", written by a product manager. Leads with
+      (Mock document — "Invoice Delivery Speed Improvements", written by a product manager. Leads with
       customer personas and a business outcome. No architecture, no schemas.)
       Acceptance criteria as written:
-      - "Customers feel confident their advisor will respond quickly."
+      - "Customers feel confident their invoice will arrive quickly."
       - "The experience is fast and easy to use."
       - "Eventually we'd also like scheduling, and probably a satisfaction survey."
       No permissions, failure behavior, or rollout section. Success metric: "improved satisfaction."
@@ -129,11 +130,11 @@ scenarios:
     prompt: |
       /eval-prd
 
-      (Mock document — "Advisor Availability Indicator", engineering tech spec.) Proposes building an
+      (Mock document — "Resource Availability Indicator", engineering tech spec.) Proposes building an
       availability lookup inside our own pack.
 
       (Mock evidence.) A cheaper path exists: the Scheduling team's pack already computes and exposes
-      advisor availability, but consuming it would require them to add a new public accessor and
+      resource availability, but consuming it would require them to add a new public accessor and
       change their API surface.
     evaluations:
       - type: behavior

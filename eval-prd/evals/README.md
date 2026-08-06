@@ -36,8 +36,8 @@ prompt. The skill normally reads the repo and pulls via the Google Docs / Notion
 none of which are available under the eval tool allowlist (`Read,Grep,Glob,Skill`).
 
 **Ticket keys are deliberately fictional (`DEMOX-`).** The eval allowlist includes `Glob` and `Read`,
-so a real `USPDS-` key would let the skill find actual files on disk and override the scenario's
-mock premise. Keep new scenarios fictional for the same reason.
+so a real project key would let the skill find actual files on disk and override the scenario's mock
+premise. Keep new scenarios fictional for the same reason.
 
 So these evals test the skill's **evaluation decisions** — document-type routing, shipped/in-flight
 classification, the refusals (no multiplier, no headcount), confidence discipline, naming unreachable

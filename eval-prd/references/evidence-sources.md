@@ -61,12 +61,13 @@ Every unavailable source appears under *Not yet read* and is reflected in the co
 run completes. The failure mode to avoid is an evaluation that reads as complete while missing the
 single most decision-relevant source.
 
-## Optional illustrations
+## Prior hand-written evaluations
 
-Two worked examples of the output shape, cited as illustration only — nothing depends on them and the
-skill runs fine if they are gone:
+If the ticket's notes dir already holds a hand-written orientation or scoping note for this document,
+read it — both as a format reference and as prior reasoning to diff against in the corrections log.
 
-- `~/workspace/notes/USPDS-295/2026-08-03-orientation.md` — inventory-first evaluation of another
-  team's tech spec and effort claim, with a `Sources read` / `Not yet read` block.
-- `~/workspace/notes/USPDS-295/2026-08-05-kickoff-outcomes.md` — the corrections-log pattern, and a
-  reminder that evaluations go stale fast.
+Treat nothing in such a note as current. Notes of this kind go stale fast: a kickoff, a decision, or a
+shipped dependency after the note was written supersedes it, and the note may say so in a banner at
+the top. Check its date against the document's before relying on either.
+
+Nothing in this skill depends on such a note existing.
