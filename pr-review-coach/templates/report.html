@@ -373,7 +373,9 @@ function card(f, key) {
   const pills = el("div", "pills");
   if (f.nit) pills.appendChild(el("span", "pill nit", "nit"));
   if (f.lens) pills.appendChild(el("span", "pill lens-" + slug(f.lens), f.lens));
-  if (f.check) pills.appendChild(el("span", "pill", f.check));
+  // Prefixed: a bare check name like "vacuous-assertion" reads as a verdict on the
+  // review comment rather than the name of the check that fired.
+  if (f.check) pills.appendChild(el("span", "pill", "check: " + f.check));
   if (f.confidence) pills.appendChild(el("span", "pill conf-" + f.confidence, f.confidence + " confidence"));
   (f.incident_refs || []).forEach(r => pills.appendChild(el("span", "pill incident", "incident " + r)));
   card.appendChild(pills);
