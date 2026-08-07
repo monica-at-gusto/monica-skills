@@ -110,6 +110,19 @@ mode, tier into Critical / Important / Suggestion / Strengths, cap issue finding
 strengths exempt, reports how many were trimmed — say so, never silently drop), and reconcile
 against the deferral ledger by exact match key.
 
+**Carry `evidence` through, and write `verify_cmd` for every critical/important finding.** Both
+lenses already return evidence — do not drop it when normalizing into the schema, it is the whole
+basis on which Monica can check a claim she is about to post under her own name. Then turn each
+one into a runnable command per `finding-schema.md`. If you can't write the command, you didn't
+verify the finding: set `confidence: low` and let the script filter it.
+
+**Set `nit` on every issue finding before running the script** — the lenses won't always populate
+it. Apply `finding-schema.md`'s test: if the author said "I'd rather leave it as is," is anything
+left besides taste? Do not use `severity: suggestion` as a synonym for nit; a coverage gap or a
+product question is non-blocking *and* substantive, and mislabelling it as a nit is how a real
+defect gets skimmed past. When in doubt, `nit: false` — an over-flagged nit is discarded silently,
+an under-flagged one wastes the author's attention.
+
 The script's `fuzzy_candidates[]` are near-miss ledger matches (same file, reworded title) — per
 `references/deferrals.md`, **ask Monica before reconciling these, never auto-apply.** Its
 `resolved_deferrals[]` are ledger entries that no longer appear at all — surface each as "resolved

@@ -19,6 +19,9 @@ deterministically.
   "detail": "1-3 sentences, plain language, no consultant-speak",
   "suggested_action": "concrete fix, or null",
   "confidence": "high | medium | low",
+  "evidence": "what was actually read that confirms this, with file:line",
+  "verify_cmd": "one shell command that surfaces that evidence",
+  "nit": false,
   "incident_refs": ["#4466"],
   "introduced_by_pr": true,
   "status": "open | acknowledged-deferred",
@@ -35,6 +38,30 @@ deterministically.
   (`references/deferrals.md`) when this finding matches one Monica already deferred with a
   rationale; `deferral` then carries that rationale + follow-up. Deferred findings are not
   counted as open and are not postable — they render as a decided note.
+- `evidence` names what was actually read to confirm the finding, with `file:line`. Never
+  paraphrase the finding back — evidence is the *external* fact the claim rests on, and the most
+  useful evidence points **outside the diff**, because that's what a reviewer reading the PR on
+  GitHub cannot check.
+- `verify_cmd` is **required on every `critical` and `important` finding** and encouraged below
+  it: one runnable shell command whose output shows the evidence. Prefer absolute paths and a
+  pinned SHA (`git -C <repo> show <sha>:<path> | grep -n …`) over anything depending on the
+  current branch. It renders click-to-copy in the report.
+
+  **A finding you cannot write a `verify_cmd` for is a finding you did not verify** — drop its
+  confidence to `low` (which filters it out) rather than shipping an unbacked claim.
+- `nit` defaults to `false`. **Severity and triviality are independent axes.** `severity` answers
+  *does this block the merge*; `nit` answers *is there anything to argue about*. A non-blocking
+  finding is not automatically a nit — a coverage gap, an accessibility consequence, or a product
+  question can all be `suggestion` + `nit: false`.
+
+  **The test:** imagine the author replies *"I'd rather leave it as is."* If nothing is left —
+  no bug, no missing coverage, no accessibility or product consequence, just taste — it's a nit.
+  If something survives that reply, it isn't. Naming, import order, style consistency, and
+  "I'd have structured this differently" are nits. "This test can't fail the way you claim" is
+  not, however small the diff to fix it.
+
+  Nits render with a `nit` pill and a dashed rule, sort last within their severity for the cap,
+  and get a `nit: ` prefix in every copy output so the author can triage them at a glance.
 - **Match key (for cross-run deferral matching):** `<file>::<slug(title)>`, where `slug` is
   the lowercased title with non-alphanumerics collapsed to `-`. Line numbers are NOT part of
   the key — they drift between runs.

@@ -66,6 +66,9 @@ def dedupe(findings: list) -> list:
 def _merge_cluster(cluster: list) -> dict:
     best = max(cluster, key=lambda f: SEVERITY_RANK.get(f["severity"], 0))
     best = dict(best)
+    # A cluster is only a nit if every finding in it is. One substantive lens hit
+    # outranks any number of style observations on the same line.
+    best["nit"] = all(f.get("nit", False) for f in cluster)
     best["incident_refs"] = sorted(set(sum((f.get("incident_refs", []) for f in cluster), [])))
     lenses = sorted(set(f["lens"] for f in cluster))
     if len(lenses) > 1:
@@ -124,8 +127,12 @@ def tier_and_cap(findings: list, cap: int) -> dict:
     for f in findings:
         tiers.setdefault(f["severity"], []).append(f)
 
+    # Nits lose to substantive findings at the same severity. Severity means
+    # "does this block", triviality is a separate axis — without this tiebreak a
+    # style observation can push a real defect out of the cap purely on line order.
     issues = tiers["critical"] + tiers["important"] + tiers["suggestion"]
     issues.sort(key=lambda f: (SEVERITY_RANK.get(f["severity"], 0),
+                                0 if f.get("nit", False) else 1,
                                 CONFIDENCE_RANK.get(f.get("confidence"), 0)), reverse=True)
     trimmed = max(0, len(issues) - cap)
     kept_issues = set(id(f) for f in issues[:cap])
