@@ -14,7 +14,7 @@ deterministically.
   "hunk_header": "@@ -10,6 +10,8 @@",
   "severity": "critical | important | suggestion | strength",
   "category": "incident-pattern | type-precision | test-coverage | description | logic | data-integrity | ...",
-  "check": "fresh-eyes check name, or null",
+  "check": "fresh-eyes check name, description-claim, ticket-claim, or null",
   "title": "<=10 words",
   "detail": "1-3 sentences, plain language, no consultant-speak",
   "suggested_action": "concrete fix, or null",
@@ -48,6 +48,11 @@ Any subagent that produces findings (e.g. the fresh-eyes mimic checks) MUST be t
 > line appears on the `+` side of the provided diff — if it only exists in unchanged
 > surrounding context, set `false`. Set `confidence: low` for anything you could not verify
 > by reading the actual file. Never invent `incident_refs`.
+
+Every lens subagent is also handed the **PR description** and the **Jira ticket** (SKILL.md Step 3)
+and must run the claim check against both. Findings from it use `check: "description-claim"` or
+`check: "ticket-claim"`; an unmet acceptance criterion is a `ticket-claim` finding. Anchor a claim
+finding at the code that disproves the claim, not at the prose — the comment has to land on a line.
 
 The "emit no other text" rule is what lets the orchestrator parse and merge reliably.
 

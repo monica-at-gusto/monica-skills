@@ -45,6 +45,22 @@ relevant finding, not the banner. Good: `Ticket USPDS-593: scope matches (4/4 cr
 `CI: pending — 4 running, rest pass`, `Scope: ~190 lines, no split`. Avoid full sentences with
 parenthetical lists.
 
+## The recommendation line
+
+The report renders a verdict directly under the title, **derived by the template from live triage
+state** — there is no `meta.recommendation` field and you must not add one, or it goes stale the
+moment she toggles a card.
+
+| Live state | Rendered line | Class |
+| --- | --- | --- |
+| Any posted finding is critical/important | `Recommendation: Reviewed, requires re-review for approval` | `rec rereview` |
+| Posted findings, none critical/important | `Recommendation: Approve — comments below are non-blocking` | `rec approve` |
+| Nothing posted | `Recommendation: Approve` | `rec approve` |
+
+Deferred findings never block — they're already decided. The same string leads **Copy for PR**
+(bolded) and **Copy for notes**, and rides in the decisions blob as `recommendation` so Step 8 can
+open the GitHub review body with it.
+
 Each finding uses the `finding-schema.md` fields plus three UI fields:
 
 - `draft_body` — the comment text drafted **in Monica's voice**. Rendered as a static preview

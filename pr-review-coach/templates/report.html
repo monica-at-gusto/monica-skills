@@ -51,6 +51,10 @@
   h1 { font-size: 22px; font-weight: 500; margin: 6px 0 10px; letter-spacing: 0; }
   .counts { display: flex; gap: 14px; flex-wrap: wrap; font-size: 13px; color: var(--muted); }
   .counts b { color: var(--ink); font-weight: 500; }
+  .rec { display: inline-block; margin-top: 12px; padding: 8px 13px; border: 1px solid;
+         border-radius: 8px; background: var(--card); font-size: 13.5px; font-weight: 500; }
+  .rec.approve { color: var(--strength); border-color: var(--strength); }
+  .rec.rereview { color: var(--accent); border-color: var(--line-strong); }
   .context { display: flex; flex-direction: column; gap: 3px; margin-top: 12px; }
   .context .ctx { font-size: 12.5px; color: var(--muted); padding-left: 12px; border-left: 2px solid var(--line); line-height: 1.45; }
   .context .ctx b { color: var(--ink); font-weight: 500; }
@@ -170,6 +174,7 @@
   <header class="top">
     <div class="eyebrow">pr review coach</div>
     <h1 id="title">—</h1>
+    <div class="rec" id="rec"></div>
     <div class="counts" id="counts"></div>
     <div class="context" id="context"></div>
   </header>
@@ -206,6 +211,30 @@ const TIERS = [
   ["strength", "Strengths"],
 ];
 const decisions = {}; // id -> {action, body}
+
+// The verdict tracks the LIVE triage state, not the initial tiers. Skipping every
+// blocker has to flip it to approve, or the line pasted into the PR contradicts the
+// comments actually posted. Deferred findings are decided, so they never block.
+const BLOCKING = new Set(["critical", "important"]);
+
+function recommendation() {
+  const posted = PRC.findings.filter(f => f.status !== "acknowledged-deferred"
+    && decisions[f.id] && decisions[f.id].action === "post");
+  if (posted.some(f => BLOCKING.has(f.severity))) {
+    return { cls: "rereview", text: "Recommendation: Reviewed, requires re-review for approval" };
+  }
+  if (posted.length) {
+    return { cls: "approve", text: "Recommendation: Approve — comments below are non-blocking" };
+  }
+  return { cls: "approve", text: "Recommendation: Approve" };
+}
+
+function refreshRecommendation() {
+  const r = recommendation();
+  const node = document.getElementById("rec");
+  node.className = "rec " + r.cls;
+  node.textContent = r.text;
+}
 
 function el(tag, cls, txt) {
   const e = document.createElement(tag);
@@ -263,6 +292,8 @@ function render() {
     box.appendChild(ul);
     root.appendChild(box);
   }
+
+  refreshRecommendation();
 }
 
 const VERDICTS = { right: "RIGHT", missed: "MISSED", sharpen: "SHARPEN" };
@@ -354,6 +385,7 @@ function card(f, key) {
     postBtn.classList.toggle("on", a === "post");
     skipBtn.classList.toggle("on", a === "skip");
     card.classList.toggle("skipped", a === "skip");
+    refreshRecommendation();
   }
   postBtn.addEventListener("click", () => setAction("post"));
   skipBtn.addEventListener("click", () => setAction("skip"));
@@ -372,6 +404,7 @@ function buildBlob() {
     _type: "pr-review-coach-decisions",
     target: PRC.meta.target,
     mode: PRC.meta.mode,
+    recommendation: recommendation().text,
     // Only emit findings marked "post" — skips are ignored downstream (Step 8),
     // so including them just clutters the blob and inflates the visible count.
     decisions: Object.entries(decisions)
@@ -387,7 +420,7 @@ function buildBlob() {
 
 function buildPrMarkdown() {
   const labels = { critical: "Critical", important: "Important", suggestion: "Suggestion" };
-  const lines = ["## PR Review", ""];
+  const lines = ["## PR Review", "", "**" + recommendation().text + "**", ""];
   for (const key of ["critical", "important", "suggestion"]) {
     const items = PRC.findings.filter(f => f.severity === key && decisions[f.id] && decisions[f.id].action === "post");
     if (!items.length) continue;
@@ -422,7 +455,7 @@ function buildPrMarkdown() {
 function buildNotesMarkdown() {
   const m = PRC.meta;
   const heading = (m.ticket ? m.ticket + " — " : "") + (m.title || m.target || "");
-  const lines = ["# PR Review — " + heading, ""];
+  const lines = ["# PR Review — " + heading, "", recommendation().text, ""];
   (m.context || []).forEach(s => lines.push("- " + s));
   if ((m.context || []).length) lines.push("");
   const labels = { critical: "Critical", important: "Important", suggestion: "Suggestion", strength: "Strengths" };

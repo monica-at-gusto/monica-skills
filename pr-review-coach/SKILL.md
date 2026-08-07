@@ -44,8 +44,13 @@ Then a quick triage pass (cheap, pre-lens) — carry results as report context
   already raised.
 - **Size / scope:** large diff (≈400+ lines) or mixed concerns → flag "consider splitting".
 - **Description:** missing the "why" or a test plan → flag it.
-- **Ticket alignment (remote):** parse a Jira ID from the branch/title/body; if found, check the
-  PR against the ticket's acceptance criteria (Jira MCP) and note any gap.
+- **Ticket alignment (remote):** parse a Jira ID from the branch/title/body; if found, fetch it
+  (Jira MCP) and check the PR against its acceptance criteria, noting any gap. If the Jira MCP
+  isn't authorized, say so in `meta.context` — an unverified AC is not a met one.
+
+**Retain the PR description body and the ticket text (summary + description + acceptance criteria)
+verbatim.** Step 3 passes both to every lens, and Step 4 filters against them. They are review
+*inputs*, not just triage notes — do not discard them after the banner is written.
 - **Re-review reconciliation:** if you reviewed this target earlier in the session, compare the
   current `headRefOid` against the prior pass. If it moved, re-fetch the diff (prior findings are
   stale) and reconcile which findings the new commits resolved — surface resolved items in
@@ -64,11 +69,37 @@ this step:
   `findings.json`; locally (or if the bot hasn't posted yet) *mimic* via
   `.fresh-eyes/checks/*.md`.
 
+**Every lens prompt MUST include the PR description and the ticket text from Step 2** alongside the
+diff, and MUST carry this check verbatim:
+
+> **Claim check.** The PR description and the Jira ticket make falsifiable claims — "no layout was
+> introduced", "fully covered by component tests", "a bare count would still pass", "no visual
+> regressions", "the errored branch renders its own badge". Verify each against the code. A claim
+> the diff contradicts is a finding: set `check: "description-claim"` or `check: "ticket-claim"`,
+> severity by the real-world impact of the gap, `confidence: high` only when you read the file that
+> disproves it. An acceptance criterion the diff doesn't satisfy is a `ticket-claim` finding even
+> when the code is otherwise correct.
+
+Do not skip this because the description reads thoroughly — a thorough description makes *more*
+checkable claims, not fewer, and an author's own stated bar is the one they can't argue with.
+
 ## Step 4 — Merge, tier, cap
 
 First drop anything already raised in the PR's existing review comments (fetched in Step 2) —
 that's a semantic judgment call (does this finding restate what a human reviewer already said?),
 not something the script below can do.
+
+**Then drop echo strengths.** A strength whose substance the PR description already claims for
+itself ("nice use of `compareDocumentPosition`" when the author wrote a paragraph explaining
+`compareDocumentPosition`) adds nothing — it praises them for what they just finished telling you,
+and it costs the review credibility. Keep a strength only when it names something the description
+does *not* already take credit for. If that leaves no strengths, ship none; an empty Strengths
+section is honest, a padded one isn't.
+
+The same test applies more weakly to issue findings: a finding the description already discloses
+isn't automatically dead, but it must add something — a consequence the author missed, or a
+disagreement with the conclusion they drew. Say which, in the draft, rather than presenting a
+disclosed trade-off as a discovery.
 
 Then save the remaining findings as a JSON array and run
 `python3 scripts/merge_findings.py <findings.json> --deferrals <ledger-path> [--remote] --cap 5`
@@ -124,12 +155,21 @@ the data block into `templates/report.html`, writes the file, and opens it. Tell
 the page, then **Copy decisions for Claude** and paste the blob back here (remote posting), or
 **Copy for PR** to paste markdown into the PR herself.
 
+**Recommendation line.** The report opens with a verdict derived from the *live* triage state:
+`Recommendation: Reviewed, requires re-review for approval` when any critical/important finding is
+set to Post, `Recommendation: Approve — comments below are non-blocking` when only
+suggestions/strengths are posted, plain `Recommendation: Approve` when nothing is. The template
+computes it and carries it into all three copy outputs. Therefore: never hand-write a
+`recommendation` field into the payload, and never state a verdict in chat that contradicts what
+the page shows — recompute from her final Post/Skip state instead of your initial tiers.
+
 ## Step 8 — Post (remote only)
 
 When Monica pastes the decisions blob (`_type: "pr-review-coach-decisions"`), parse it and
 assemble ONE pending GitHub review from the `action: "post"` entries per
-`references/posting-recipe.md` (verify each line anchor first). Default: leave it PENDING;
-submit only on explicit request. Locally there is nothing to post — the page plus
+`references/posting-recipe.md` (verify each line anchor first). The blob's `recommendation` string
+is the review body's opening line — lead with it, verbatim, above the summary. Default: leave it
+PENDING; submit only on explicit request. Locally there is nothing to post — the page plus
 **Copy for PR** is the deliverable. This replaces her old `/review` self-review habit.
 
 ## Step 9 — Pattern capture (every session)
