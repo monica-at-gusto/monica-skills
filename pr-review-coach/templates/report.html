@@ -92,6 +92,8 @@
   .deferral { margin: 8px 0 0; color: #313131; }
   .deferral b { color: var(--ink); font-weight: 500; }
   .card.improve { border-left-color: var(--faint); background: #fafafa; }
+  .card.summary { border-left-color: var(--faint); background: #fafafa; }
+  .card.summary .draft { margin-top: 0; }
   .improve-list { margin: 0; padding-left: 18px; }
   .improve-list li { margin: 4px 0; color: #313131; }
   .loc { font: 12.5px ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--muted); overflow-wrap: anywhere; }
@@ -288,6 +290,10 @@ function render() {
   }
 
   const root = document.getElementById("findings");
+  if (PRC.meta.summary != null) {
+    root.appendChild(el("div", "tier", "Closing note"));
+    root.appendChild(summaryCard());
+  }
   for (const [key, label] of TIERS) {
     const items = PRC.findings.filter(f => f.severity === key && f.status !== "acknowledged-deferred");
     if (!items.length) continue;
@@ -314,6 +320,33 @@ function render() {
 }
 
 const VERDICTS = { right: "RIGHT", missed: "MISSED", sharpen: "SHARPEN" };
+
+const summary = { text: "" };
+
+function summaryCard() {
+  summary.text = PRC.meta.summary || "";
+  const card = el("div", "card summary");
+  const draft = el("div", "draft");
+  const preview = el("div", "draft-preview");
+  const ta = el("textarea");
+  ta.value = summary.text;
+  ta.placeholder = "Closing note…";
+
+  function syncPreview() {
+    const v = ta.value.trim();
+    preview.textContent = v || "No closing note — click to write one.";
+    preview.classList.toggle("empty", !v);
+  }
+  syncPreview();
+
+  preview.addEventListener("click", () => { draft.classList.add("editing"); ta.focus(); });
+  ta.addEventListener("input", () => { summary.text = ta.value; });
+  ta.addEventListener("blur", () => { syncPreview(); draft.classList.remove("editing"); });
+
+  draft.append(preview, ta);
+  card.appendChild(draft);
+  return card;
+}
 
 function deferredCard(f) {
   const card = el("div", "card deferred");
@@ -441,6 +474,7 @@ function buildBlob() {
     target: PRC.meta.target,
     mode: PRC.meta.mode,
     recommendation: recommendation().text,
+    summary: summary.text.trim(),
     // Only emit findings marked "post" — skips are ignored downstream (Step 8),
     // so including them just clutters the blob and inflates the visible count.
     decisions: Object.entries(decisions)
@@ -459,6 +493,7 @@ function buildBlob() {
 function buildPrMarkdown() {
   const labels = { critical: "Critical", important: "Important", suggestion: "Suggestion" };
   const lines = ["## PR Review", "", "**" + recommendation().text + "**", ""];
+  if (summary.text.trim()) { lines.push(summary.text.trim(), ""); }
   for (const key of ["critical", "important", "suggestion"]) {
     const items = PRC.findings.filter(f => f.severity === key && decisions[f.id] && decisions[f.id].action === "post");
     if (!items.length) continue;
@@ -494,6 +529,7 @@ function buildNotesMarkdown() {
   const m = PRC.meta;
   const heading = (m.ticket ? m.ticket + " — " : "") + (m.title || m.target || "");
   const lines = ["# PR Review — " + heading, "", recommendation().text, ""];
+  if (summary.text.trim()) { lines.push(summary.text.trim(), ""); }
   (m.context || []).forEach(s => lines.push("- " + s));
   if ((m.context || []).length) lines.push("");
   const labels = { critical: "Critical", important: "Important", suggestion: "Suggestion", strength: "Strengths" };

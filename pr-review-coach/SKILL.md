@@ -147,8 +147,25 @@ files. (Stub until populated — see Step 9.)
   themes, no findings) beside the chat — see `references/practice-panel.md`.
 
 Draft every postable comment **in her voice** — plain, conversational, 1–3 sentences, no
-"consider whether", no consultant-speak; state the issue and a concrete suggestion. Set each
+"consider whether", no consultant-speak; state the issue and a concrete suggestion. Hold all
+finding prose to the ~70/30 plain-language ratio in `references/finding-schema.md`. Set each
 finding's `default_action` (`post` for critical/important, `skip` for suggestion/strength).
+
+**Draft the closing note.** Set `meta.summary` to 2–3 sentences that open the review: what you
+verified and found sound, *then* what needs action. Lead with the verification — the author can't
+infer it from inline comments, and it's what makes a blocking comment read as diligence rather
+than a gate. Never restate the recommendation line (rendered above it) and never enumerate the
+findings (they're directly below it).
+
+**Only claim what this run actually did.** The note goes out under Monica's name, so every claim in
+it is hers to defend to the author. Each verification clause must name something a step above
+genuinely checked and you can point at — a file you read, an `evidence` field, a `verify_cmd` you
+wrote. Never generalize ("reviewed thoroughly", "all paths covered") and never carry a claim over
+from a previous run. If a lens was skipped or a tool was unavailable — Jira MCP unauthorized, so
+acceptance criteria went unverified; fresh-eyes hadn't posted — the note must not imply otherwise.
+**Say less instead.** A short honest note beats a fuller one that overstates: "Two comments on test
+coverage inline" with no verification clause is a perfectly good closing note when nothing
+substantive was verified.
 
 Comment discipline: each finding appears once; stay proportional (don't bury a critical under
 nits); acknowledge good patterns (they become Strengths). Before finalizing, optionally run the
@@ -161,7 +178,7 @@ acknowledged & deferred on the next run instead of re-surfacing as an open ask.
 ## Step 7 — Render the report (both modes)
 
 Follow `references/html-report.md` for the JSON shape: `meta` (`target`, `ticket`, `title`, `mode`,
-`counts`, `context`) and `findings[]` (the schema fields plus `draft_body`, `default_action`, and —
+`counts`, `context`, `summary`) and `findings[]` (the schema fields plus `draft_body`, `default_action`, and —
 practice only — `your_read` + `verdict`). Save it to a temp file, then run
 `python3 scripts/render_report.py <json-file> /tmp/pr-review-coach-<target>.html` — it substitutes
 the data block into `templates/report.html`, writes the file, and opens it. Tell Monica: triage in
@@ -180,8 +197,9 @@ the page shows — recompute from her final Post/Skip state instead of your init
 
 When Monica pastes the decisions blob (`_type: "pr-review-coach-decisions"`), parse it and
 assemble ONE pending GitHub review from the `action: "post"` entries per
-`references/posting-recipe.md` (verify each line anchor first). The blob's `recommendation` string
-is the review body's opening line — lead with it, verbatim, above the summary. Default: leave it
+`references/posting-recipe.md` (verify each line anchor first). The review body is the blob's
+`recommendation` string, then its `summary` string (the closing note, as she edited it), then the
+findings — both verbatim, in that order. Default: leave it
 PENDING; submit only on explicit request. Locally there is nothing to post — the page plus
 **Copy for PR** is the deliverable. This replaces her old `/review` self-review habit.
 

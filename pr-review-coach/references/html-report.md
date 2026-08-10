@@ -19,6 +19,7 @@ writes the result, and opens it.
 {
   "meta": { "target": "20151", "ticket": "USPDS-593", "title": "<PR title or branch>", "mode": "remote|local|practice",
             "counts": { "critical": 1, "important": 1, "suggestion": 1, "strength": 1 },
+            "summary": "Verified X against Y — those check out. Two comments inline, one needs a change first.",
             "context": ["CI: failing — 2 checks", "Large PR (1,240 lines) — consider splitting",
                         "Ticket USPDS-593: scope matches"],
             "takeaways": ["Auth-coverage is the recurring gap — you missed it here and last session.",
@@ -44,6 +45,12 @@ automatically. Push any detail (which acceptance criteria, which danger gate, et
 relevant finding, not the banner. Good: `Ticket USPDS-593: scope matches (4/4 criteria)`,
 `CI: pending — 4 running, rest pass`, `Scope: ~190 lines, no split`. Avoid full sentences with
 parenthetical lists.
+
+`meta.summary` (optional) is the drafted **closing note** — the review body's opening paragraph,
+sitting below the recommendation line. It renders as an editable card above the first tier and
+leads all three copy outputs. Unlike a finding it has no Post/Skip: it always ships. Clear the box
+and it's omitted everywhere. Draft it per SKILL.md Step 6 — verification first, then what needs
+action.
 
 ## The recommendation line
 

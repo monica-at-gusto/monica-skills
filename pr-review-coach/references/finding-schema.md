@@ -66,6 +66,24 @@ deterministically.
   the lowercased title with non-alphanumerics collapsed to `-`. Line numbers are NOT part of
   the key — they drift between runs.
 
+## Plain language: ~70/30
+
+`detail`, `suggested_action`, and `draft_body` are all read by a human deciding what to do.
+Target roughly **70% ordinary English, 30% technical**.
+
+The 30% is what must stay exact: identifiers, file paths, method names, constant values, actual
+numbers. Never soften those — `total_count` is not "the count field".
+
+The 70% is the *reasoning connecting them*, and that's what gets written plainly. Lead with the
+consequence, then the mechanism. One clause of mechanism per sentence.
+
+> Too technical: "gap = 5 - 10 = -5, missed_count = (-6)/7 = -1, so compute returns 0."
+> 70/30: "5 days back is inside the 10-day arrears window, so nothing gets flagged either way —
+> `gap` goes negative and `missed_count` floors to -1."
+
+**The test:** could an engineer who has never opened this file follow the first sentence? If they
+need the code in front of them to parse it, rewrite it.
+
 ## Subagent output contract
 
 Any subagent that produces findings (e.g. the fresh-eyes mimic checks) MUST be told:
