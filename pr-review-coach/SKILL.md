@@ -51,11 +51,32 @@ Then a quick triage pass (cheap, pre-lens) — carry results as report context
 **Retain the PR description body and the ticket text (summary + description + acceptance criteria)
 verbatim.** Step 3 passes both to every lens, and Step 4 filters against them. They are review
 *inputs*, not just triage notes — do not discard them after the banner is written.
-- **Re-review reconciliation:** if you reviewed this target earlier in the session, compare the
-  current `headRefOid` against the prior pass. If it moved, re-fetch the diff (prior findings are
-  stale) and reconcile which findings the new commits resolved — surface resolved items in
-  `meta.context` ("commit <sha> resolved N prior findings: …") and carry forward only what's
-  unchanged. Don't re-flag fixed issues.
+- **Re-review reconciliation:** if this target already carries review comments — from an earlier
+  session, or from Monica directly on the PR — compare the current `headRefOid` against the one
+  that was reviewed. If it moved, re-fetch the diff (prior findings are stale), reconcile which
+  findings the new commits resolved, and **lead your response with the re-review table below**.
+  Carry forward only what's unchanged; don't re-flag fixed issues.
+
+### The re-review table (required whenever the head moved since a prior review)
+
+| Finding | Commit | What changed |
+| --- | --- | --- |
+
+One row per prior finding. Add a row per issue the **author** found and fixed themselves since the
+last pass, marked *(self-caught)* — those are the ones Monica hasn't seen and most needs to look
+at. Follow the table with a short "what to actually look at" list naming which commits carry real
+change and which to skip (docs/lint-only ones).
+
+**Attribute every fix by pickaxe, never by reading the commit message:**
+
+```
+git log -S'<distinctive code string>' --oneline --reverse <first-commit>~1..<head> -- <path>
+```
+
+Commit messages bundle and misattribute. On a real re-review, a message claimed it had reconciled
+a predicate that a *later* commit actually changed — the table built from messages would have sent
+the reviewer to the wrong commit and mischaracterised what the author did. Run the pickaxe per fix
+and use the commit it names. If the result contradicts something you already told her, say so.
 
 ## Step 3 — Gather lenses concurrently
 
