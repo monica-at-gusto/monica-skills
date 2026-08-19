@@ -1,0 +1,50 @@
+judge_domain_context: |
+  The skill under test is `handoff`: at the end of a chat session it writes ONE file that a
+  fresh session can start from — `~/workspace/notes/<TICKET>/YYYY-MM-DD-handoff.md`. It is
+  WRITE-ONLY; there is no resume-side path, and the new chat simply reads the file.
+
+  The note is THIN BY DESIGN: a short context blurb plus an index of the ticket's notes
+  directory. The detail already lives in those other notes files. The handoff says where things
+  stand and which files to open — it does NOT re-tell them. Pointer, not copy.
+
+  Its lane (what it is responsible for):
+  - Ticket resolution is ASK-DON'T-GUESS: from the argument, else from the git branch
+    (`monica.cruz/uspds-946-...` → `USPDS-946`). If neither resolves, ASK. Never invent a notes
+    directory — a handoff written into the wrong place is worse than no handoff.
+  - Notes inventory: every file in the directory, full path, ONE accurate line each, read rather
+    than labelled from its filename. Files this session created or changed are FLAGGED. Two
+    signals are used together — what the session knows it wrote (primary) and file mtime (the
+    cross-check). `~/workspace/notes` is not a git repo, so there is no commit history. When the
+    two signals disagree, the note SAYS SO rather than silently picking one.
+  - Sections, in order: Opening line (addressed to the next session) · The blurb · Notes in this
+    directory · Local state · Ruled out, and why · Not yet verified · Routes already closed ·
+    Next move · Related.
+  - CONDITIONAL SECTIONS: a section with nothing to put in it is LEFT OUT ENTIRELY — never
+    present-and-empty, never "N/A". But when the session DID produce the material, the section is
+    included, not compressed away as noise.
+  - The three discipline sections are the point of the skill:
+    * `Ruled out, and why` — every eliminated theory carries the REASON it died. "Ruled out: X"
+      with no why is not trustworthy and will get re-litigated.
+    * `Not yet verified` — a hypothesis goes here, LABELLED as one, with what would confirm it.
+      Never in the blurb, and never in `Ruled out`. Eliminating a theory and failing to confirm
+      one are DIFFERENT STATES; merging them is how a hunch gets promoted to a finding.
+    * `Routes already closed` — dead measurement/access paths (denied console, stale table, a
+      metric that does not exist), so the next session does not pay for them twice.
+  - Honesty: a claim that something was verified, run, or shipped appears ONLY if the session
+    actually did it. When unsure, the skill says LESS. Every claim in the blurb traces to a
+    linked note or to command output, never to recollection.
+
+  Judge for: ask-don't-guess ticket resolution, the hypothesis-vs-ruled-out separation, reasons
+  attached to ruled-out theories, conditional sections dropping when empty, pointer-not-copy when
+  a detail note already holds the material, accurate session-touched flagging, and refusal to
+  overstate work the session did not do.
+
+  NOTE: these scenarios inject mock `ls -lt` output, mock git/PR state, and mock notes contents
+  inline, because the skill normally gathers via Bash (`ls`, `git`, `gh`) which is unavailable
+  under the eval tool allowlist (Read,Grep,Glob,Skill). Ticket IDs are FICTIONAL (USPDS-990xx) so
+  real files on disk cannot override the mock premise. Judge the skill's DECISIONS and the
+  CONTENT it composes over the provided context — not live gathering, and not an actual file
+  write. Do not penalize it for being unable to run `ls` or `git`.
+
+report_title: "handoff Skill Eval Results"
+judge_model: "sonnet"

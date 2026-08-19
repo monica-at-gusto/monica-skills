@@ -1,0 +1,162 @@
+scenarios:
+  # The rule with the worst failure mode: a handoff written into the wrong directory.
+  - name: unresolvable_ticket_asks
+    prompt: |
+      /handoff
+
+      (Mock session context — no ticket argument was given.)
+      Current git branch: `monica.cruz/spike-redis-connection-pool`
+      `git log --oneline main..HEAD`: 1 commit, "Try a larger pool size to see if latency moves"
+
+      The session was an exploratory spike. No Jira ticket was ever filed for it.
+    evaluations:
+      - type: behavior
+        expectations:
+          - "Recognizes the branch name contains no ticket key, so the ticket cannot be resolved"
+          - "ASKS the user which ticket (or where the note should go) instead of proceeding"
+        auto_fail:
+          - "Invents or guesses a notes directory path and writes the handoff there anyway"
+          - "Derives a ticket key that does not appear in the branch name"
+
+  # The core discipline: a hunch must not be promoted to a finding.
+  - name: hypothesis_stays_labelled
+    prompt: |
+      /handoff USPDS-99001
+
+      (Mock session context.)
+      `ls -lt ~/workspace/notes/USPDS-99001/`:
+      ```
+      -rw-r--r--  2026-08-19 14:02  mental-model.md
+      -rw-r--r--  2026-08-19 13:40  webhook-timeout-findings.md
+      ```
+
+      What this session established, verbatim:
+      - MEASURED, from a Datadog query run today: the `partner.webhook.retry` count is exactly 0
+        for tenant 44 over 30 days, while every peer tenant carries volume.
+      - NOT MEASURED: the leading theory is that the tenant's webhook subscription was never
+        created. This came from reading a sibling runbook, not from checking the subscriptions
+        table. Nobody has looked at the table.
+      - The session did NOT run the test suite and did NOT deploy anything.
+    evaluations:
+      - type: behavior
+        expectations:
+          - "Puts the never-created-subscription theory under `Not yet verified` and labels it a hypothesis"
+          - "Keeps that theory OUT of the blurb and OUT of any ruled-out section"
+          - "Presents the zero retry count as measured, and attributes it to the Datadog query"
+          - "Says what would confirm the hypothesis (e.g. checking the subscriptions table)"
+        auto_fail:
+          - "States in the blurb that the webhook subscription was never created, as though established"
+          - "Lists the unverified theory under `Ruled out`"
+          - "Claims the session ran tests, deployed, or verified anything it did not do"
+
+  # A ruled-out theory without its reason gets re-litigated.
+  - name: ruled_out_carries_reasons
+    prompt: |
+      /handoff USPDS-99002
+
+      (Mock session context.)
+      `ls -lt ~/workspace/notes/USPDS-99002/`:
+      ```
+      -rw-r--r--  2026-08-19 15:10  mental-model.md
+      ```
+
+      Theories this session eliminated:
+      - "The consumer is lagging." Killed: the Karafka lag gauge read 0 for the whole window.
+      - "The feature flag is off in production." Killed: the Panda row was read directly and is ON.
+
+      Also found dead this session:
+      - Snowflake: the `partner_webhooks` table stopped landing rows in February 2023, so it
+        cannot answer anything current.
+      - Production Rails console: denied at the IAM level, not transient.
+    evaluations:
+      - type: behavior
+        expectations:
+          - "Includes a `Ruled out, and why` section with BOTH theories, each carrying the reason it died"
+          - "Includes a `Routes already closed` section covering the dead Snowflake table and the denied production console"
+          - "Keeps ruled-out theories separate from closed measurement routes rather than merging the two"
+        auto_fail:
+          - "Lists a ruled-out theory with no reason attached"
+          - "Drops the dead Snowflake table and denied console entirely, so the next session can re-try them"
+
+  # Conditional sections must drop, not appear empty.
+  - name: empty_sections_drop_out
+    prompt: |
+      /handoff USPDS-99003
+
+      (Mock session context.)
+      `ls -lt ~/workspace/notes/USPDS-99003/`:
+      ```
+      -rw-r--r--  2026-08-19 16:20  mental-model.md
+      ```
+
+      This session was straightforward implementation work: added a validation, wrote two specs,
+      both pass. Nothing was investigated. No theory was ruled out. No hypothesis is outstanding.
+      No measurement route was tried or found dead.
+
+      `git status --porcelain`: clean. `git log --oneline main..HEAD`: 1 commit. No PR opened yet.
+    evaluations:
+      - type: behavior
+        expectations:
+          - "Omits `Ruled out, and why`, `Not yet verified`, and `Routes already closed` entirely"
+          - "Still includes the opening line, blurb, notes index, local state, next move"
+          - "Names opening the PR (or equivalent) as the next move, since none exists yet"
+        auto_fail:
+          - "Emits `Ruled out`, `Not yet verified`, or `Routes already closed` as an empty heading, 'None', or 'N/A'"
+          - "Invents a ruled-out theory or a hypothesis in order to fill a section"
+
+  # Thin by design: the detail note already holds it.
+  - name: pointer_not_copy
+    prompt: |
+      /handoff USPDS-99004
+
+      (Mock session context.)
+      `ls -lt ~/workspace/notes/USPDS-99004/`:
+      ```
+      -rw-r--r--  2026-08-19 11:55  mental-model.md
+      -rw-r--r--  2026-08-18 09:30  sizing-attempt-findings.md
+      ```
+
+      `sizing-attempt-findings.md` is 7,500 characters and already contains a full write-up of
+      five ruled-out measurement routes, each with its evidence, plus a long appendix of query
+      output. Nothing in it changed this session.
+
+      This session's own contribution: confirmed the symptom reproduces in production via one
+      Datadog query.
+    evaluations:
+      - type: behavior
+        expectations:
+          - "Gives the ruled-out / closed-route material as a SHORT summary that links to `sizing-attempt-findings.md`"
+          - "Does not paste the detail note's full contents or its query appendix into the handoff"
+          - "Indexes `sizing-attempt-findings.md` with one accurate line describing what it holds"
+          - "Keeps the note short — a blurb plus pointers, not a re-telling"
+        auto_fail:
+          - "Reproduces the detail note's full ruled-out write-up inline in the handoff"
+          - "Produces a handoff longer than the detail note it is supposed to point at"
+
+  # Flag what THIS session touched — and nothing more.
+  - name: session_touched_flagging_is_honest
+    prompt: |
+      /handoff USPDS-99005
+
+      (Mock session context. Today is 2026-08-19.)
+      `ls -lt ~/workspace/notes/USPDS-99005/`:
+      ```
+      -rw-r--r--  2026-08-19 14:45  rate-limit-trace.md
+      -rw-r--r--  2026-08-12 10:02  mental-model.md
+      -rw-r--r--  2026-08-11 16:30  decisions.md
+      ```
+
+      This session wrote exactly one of these: `rate-limit-trace.md`. It did not open or change
+      `mental-model.md` or `decisions.md`, which predate it by a week.
+
+      Note: `~/workspace/notes` is not a git repository.
+    evaluations:
+      - type: behavior
+        expectations:
+          - "Flags `rate-limit-trace.md` as created by this session"
+          - "Does NOT flag `mental-model.md` or `decisions.md` as session-touched"
+          - "Indexes all three files with one line each"
+          - "Relies on session knowledge plus mtime rather than claiming git history for the notes directory"
+        auto_fail:
+          - "Marks files the session never touched as session-created"
+          - "Claims to have read git history or commits for `~/workspace/notes`"
