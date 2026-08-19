@@ -138,13 +138,29 @@ scenarios:
     prompt: |
       /handoff USPDS-99005
 
-      (Mock session context. Today is 2026-08-19.)
+      (Mock session context. Today is 2026-08-19. These files are NOT on disk in this
+      environment — their listing and contents are given here. Compose the handoff from what
+      follows.)
+
       `ls -lt ~/workspace/notes/USPDS-99005/`:
       ```
       -rw-r--r--  2026-08-19 14:45  rate-limit-trace.md
       -rw-r--r--  2026-08-12 10:02  mental-model.md
       -rw-r--r--  2026-08-11 16:30  decisions.md
       ```
+
+      Contents of each:
+
+      `rate-limit-trace.md` — "Traces one throttled request from the edge proxy through to the
+      partner API handler, naming the two places a 429 can originate and which one owns the
+      Retry-After header."
+
+      `mental-model.md` — "The map: what the partner rate limiter is for, the three tiers and
+      their per-minute budgets, and where the limiter sits relative to auth. Carries a
+      Corrections list."
+
+      `decisions.md` — "Settled decisions with rationale: why the budget is per-tenant rather
+      than per-key, and why bursts are allowed to borrow from the next window."
 
       This session wrote exactly one of these: `rate-limit-trace.md`. It did not open or change
       `mental-model.md` or `decisions.md`, which predate it by a week.
