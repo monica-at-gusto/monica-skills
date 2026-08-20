@@ -1,7 +1,7 @@
 ---
 name: handoff
-description: Write the "start a fresh chat from this file" note — a short context blurb plus an index of the ticket's notes directory, with the files this session produced flagged, so a new session is oriented without re-deriving anything. Use when wrapping up a session, spinning up a new chat on the same ticket, parking work mid-investigation, or invoking /handoff. Write-only — the new chat just reads the file.
-argument-hint: "[<TICKET>]"
+description: Write the "start a fresh chat from this file" note — a short context blurb plus an index of the ticket's notes directory, with the files this session produced flagged, so a new session is oriented without re-deriving anything. Keyed by ticket + topic, so one session can hand off several threads separately. Use when wrapping up a session, spinning up a new chat on the same ticket or topic, parking a side thread, or invoking /handoff. Write-only — the new chat just reads the file.
+argument-hint: "[<TICKET>] [<topic>]"
 allowed-tools: [Read, Glob, Grep, Write, "Bash(ls *)", "Bash(git rev-parse*)", "Bash(git branch*)", "Bash(git status*)", "Bash(git log *)", "Bash(git diff *)", "Bash(gh pr view*)", "Bash(gh pr list*)"]
 ---
 
@@ -14,6 +14,33 @@ human reviewer.
 other notes files — this note says where things stand and which of those files to open. It does
 not re-tell them. If the blurb outgrows a screen, the content belongs in a detail note that the
 index links to.
+
+## Step 0 — Resolve the topic, then check for an existing handoff
+
+A handoff is keyed by **ticket + topic**. One session can legitimately produce several — a prod
+rollout session yields separate handoffs for the runbook trimming, the feature-flag state, and a
+parked side thread.
+
+Slug the topic from what was asked ("on the feature flags and Surendhar's orphan rows" →
+`feature-flag-state`) or from what this session actually worked on. **Echo the slug back before
+writing**, so a wrong read is caught before a file exists. Ask when the session covered several
+things and no one topic dominates.
+
+**There is no bare `handoff.md`.** Every handoff carries its topic. A generic filename does not
+mean "the overall one" — it means "written first" — and a reader browsing the directory cannot
+tell those apart.
+
+Then glob `~/workspace/notes/<TICKET>/*handoff*.md`:
+
+- **A handoff for THIS topic exists:** overwrite it, and say so in chat. Nothing outdated
+  survives inside a handoff.
+- **Handoffs for OTHER topics exist:** leave them untouched. A different topic is a separate
+  file, never an overwrite. Name them in the new note's Related section so sibling topics stay
+  discoverable.
+
+Carry the durable sections forward rather than re-deriving them: `Ruled out, and why` and
+`Routes already closed` stay true unless this session overturned them. Re-derive the perishable
+ones — blurb, local state, next move — from scratch.
 
 ## Step 1 — Resolve the ticket
 
@@ -55,7 +82,9 @@ two signals disagree, say so in the note rather than silently picking one.
 
 ## Step 4 — Write the note
 
-Path: `~/workspace/notes/<TICKET>/YYYY-MM-DD-handoff.md`.
+Path: `~/workspace/notes/<TICKET>/<topic-slug>-handoff.md`, using the slug echoed in Step 0. No
+date — overwriting within a topic keeps the file current, so a date would only preserve
+something outdated.
 
 Sections in this order. **A section with nothing to put in it is left out entirely** — never
 present-and-empty, never "N/A".
