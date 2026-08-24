@@ -31,6 +31,30 @@ Rank each candidate on these (the defaults agreed in the first run; the user can
 3. **Priority / blocking risk** — ticket priority + whether it blocks others, so the pickup
    creates real value rather than just being safe.
 
+### Reading real priority for bug/issue tickets — scale / scope / timeline
+
+For a **bug/issue ticket** (not a feature pickup), don't take the Jira priority field at face
+value — derive real priority from three signals (Kilian's framework, 2026-07-15):
+
+- **Scale** — how often / how many. Error volume and blast radius: a one-off vs. thousands, one
+  customer vs. every DSA.
+- **Scope** — under what conditions it occurs. Staging-only vs. production, one edge case vs. the
+  common path. A narrow scope is a real argument for *limiting* the effort, not a full salvage.
+  (2026-07-15: USPDS-652's staging-only Redis-write bug → the agreed move was a bounded fix + a
+  logging statement to quantify scale, not a rework.)
+- **Timeline** — when it started and whether it's worsening. A steady long-standing bug ranks
+  below a fresh regression that's trending up.
+
+Apply this **only to defect tickets** — feature/enhancement pickups have no error rate, condition,
+or trend to read, so skip the lens rather than inventing values. When the signals are known,
+surface them as a single rationale row (`lbl: "Scale · Scope · Timeline"`) so the priority call
+shows its evidence; when they aren't yet knowable from the ticket, the honest move is to name what
+to measure first (often a logging statement) as the real first step.
+
+Corollary — **reprioritize, don't push through.** If a ticket turns out to need far more effort
+than its scale/scope/timeline justified, flag it for reprioritization rather than grinding it out;
+continuing isn't always the right call.
+
 ## Tiering rule
 
 - **Ready** = HIGH pack familiarity **and** clean to pick up (no toe-stepping). Best of these
@@ -77,6 +101,34 @@ Distinguish the block type in the output, because it changes the advice:
 - **Ownership block** — someone already owns the ticket → not free; reassignment conversation.
 - **Sequencing block** — ticket is free but its deps aren't merged → free to claim, not to finish;
   name the blocker and who owns it, and the "start" date is when the blocker lands.
+
+### Cross-check the free pool against open PRs and worktrees
+
+Jira fields describe *intent*; git and GitHub describe *state*. Before tiering the free pool, check
+whether any candidate already has an open PR or a live worktree — a ticket can read as a cold
+backlog item and in fact be **her own already-written PR waiting on a merge**. Those rank at or near
+the top: near-zero design cost, no toe-stepping, and a merged artifact for the velocity axis.
+
+Cheap ways to catch it: does a `~/workspace/notes/<TICKET>/` dir exist, does the description
+reference a PR number, does `git worktree list` show a branch matching the ticket, does
+`gh pr list --search <ticket-or-branch>` return anything open.
+
+Same check protects the other direction — a ticket whose PR already **merged** shouldn't be surfaced
+as a pickup at all (Jira lags on this constantly; see the standing 08-03 note).
+
+(2026-08-10: USPDS-910 was unassigned and Backlog under USPDS-686, and would have sorted last on
+Jira fields alone. It was actually Monica's own draft PR #364413 on a surviving worktree — the top
+pickup of the run.)
+
+### When the epic owner is away, name their tickets explicitly
+
+If the epic owner is OOO, don't fold their tickets into the generic held set. Their open tickets are
+often the **highest-leverage** items available — surface them as *"reassignment conversation, not a
+free grab"* with a one-line why. Silently holding them hides the real options.
+
+(2026-08-10: USPDS-811 and USPDS-817 were both Kilian's while he was OOO. 817 gated Phase B
+verification and Monica had already said she wanted it; 811 was work she was effectively doing.
+Neither was in the free pool.)
 
 ## The toe-stepping rule (most important, least obvious)
 
