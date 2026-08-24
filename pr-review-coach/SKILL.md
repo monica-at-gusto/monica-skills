@@ -131,11 +131,61 @@ mode, tier into Critical / Important / Suggestion / Strengths, cap issue finding
 strengths exempt, reports how many were trimmed — say so, never silently drop), and reconcile
 against the deferral ledger by exact match key.
 
+**Two findings in the same small new file will collide in the 3-line dedupe window.** The script
+keeps the higher severity and drops the other — correct for genuine duplicates, wrong when a short
+new file (a shared example, a small helper) legitimately carries two distinct findings a couple of
+lines apart. **Compare the script's per-tier counts against what you fed it.** A tier that went to
+zero is the tell. When it fires, re-anchor the lower-severity finding somewhere it genuinely belongs
+— usually the code side the finding is *about*, not the file you first noticed it in — rather than
+accepting the merge. Do not simply raise its severity to survive the collision. Caught on #367417:
+"TypeError asserted nowhere" sat 2 lines from "5 examples fail" in a 19-line shared-example file and
+vanished; re-anchoring it at the `rescue` line it was actually about kept both.
+
 **Carry `evidence` through, and write `verify_cmd` for every critical/important finding.** Both
 lenses already return evidence — do not drop it when normalizing into the schema, it is the whole
 basis on which Monica can check a claim she is about to post under her own name. Then turn each
 one into a runnable command per `finding-schema.md`. If you can't write the command, you didn't
 verify the finding: set `confidence: low` and let the script filter it.
+
+**When a PR adds one shared spec helper and wires it into many files, RUN it against every file it
+was wired into.** Do not reason about whether it passes — a shared example reads ambient state
+(`let`s, `subject`, `described_class`) that differs per caller, so its contract is invisible at both
+the definition and the call site. It can pass in most files and fail in a handful, for more than one
+reason, and reading finds only the reason you thought to look for. Fetch the head into a worktree
+(`git fetch origin pull/<n>/head:<branch>`, `git worktree add`) and run the new example across the
+whole set, filtered by its description:
+
+```
+DISABLE_SPRING=1 bin/rspec <spec-dir-or-files> -e '<the new context or example description>'
+```
+
+Report the split (`12 pass, 5 fail`) and group the failures by cause, not by file — the causes are
+the finding, the files are the blast radius. Paste the real runner output in the response. Caught on
+#367417: reading the shared example found 2 failures from an unreachable stub; running all 17 found
+5, because 3 caller files never defined the `let` the example depends on. Fresh-eyes missed both
+causes, and CI had not finished, so the run was the only source.
+
+**Check every anchor against the diff, and move the unanchorable ones into the body.** A finding's
+`line` must be a line this PR actually adds or shows — parse the diff hunks and confirm it, don't
+eyeball it. Two outcomes:
+
+- **Anchorable** — the disproving code is in the diff. Anchor there and post it inline.
+- **Not anchorable** — the disproving code lives in a file the PR doesn't touch, so GitHub has no
+  line to hang the comment on. Per `finding-schema.md` the lens sets `line: null` for these; if a
+  lens instead handed you the nearest changed line, correct it to `null` yourself. Do NOT keep that
+  substitute anchor — an inline comment on `A.tsx:31` whose body is about `B.tsx:57` reads to the
+  author as a misfire. Fold the finding into `meta.summary`, cite the evidence as plain text
+  (`payroll_admin_account_manager_channels.tsx:57`), and add a `meta.context` line saying it's in
+  the body with no diff line to anchor to. Say in the draft that it's outside the diff — that's why
+  it isn't inline, and it tells the author you looked past the files they changed.
+
+`merge_findings.py` passes `line: null` findings through untouched (verified), so they tier and cap
+normally — the split happens when you build the report payload, not in the script.
+
+This is the common shape for the strongest finding in a review: "you missed a surface" is
+cross-file by definition, so the code that proves it is almost never in the diff. Caught on
+Gusto/web #32292, where the fix gated an availability pill on two components while a third,
+untouched one still rendered it on a branch the same audience reaches.
 
 **Set `nit` on every issue finding before running the script** — the lenses won't always populate
 it. Apply `finding-schema.md`'s test: if the author said "I'd rather leave it as is," is anything
@@ -205,6 +255,17 @@ practice only — `your_read` + `verdict`). Save it to a temp file, then run
 the data block into `templates/report.html`, writes the file, and opens it. Tell Monica: triage in
 the page, then **Copy decisions for Claude** and paste the blob back here (remote posting), or
 **Copy for PR** to paste markdown into the PR herself.
+
+**The two claim-check banner lines are mandatory.** Before rendering, write the first two
+`meta.context` entries in this order — Jira ticket first, PR description second — per the
+required-entries table in `references/html-report.md`. Lead with the outcome in plain words
+(`Checked against Jira: everything checks out`, `Checked against PR description: 1 claim
+contradicted — see Critical`), not a fraction.
+
+Only write "checked" if this run actually checked; when a source was unavailable use the
+`Not checked against …` form and name why. But never *drop* a line because the check came back
+clean — absence is indistinguishable from "never ran", and Monica reads these two lines
+specifically to confirm the Step 3 claim check happened.
 
 **Recommendation line.** The report opens with a verdict derived from the *live* triage state:
 `Recommendation: Reviewed, requires re-review for approval` when any critical/important finding is

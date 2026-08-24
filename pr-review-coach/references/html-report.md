@@ -39,6 +39,29 @@ The same text is saved to the `~/workspace/notes/reviews_practice/` log (`refere
 gaps, ticket alignment. The template renders them as a short banner under the counts. Omit or
 leave empty when there's nothing to surface.
 
+### Required entries: the claim check
+
+The **first two** entries are mandatory on every run, in this order. They exist so the claim check
+from SKILL.md Step 3 is visible as a result rather than assumed — Monica should not have to ask
+whether the PR was read against the ticket and its own description.
+
+Lead with the outcome in plain words, not a fraction. Point at the tier that carries the problem so
+she can jump to it.
+
+| # | Entry | Wording |
+| --- | --- | --- |
+| 1 | Jira ticket | `Checked against Jira: everything checks out` · `Checked against Jira: 1 critical below` · `Checked against Jira: 2 unmet criteria — see Important` · `Not checked against Jira: MCP unauthorized` · `No Jira ticket found in branch/title/body` |
+| 2 | PR description | `Checked against PR description: all claims hold` · `Checked against PR description: 1 claim contradicted — see Critical` · `Not checked against PR description: body is empty` |
+
+Two rules, and they pull in opposite directions on purpose:
+
+- **Only say "checked" if you checked.** The confirmation is a claim about this run. If the Jira MCP
+  wasn't authorized or the body was empty, use the `Not checked` form and name why.
+- **A clean check still gets a line.** Dropping the entry when nothing is wrong is the failure mode —
+  absence is indistinguishable from "never ran", which is the exact doubt these lines exist to kill.
+
+Both lines carry into **Copy for notes**, so the record shows what was checked against what.
+
 **Keep each entry terse: `Label: value`, ≤ ~10 words, one line.** The banner is a scannable
 status strip, not an explanation — the leading label (before the first colon) is bolded
 automatically. Push any detail (which acceptance criteria, which danger gate, etc.) into the

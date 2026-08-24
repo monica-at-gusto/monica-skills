@@ -30,6 +30,10 @@ deterministically.
 ```
 
 - `line` anchors to the NEW file; `side: RIGHT` = added/context, `LEFT` = removed line.
+  `line: null` means **no inline anchor exists** — the evidence lives outside the diff. It is a
+  valid finding; it ships in the review body instead of as an inline comment (see the claim-check
+  rules below and SKILL.md Step 4). `merge_findings.py` keeps these and never proximity-clusters
+  them.
 - `hunk_header` is the fallback anchor when `line` is fuzzy (used by the posting guard).
 - `incident_refs` is populated by the risk lens only; `[]` otherwise.
 - `introduced_by_pr: false` = the finding is about pre-existing code → filtered out before
@@ -96,8 +100,18 @@ Any subagent that produces findings (e.g. the fresh-eyes mimic checks) MUST be t
 
 Every lens subagent is also handed the **PR description** and the **Jira ticket** (SKILL.md Step 3)
 and must run the claim check against both. Findings from it use `check: "description-claim"` or
-`check: "ticket-claim"`; an unmet acceptance criterion is a `ticket-claim` finding. Anchor a claim
-finding at the code that disproves the claim, not at the prose — the comment has to land on a line.
+`check: "ticket-claim"`; an unmet acceptance criterion is a `ticket-claim` finding.
+
+**Anchor a claim finding at the code that disproves the claim, not at the prose.** When that code
+is in the diff, set `line` to it. When it isn't — the disproving file is one the PR never touches —
+there is no line to anchor to, and that is a valid finding, not a defective one. Set `line: null`
+and put the `file:line` of the real evidence in `evidence`. **Never substitute the nearest changed
+line**: an inline comment on `A.tsx:31` whose body is about `B.tsx:57` reads to the author as a
+misfire, and it hides that you looked past the files they changed. The orchestrator ships
+`line: null` findings as prose in the review body (SKILL.md Step 4).
+
+This is the normal shape for the strongest finding in a review — "you missed a surface" is
+cross-file by definition, so its proof is usually outside the diff.
 
 The "emit no other text" rule is what lets the orchestrator parse and merge reliably.
 
