@@ -8,6 +8,18 @@ judge_domain_context: |
   stand and which files to open — it does NOT re-tell them. Pointer, not copy.
 
   Its lane (what it is responsible for):
+  - KEYED BY TICKET + TOPIC. One session can legitimately produce several handoffs, one per
+    topic — a prod rollout session yields separate ones for the runbook trimming, the
+    feature-flag state, and a parked side thread. The topic is slugged from what was asked and
+    ECHOED BACK before writing. There is NO bare `handoff.md`: a generic filename does not mean
+    "the overall one", it means "written first", and a reader browsing the directory cannot tell
+    those apart. There is no date in the filename either.
+  - A handoff for the SAME topic is OVERWRITTEN — nothing outdated survives inside a handoff.
+    Handoffs for OTHER topics are left untouched and named in Related; a different topic is a
+    separate file, never an overwrite.
+  - On a rewrite, the DURABLE sections carry forward: `Ruled out, and why` and `Routes already
+    closed` stay true unless the session overturned them, and they are the expensive part. The
+    perishable ones — blurb, local state, next move — are re-derived.
   - Ticket resolution is ASK-DON'T-GUESS: from the argument, else from the git branch
     (`monica.cruz/uspds-946-...` → `USPDS-946`). If neither resolves, ASK. Never invent a notes
     directory — a handoff written into the wrong place is worse than no handoff.

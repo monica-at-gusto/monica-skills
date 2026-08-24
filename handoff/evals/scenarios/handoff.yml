@@ -176,3 +176,80 @@ scenarios:
         auto_fail:
           - "Marks files the session never touched as session-created"
           - "Claims to have read git history or commits for `~/workspace/notes`"
+
+  # Step 0: the generic filename means "written first", not "the overall one".
+  - name: topic_keyed_filename
+    prompt: |
+      /handoff on the feature flags and Surendhar's orphan rows
+
+      (Mock session context. These files are NOT on disk in this environment — the listing and
+      contents are given below. Compose the handoff from what follows.)
+
+      Current git branch: `monica.cruz/uspds-99010-prod-rollout`
+
+      `ls -lt ~/workspace/notes/USPDS-99010/`:
+      ```
+      -rw-r--r--  2026-08-19 09:15  mental-model.md
+      -rw-r--r--  2026-08-18 16:40  prod-rollout-runbook.md
+      ```
+
+      Contents of each:
+
+      `mental-model.md` — "The map: the four rollout phases, which write-path entry points are
+      gated by a flag, and where the read path turns on."
+
+      `prod-rollout-runbook.md` — "The live rollout plan, including the production order of
+      operations for creating flag rows before a deploy."
+
+      This session covered two threads: the state of the rollout feature flags, and Surendhar's
+      count of orphaned pay-schedule rows. It wrote neither of the files above.
+    evaluations:
+      - type: behavior
+        expectations:
+          - "Names a topic-keyed target filename ending in `-handoff.md`, carrying the feature-flag/orphan-rows topic in the slug"
+          - "Echoes the slug back before writing, so a wrong read can be corrected first"
+          - "Uses no date in the filename"
+        auto_fail:
+          - "Targets a bare `handoff.md` with no topic in the name"
+          - "Puts a YYYY-MM-DD date in the handoff filename"
+
+  # Step 0: overwrite within a topic; a different topic is a separate file.
+  - name: same_topic_overwrite_keeps_siblings
+    prompt: |
+      /handoff on the null-payload rows
+
+      (Mock session context. These files are NOT on disk in this environment — the listing and
+      contents are given below. Compose the handoff from what follows.)
+
+      Current git branch: `monica.cruz/uspds-99011-prod-rollout`
+
+      `ls -lt ~/workspace/notes/USPDS-99011/`:
+      ```
+      -rw-r--r--  2026-08-19 14:22  null-blobs-phase-c-handoff.md
+      -rw-r--r--  2026-08-19 14:12  gdoc-trimming-handoff.md
+      -rw-r--r--  2026-08-19 13:39  feature-flag-state-handoff.md
+      -rw-r--r--  2026-08-17 10:05  mental-model.md
+      ```
+
+      `null-blobs-phase-c-handoff.md` is the handoff for THIS topic, written earlier. It contains:
+      - Ruled out, and why: "USPDS-99001 as the cause — ruled out, it broke at compute, not at
+        staling."
+      - Routes already closed: "Production Rails console — denied at the IAM level, not
+        transient."
+
+      `gdoc-trimming-handoff.md` and `feature-flag-state-handoff.md` are handoffs for two
+      different topics on the same ticket.
+
+      This session added nothing to either list. It only confirmed the thread stays parked and
+      that the read path is unaffected.
+    evaluations:
+      - type: behavior
+        expectations:
+          - "Replaces `null-blobs-phase-c-handoff.md`, the handoff for this same topic, and says so"
+          - "Leaves `gdoc-trimming-handoff.md` and `feature-flag-state-handoff.md` alone rather than overwriting or merging them"
+          - "Names the two sibling-topic handoffs in the new note's Related section"
+          - "Carries the ruled-out USPDS-99001 entry and the denied-production-console closed route forward into the rewrite"
+        auto_fail:
+          - "Overwrites, merges, or rewrites a sibling-topic handoff"
+          - "Drops the ruled-out entry or the closed measurement route, losing them in the rewrite"
+          - "Creates a second file for the same topic instead of replacing the existing one"

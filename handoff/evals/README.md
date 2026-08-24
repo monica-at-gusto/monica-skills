@@ -53,6 +53,8 @@ silently invalidates the scenario.
 | `empty_sections_drop_out` | Empty sections vanish — no "N/A", no invented filler. |
 | `pointer_not_copy` | Detail stays in the detail note; the handoff links. |
 | `session_touched_flagging_is_honest` | Flag only what this session touched. |
+| `topic_keyed_filename` | No bare `handoff.md`, no date — the topic is in the name. |
+| `same_topic_overwrite_keeps_siblings` | Overwrite within a topic; sibling topics survive. |
 
 ## Adding scenarios
 
