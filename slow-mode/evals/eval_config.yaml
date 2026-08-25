@@ -1,0 +1,50 @@
+judge_domain_context: |
+  The skill under test is `slow-mode`: it explains ONE concept or piece of code at a speed Monica
+  can absorb, and it optimizes for her understanding rather than for delivering an explanation.
+  It is the companion to `control-flow-chart` (that one is for logic she can't SEE; this one is for
+  a concept she can't HOLD).
+
+  Its lane / responsibilities:
+  - Pacing: ONE new idea per turn. Length is not the constraint; idea count is. It explains one
+    conceptual unit, gives one small concrete example, asks ONE comprehension question, and STOPS.
+    An unanswered question is a hard stop — it must never answer its own question or continue past it.
+  - The gate (swing-then-sharpen): Monica says the concept back in her own words; the skill names
+    ONLY what diverged from the code and what's missing. It must NOT score her — no "right",
+    "partly right", "wrong", "close", "exactly" as an opener or verdict. She then decides whether to
+    take another pass or climb. Agreement noises ("makes sense", "sounds good") are NOT a pass.
+    "I don't know enough to answer that yet" must be stated as an available answer in the question
+    itself, and when taken, the skill backs up to what the answer depends on instead of re-asking.
+  - The ladder (5 layers, one per turn, withholding is the point):
+    1 Vocabulary (Ruby syntax counts as vocabulary — she is learning the language, not just the
+      codebase) · 2 Local behavior in isolation · 3 Data flow (what enters/transforms/leaves)
+      · 4 Dependencies (behavior resting on code not visible; nil/raise/empty) · 5 System role.
+    Each layer must WITHHOLD later layers' content, even when mentioning it would make the current
+    layer easier to explain.
+  - Back-up is OFFERED, never automatic: on a back-up signal (e.g. she answers a Layer 3 data-flow
+    question with Layer 5 purpose), the skill NAMES the signal and offers "drop back or push on —
+    which?", leaving the call to her. Push-on is legitimate and must be honored. It must not drop
+    silently or unilaterally.
+  - Language: preserve real terminology, define each new term BEFORE first use, short direct
+    sentences, separate what the code DOES from WHY, separate observed behavior from inference.
+    NO analogies unless she explicitly asks for one — use a real example from the code instead.
+  - Never explain from memory: it pastes the actual lines. For a concept with NO file (a Ruby idiom,
+    a Kafka guarantee), it LAYERS the example — a 2-3 line minimal illustration FIRST (labeled as an
+    illustration), then OFFERS the real call site, and when accepted it frames it ("here's a real one
+    in <file>, which handles X — this call is doing Y") rather than pasting bare code.
+  - It must not quiz her on anything a grep would answer, and must not produce implementation code
+    unless asked.
+  - It does NOT enter on "this topic looks hard" — only on an explicit confusion signal (says she
+    doesn't get it / is lost, re-asks, 2+ follow-ups on one piece, asks to be taught, or /slow-mode).
+    A plain factual question gets a plain fast answer.
+
+  Judge for: pacing discipline (one idea, one question, then stop), gate correctness (names
+  divergence without scoring; leaves the climb decision to her), layer withholding, offered-not-
+  automatic back-up, no uninvited analogies, and the layered example for file-less concepts.
+
+  NOTE: the skill normally reads repo files and writes a swing-and-sharpen rep. Under the eval tool
+  allowlist those are unavailable/undesirable. Scenarios inject the code inline and instruct it to
+  emit its conversational turn as plain text. Judge the DECISIONS and the conversational shape —
+  do not penalize it for not reading files or not writing the rep.
+
+report_title: "slow-mode Skill Eval Results"
+judge_model: "sonnet"

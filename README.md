@@ -172,6 +172,35 @@ loud, and let the effort estimate re-derive itself instead of arguing scope.
 - **Detail lives in `eval-prd/references/`**; SKILL.md stays lean. Evals: `eval-prd/evals/` —
   `cd eval-prd && uv run skill-evals`.
 
+### slow-mode
+
+Explains one concept at a speed I can absorb, instead of at the speed it's convenient to deliver.
+Companion to `control-flow-chart`: that one is for logic I can't **see**, this one is for a concept I
+can't **hold**. Started life as a prompt I pasted by hand.
+
+```
+/slow-mode [<concept|file|method|"the thing we just discussed">]
+```
+
+- **Lifts the caps:** suspends the ~200-word answer-first ceiling for its duration. Length isn't the
+  constraint — **one new idea per turn** is.
+- **The gate is the skill:** I say the concept back in my own words; it names *only* what diverged,
+  never a verdict, and *I* decide whether to take another pass or climb. Agreement noises don't
+  count as a pass, and an unanswered comprehension question is a hard stop.
+- **Five layers, withholding on purpose:** vocabulary → local behavior → data flow → dependencies →
+  system role. Ruby syntax counts as vocabulary. Each layer must not leak the next one's content.
+- **Back-up is offered, not automatic:** when my answer signals a thinner layer below, it names the
+  signal and asks *drop back or push on?* — because the signal has a real false-positive rate and
+  dragging me through a layer I already hold wastes the session.
+- **Never explains from memory:** pastes the real lines. For a concept with no file, a minimal
+  illustration comes first, then it *offers* the real call site and frames it by file before pasting.
+- **Hands off to the chart** when the confusion turns out to be shaped like branching logic — two
+  prose answers on the same control-flow question is the cue to switch mediums.
+- **Write-back:** a full swing-and-sharpen rep to `~/workspace/notes/swing-and-sharpen/`, plus one
+  `Corrections` line in the ticket's `mental-model.md` only when a belief about the ticket changed.
+- **Detail lives in `slow-mode/references/`** (`explanation-rules.md`, `layer-ladder.md`); SKILL.md
+  stays lean. Evals: `slow-mode/evals/` (see its README).
+
 ## Linking a skill into Claude Code
 
 From the repo root:

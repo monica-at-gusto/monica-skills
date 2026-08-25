@@ -1,0 +1,205 @@
+# EVAL PREAMBLE (each scenario carries its own): the skill normally reads repo files and writes a
+# swing-and-sharpen rep. Under the eval sandbox that stalls on filesystem-vs-mock conflicts, so each
+# scenario injects the code inline and asks for the single conversational turn as plain text.
+
+scenarios:
+  # The gate is the whole skill: ask ONE question, then stop. Never self-answer.
+  - name: gate_blocks_and_waits
+    prompt: |
+      /slow-mode this method
+
+      Start me at Layer 1 (vocabulary).
+
+      EVAL SANDBOX — work ONLY from the code below. Do NOT read or write any files, do NOT enter
+      planning. Emit your single next conversational turn as plain text, exactly as you would send
+      it to me, then end your response. Keep the turn under 250 words (sandbox limit only — the
+      real skill has no length cap).
+
+      ```ruby
+      def resolve_tier(company)
+        return unless company
+        cached = @tiers[company.id]
+        cached || fetch_tier(company).tap { |t| @tiers[company.id] = t }
+      end
+      ```
+    evaluations:
+      - type: behavior
+        expectations:
+          - "Stays within one conceptual unit: a list of one-line vocabulary glosses counts as one, but layering a behavior explanation on top of vocabulary does not"
+          - "Ends by asking exactly one comprehension question and then stops"
+          - "States, in the question itself, that 'I don't know enough to answer that yet' is an acceptable answer"
+          - "Defines any Ruby idiom it leans on (bare return, ||, tap) before using it"
+        auto_fail:
+          - "Answers its own comprehension question"
+          - "Continues past the question into a further explanation or a next layer"
+          - "Asks two or more comprehension questions in the same turn"
+          - "Explains the method's role in the wider system in this first turn"
+
+  # Sharpen without scoring: name the divergence, leave the climb decision to her.
+  - name: gate_names_divergence_without_scoring
+    prompt: |
+      /slow-mode
+
+      EVAL SANDBOX — no file reads or writes. Emit only your next conversational turn as plain text.
+
+      You just explained this method to me at Layer 2 (local behavior):
+
+      ```ruby
+      def charge(invoice)
+        Payments::Api.charge!(invoice)
+      rescue Payments::Declined => e
+        Result.new(error: e.class.name)
+      end
+      ```
+
+      Here is my swing, in my own words: "It calls the payments API to charge the invoice. If the
+      card gets declined it re-raises the error up to whoever called it."
+    evaluations:
+      - type: behavior
+        expectations:
+          - "Corrects the re-raise reading: the rescue returns a Result object, so the method returns normally"
+          - "Names what diverged and what is missing; stating which parts match the code is allowed, since that tells me what to keep"
+          - "Leaves the decision to take another pass or climb to the next layer up to me"
+        auto_fail:
+          - "Opens with a verdict like 'right', 'partly right', 'wrong', 'close', 'exactly', or 'good job'"
+          - "Praises the swing or gives it an overall verdict, such as 'good', 'nice', or rating it as a whole"
+          - "Climbs to the next layer without asking"
+          - "Fails to correct the mistaken re-raise reading"
+
+  # Back-up is offered, never automatic or silent.
+  - name: back_up_is_offered_not_automatic
+    prompt: |
+      /slow-mode
+
+      EVAL SANDBOX — no file reads or writes. Emit only your next conversational turn as plain text.
+
+      We are at Layer 3 (data flow). You asked me what enters this method and what shape leaves it.
+
+      My answer: "It's there so the consumer doesn't have to know about the discriminator field."
+    evaluations:
+      - type: behavior
+        expectations:
+          - "Recognizes that my answer is about purpose, which belongs to a later layer, not data flow"
+          - "Names the back-up signal explicitly rather than dropping silently"
+          - "Offers me the choice between dropping back a layer and pushing on, and asks which I want"
+        auto_fail:
+          - "Drops back a layer unilaterally without offering the choice"
+          - "Ignores the signal and proceeds with Layer 3 as if the question was answered"
+          - "Tells me the answer was wrong or scores it"
+
+  # File-less concept: minimal illustration first, real call site offered and framed.
+  - name: fileless_concept_layers_the_example
+    prompt: |
+      /slow-mode index_with
+
+      EVAL SANDBOX — do NOT read or grep any files (assume you cannot). Emit only your next
+      conversational turn as plain text.
+    evaluations:
+      - type: behavior
+        expectations:
+          - "Presents a short self-contained minimal example, roughly two or three lines, before any repo code (a mode announcement and an assumptions block may legitimately come first)"
+          - "Labels that example as an illustration rather than presenting it as existing code"
+          - "Offers to show a real call site in the codebase and waits for me to accept"
+        auto_fail:
+          - "Leads with a repo call site instead of a minimal example"
+          - "Presents invented code as if it were an actual file's contents"
+          - "Pastes a real call site without offering first"
+          - "Uses an analogy or metaphor without being asked for one"
+
+  # Withholding is the ladder's job: a Layer 1 request must not become a system tour.
+  - name: withholds_later_layers
+    prompt: |
+      /slow-mode
+
+      EVAL SANDBOX — no file reads or writes. Emit only your next conversational turn as plain text.
+
+      Start me at Layer 1 (vocabulary) on this consumer:
+
+      ```ruby
+      class BatchStaleConsumer < ApplicationConsumer
+        sig { params(message: Karafka::Messages::Message).void }
+        def consume_one(message)
+          payload = message.payload
+          return if payload[:last_missed_date].blank?
+          Batches::Staler.new(payload).call
+        end
+      end
+      ```
+    evaluations:
+      - type: behavior
+        expectations:
+          - "Covers only unfamiliar vocabulary and constructs, treating Ruby and framework syntax as vocabulary"
+          - "Defines each term before leaning on it"
+          - "Ends with one comprehension question about a term, then stops"
+        auto_fail:
+          - "Explains how this consumer fits into the wider Kafka pipeline or who produces the topic"
+          - "Traces the data flow through Batches::Staler"
+          - "Explains why the blank check exists rather than what the construct is"
+          - "Batches vocabulary and behavior into the same turn"
+
+  # A prerequisite is named and banked, not followed.
+  - name: prerequisite_is_tldrd_and_deferred
+    prompt: |
+      /slow-mode
+
+      EVAL SANDBOX — no file reads or writes. Emit only your next conversational turn as plain text,
+      under 250 words (sandbox limit only).
+
+      We are at Layer 2 on this consumer, and understanding it turns on knowing how Kafka assigns
+      partitions to consumers — a separate topic I have not told you whether I know.
+
+      ```ruby
+      def consume_one(message)
+        Batches::Staler.new(message.payload).call
+      end
+      ```
+    evaluations:
+      - type: behavior
+        expectations:
+          - "Names the prerequisite topic explicitly instead of teaching it silently or assuming I know it"
+          - "Asks whether I already hold that prerequisite"
+          - "Keeps any explanation of the prerequisite to a short TL;DR scoped to the method at hand, and labels it as partial rather than complete"
+          - "Says the deeper dive is being noted for later rather than taken now"
+        auto_fail:
+          - "Delivers a full explanation of Kafka partitioning instead of a scoped TL;DR"
+          - "Assumes I know the prerequisite without asking"
+          - "Teaches the prerequisite without naming it as a separate topic"
+          - "Abandons the original method to pursue the prerequisite"
+
+  # Exactly one comprehension question, even when two terms both deserve testing.
+  - name: exactly_one_question_per_turn
+    prompt: |
+      /slow-mode
+
+      EVAL SANDBOX — no file reads or writes. Emit only your next conversational turn as plain text,
+      under 250 words (sandbox limit only).
+
+      Start me at Layer 1 (vocabulary) on this line. Both constructs on it are new to me.
+
+      ```ruby
+      records = ids.present? ? Company.where(id: ids).index_with { |c| c.tier } : {}
+      ```
+    evaluations:
+      - type: behavior
+        expectations:
+          - "Ends the turn with exactly one comprehension question"
+          - "Defines the constructs it introduces before leaning on them"
+        auto_fail:
+          - "Asks two or more comprehension questions in the turn"
+          - "Justifies asking multiple questions by noting they are separate or both important"
+          - "Answers its own question"
+
+  # Not every question is a confusion signal.
+  - name: plain_question_stays_fast
+    prompt: |
+      What command runs a single RSpec file in zenpayroll?
+
+      EVAL SANDBOX — no file reads or writes. Answer as you normally would, as plain text.
+    evaluations:
+      - type: behavior
+        expectations:
+          - "Answers the question directly and briefly"
+        auto_fail:
+          - "Enters slow mode or announces slow mode"
+          - "Walks through vocabulary layers or a five-layer ladder"
+          - "Asks a comprehension question before answering"
